@@ -1,0 +1,1583 @@
+[
+  {
+    "id": 0,
+    "name": "root",
+    "desc": "",
+    "type": "root",
+    "dtype": "none",
+    "isShown": true,
+    "related": [7010105, 4480963, 8875860, 6071837, 5583020, 2055571, 3734015, 201]
+  },
+  {
+    "id": 634,
+    "name": "id",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 881,
+    "name": "apoE2",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 882,
+    "name": "apoE3",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 883,
+    "name": "apoE4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 884,
+    "name": "apoe_subtyping",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 885,
+    "name": "p_tau181",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 886,
+    "name": "p_tau217",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 1,
+    "name": "age",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "hhhhhhhhh"
+  },
+  {
+    "id": 2,
+    "name": "rvpa",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 3,
+    "name": "swms",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: SWM Strategy (6-8 boxes): The number of times a subject begins a new search pattern from the same box they started with previously. If they always begin a search from the same starting point we infer that the subject is employing a planned strategy for finding the tokens. Therefore a low score indicates high strategy use (1 = they always begin the search from the same box), a high score indicates that they are beginning their searches from many different boxes. Calculated across assessed trials with 6 tokens or 8 tokens."
+  },
+  {
+    "id": 4,
+    "name": "dmscc",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Mean Choices to Correct: The mean number of choices that the subject made on each trial, including the correct choice. Calculated across all trials where the subject eventually made the correct choice (simultaneous and all delays)."
+  },
+  {
+    "id": 5,
+    "name": "dmsml",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Mean Correct Latency: The mean latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt. Calculated across all correct assessed trials (simultaneous and all delays)."
+  },
+  {
+    "id": 6,
+    "name": "dmspc",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Percent Correct: The percentage of assessment trials during which the subject chose the correct box on their first box choice. Calculated across all assessed trials (simultaneous presentation and all delays)."
+  },
+  {
+    "id": 7,
+    "name": "dmstc",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Total Correct: The total number of times a subject chose the correct answer on their first box choice. Calculated across all assessed trials (simultaneous presentation and all delays)."
+  },
+  {
+    "id": 8,
+    "name": "dmste",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Total Errors: The total number of times a subject failed to choose the correct box on their first selection, thus making an error. Calculated across all assessed trials (simultaneous and all delays) regardless of which incorrect box (out of the 3 possible incorrect boxes) was chosen."
+  },
+  {
+    "id": 9,
+    "name": "motml",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "The mean latency from the display of a stimulus to a correct response to that stimulus during assessment trials."
+  },
+  {
+    "id": 10,
+    "name": "mottc",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "The total number of assessment trials on which the subject made a correct response."
+  },
+  {
+    "id": 11,
+    "name": "motte",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "The total number of assessment trials on which the subject failed to make a correct response."
+  },
+  {
+    "id": 12,
+    "name": "rvpml",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "RVP Mean Response Latency: The mean response latency on trials where the subject responded correctly. Calculated across all assessed trials."
+  },
+  {
+    "id": 13,
+    "name": "rvpph",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "RVP Probability of Hit: The number of target sequences during assessment blocks that were correctly responded to within the time allowed, divided by the number of target sequences during assessment blocks (Correct hits ÷ total number of sequences)"
+  },
+  {
+    "id": 14,
+    "name": "rvpth",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "RVP Total Hits: The total number of target sequences that were correctly responded to (Correct Hits) within the allowed time during assessment sequence blocks."
+  },
+  {
+    "id": 15,
+    "name": "rvptm",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "RVP Total Misses: The total number of target sequences that were not responded to within the allowed time during assessment sequence blocks."
+  },
+  {
+    "id": 16,
+    "name": "swmpr",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Problem Reached: This measure reports the problem number that the subject reached, but did not necessarily complete."
+  },
+  {
+    "id": 17,
+    "name": "swms6",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Strategy (6 box only): This measure computes the strategy score for the 6 box stage of the task only. The strategy score is calculated based on the number of times a subject begins a new search pattern from the same box they started with previously. If they always begin a search from the same starting point we infer that the subject is employing a planned strategy for finding the tokens. Therefore a low score indicates high strategy use (1 = they always begin the search from the same box), a high score indicates that they are beginning their searches from many different boxes."
+  },
+  {
+    "id": 18,
+    "name": "swmsx",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Strategy (6-12 boxes): The number of times a subject begins a new search pattern from the same box they started with previously. If they always begin a search from the same starting point we infer that the subject is employing a planned strategy for finding the tokens. Therefore a low score indicates high strategy use (1 = they always begin the search from the same box), a high score indicates that they are beginning their searches from many different boxes. Calculated across assessed trials with 6 tokens or more."
+  },
+  {
+    "id": 19,
+    "name": "__time",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 20,
+    "name": "dmslsd",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Correct Latency Standard Deviation (SD): The standard deviation of response latencies for trials where subjects selected the correct box on their first attempt. Calculated across all correct assessed trials (simultaneous and all delays)."
+  },
+  {
+    "id": 21,
+    "name": "dmsmdl",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Median Correct Latency: The median latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt. Calculated across all correct assessed trials (simultaneous and all delays)."
+  },
+  {
+    "id": 22,
+    "name": "dmsml0",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Mean Correct Latency (0 seconds delay): The mean latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a zero second delay. Calculated across all assessed trials containing a zero second delay."
+  },
+  {
+    "id": 23,
+    "name": "dmsml4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Mean Correct Latency (4 seconds delay): The mean latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a four second delay. Calculated across all assessed trials containing a four second delay."
+  },
+  {
+    "id": 24,
+    "name": "dmsmls",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Mean Correct Latency (simultaneous): The mean latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a simultaneous presentation of target and response stimuli. Calculated across all assessed trials containing simultaneous presentation."
+  },
+  {
+    "id": 25,
+    "name": "dmspc0",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: DMS Percent Correct (0 seconds delay): The percentage of assessment trials containing a zero second delay during which the subject chose the correct box on their first box choice. Calculated across all assessed trials containing a zero second delay."
+  },
+  {
+    "id": 26,
+    "name": "dmspc4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: DMS Percent Correct (4 second delay): The percentage of assessment trials containing a four second delay during which the subject chose the correct box on their first box choice. Calculated across all assessed trials containing a four second delay."
+  },
+  {
+    "id": 27,
+    "name": "dmspcs",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: DMS Percent Correct (simultaneous): The percentage of assessment trials where the target and response stimuli were presented simultaneously during which the subject chose the correct box on their first box choice. Calculated across all assessed trials containing the simultaneous presentation of stimuli."
+  },
+  {
+    "id": 28,
+    "name": "dmstc0",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Total Correct (0 second delay): The total number of times a subject chose the correct answer on their first box choice for trials where the response stimuli appeared on screen after a 0 second delay after the target stimulus was shown. Calculated across all assessed trials which contained a delay of zero seconds."
+  },
+  {
+    "id": 29,
+    "name": "dmstc4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Total Correct (4 second delay): The total number of times a subject chose the correct answer on their first box choice for trials where the response stimuli appeared on screen after a 4 second delay after the target stimulus was shown. Calculated across all assessed trials which contained a delay of four seconds."
+  },
+  {
+    "id": 30,
+    "name": "dmstcs",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Total Correct (simultaneous): The total number of times a subject chose the correct answer on their first box choice for trials where the target stimulus and response stimuli appeared on screen simultaneously. Calculated across all assessed trials that included a simultaneous presentation (no delay) of target and response stimuli."
+  },
+  {
+    "id": 31,
+    "name": "dmstec",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Error (incorrect colour): The number of times that the subject failed to select the correct box on their first selection, and instead chose the distractor stimulus that contained the same pattern/ physical attributes, but different colours. Calculated across all assessed trials (simultaneous and all delays)."
+  },
+  {
+    "id": 32,
+    "name": "dmsted",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Error (distractor): The number of times that the subject failed to select the correct box on their first selection, and instead chose the distractor stimulus that contained no common elements to the original target stimulus. Calculated across all assessed trials (simultaneous and all delays)."
+  },
+  {
+    "id": 33,
+    "name": "dmstep",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Error (incorrect pattern): The number of times that the subject failed to select the correct box on their first selection, and instead chose the distractor stimulus that contained the same colour elements, but different pattern/ physical attributes. Calculated across all assessed trials (simultaneous and all delays)."
+  },
+  {
+    "id": 34,
+    "name": "ethnic",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 35,
+    "name": "income",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 36,
+    "name": "motsdl",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "This is the standard deviation of the latency, calculated from the display of a stimulus to a correct response to that stimulus during assessment trials."
+  },
+  {
+    "id": 37,
+    "name": "palta2",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Attempts 2 Patterns: The total number of attempts made (but not necessarily completed) by the subject during assessment problems containing a total of 2 shapes to recall."
+  },
+  {
+    "id": 38,
+    "name": "palta4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Attempts 4 patterns: The total number of attempts made (but not necessarily completed) by the subject during assessment problems containing a total of 4 shapes to recall."
+  },
+  {
+    "id": 39,
+    "name": "palta6",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Attempts 6 Patterns: The total number of attempts made (but not necessarily completed) by the subject during assessment problems containing a total of 6 shapes to recall."
+  },
+  {
+    "id": 40,
+    "name": "palta8",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Attempts 8 Patterns: The total number of attempts made (but not necessarily completed) by the subject during assessment problems containing a total of 8 shapes to recall."
+  },
+  {
+    "id": 41,
+    "name": "palte2",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 2 Patterns: The total number of times a subject selected an incorrect box when attempting to recall a pattern location on trials containing a total of 2 patterns. Calculated across all 2-pattern assessed trials."
+  },
+  {
+    "id": 42,
+    "name": "palte4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 4 Patterns: The total number of times a subject selected an incorrect box when attempting to recall a pattern location on trials containing a total of 4 patterns. Calculated across all 4-pattern assessed trials."
+  },
+  {
+    "id": 43,
+    "name": "palte6",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 6 Patterns: The total number of times a subject selected an incorrect box when attempting to recall a pattern location on trials containing a total of 6 patterns. Calculated across all 6-pattern assessed trials."
+  },
+  {
+    "id": 44,
+    "name": "palte8",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 8 Patterns: The total number of times a subject selected an incorrect box when attempting to recall a pattern location on trials containing a total of 8 patterns. Calculated across all 8-pattern assessed trials."
+  },
+  {
+    "id": 45,
+    "name": "prmpcd",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: PRM Percent Correct Delayed: The number of correct patterns selected by the subject in the delayed forced-choice condition, expressed as a percentage."
+  },
+  {
+    "id": 46,
+    "name": "prmpci",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: PRM Percent Correct Immediate: The number of correct patterns selected by the subject in the immediate forced-choice condition, expressed as a percentage."
+  },
+  {
+    "id": 47,
+    "name": "rvplsd",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "RVP Response Latency (SD): The standard deviation of response latency on trials where the subject responded correctly. Calculated across all assessed trials."
+  },
+  {
+    "id": 48,
+    "name": "rvpmdl",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: RVP Median Response Latency: The median response latency on trials where the subject responded correctly. Calculated across all assessed trials."
+  },
+  {
+    "id": 49,
+    "name": "rvppfa",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: RVP Probability of False Alarm: The number of sequence presentations that were false alarms divided by the number of sequence presentations that were false alarms plus the number of sequence presentations that were correct rejections: (False Alarms ÷ (False Alarms + Correct Rejections))"
+  },
+  {
+    "id": 50,
+    "name": "rvptfa",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "RVP Total False Alarms: The total number of stimulus presentations during assessment blocks that were false alarms."
+  },
+  {
+    "id": 51,
+    "name": "sex_id",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 52,
+    "name": "swmbe4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: SWM Between errors 4 boxes: The number of times a subject revisits a box in which a token has previously been found. Calculated across all trials with 4 tokens only."
+  },
+  {
+    "id": 53,
+    "name": "swmbe6",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: SWM Between errors 6 boxes: The number of times the subject revisits a box in which a token has previously been found. Calculated across all trials with 6 tokens only."
+  },
+  {
+    "id": 54,
+    "name": "swmbe8",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: SWM Between errors 8 boxes: The number of times the subject revisits a box in which a token has previously been found. Calculated across all trials with 8 tokens only."
+  },
+  {
+    "id": 55,
+    "name": "swmde4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Double errors 4 boxes: The number of times a subject commits an error that is both a within error and a between error. Calculated across all trials with 4 tokens only."
+  },
+  {
+    "id": 56,
+    "name": "swmde6",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Double errors 6 boxes: The number of times a subject commits an error that is both a within error and a between error. Calculated across all trials with 6 tokens only."
+  },
+  {
+    "id": 57,
+    "name": "swmde8",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Double errors 8 boxes: The number of times a subject commits an error that is both a within error and a between error. Calculated across all trials with 8 tokens only."
+  },
+  {
+    "id": 58,
+    "name": "swmte4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Total errors 4 boxes: The number of times a box is selected that is certain not to contain a token and therefore should not have been visited by the subject, i.e. between errors + within errors - double errors. Calculated across all trials with 4 tokens only."
+  },
+  {
+    "id": 59,
+    "name": "swmte6",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Total errors 6 boxes: The number of times a box is selected that is certain not to contain a token and therefore should not have been visited by the subject, i.e. between errors + within errors - double errors. Calculated across all trials with 6 tokens only."
+  },
+  {
+    "id": 60,
+    "name": "swmte8",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Total errors 8 boxes: The number of times a box is selected that is certain not to contain a token and therefore should not have been visited by the subject, i.e. between errors + within errors - double errors. Calculated across all trials with 8 tokens only."
+  },
+  {
+    "id": 61,
+    "name": "swmwe4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Within errors 4 boxes: The number of times a subject revisits a box already found to be empty during the same search. Calculated across all trials with 4 tokens only."
+  },
+  {
+    "id": 62,
+    "name": "swmwe6",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Within errors 6 boxes: The number of times a subject revisits a box already found to be empty during the same search. Calculated across all trials with 6 tokens only."
+  },
+  {
+    "id": 63,
+    "name": "swmwe8",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Within errors 8 boxes: The number of times a subject revisits a box already found to be empty during the same search. Calculated across all trials with 8 tokens only."
+  },
+  {
+    "id": 64,
+    "name": "dmsl0sd",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Correct Latency Standard Deviation (SD) (0 second delay): The standard deviation of response latencies for trials containing a zero second delay between the presentation of target and response stimuli, where subjects selected the correct box on their first attempt. Calculated across all assessed trials containing a zero second delay."
+  },
+  {
+    "id": 65,
+    "name": "dmsl4sd",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Correct Latency Standard Deviation (SD) (4 second delay): The standard deviation of response latencies for trials containing a four second delay between the presentation of target and response stimuli, where subjects selected the correct box on their first attempt. Calculated across all assessed trials containing a four second delay."
+  },
+  {
+    "id": 66,
+    "name": "dmslssd",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Correct Latency Standard Deviation (SD) (simultaneous): The standard deviation of response latencies for trials containing a simultaneous presentation of target and response stimuli, where subjects selected the correct box on their first attempt. Calculated across all assessed trials containing simultaneous presentations."
+  },
+  {
+    "id": 67,
+    "name": "dmsmdl0",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Median Correct Latency (0 seconds delay): The median latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a zero second delay. Calculated across all assessed trials containing a zero second delay."
+  },
+  {
+    "id": 68,
+    "name": "dmsmdl4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Median Correct Latency (4 seconds delay): The median latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a four second delay. Calculated across all assessed trials containing a four second delay."
+  },
+  {
+    "id": 69,
+    "name": "dmsmdls",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Median Correct Latency (simultaneous): The median latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a simultaneous presentation of target and response stimuli. Calculated across all assessed trials containing simultaneous presentation."
+  },
+  {
+    "id": 70,
+    "name": "dmsml12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Mean Correct Latency (12 seconds delay): The mean latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a twelve second delay. Calculated across all assessed trials containing a twelve second delay."
+  },
+  {
+    "id": 71,
+    "name": "dmsmlad",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Mean Correct Latency (all delays): The mean latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a delay between target and response stimuli presentation. Calculated across all assessed trials containing a delay."
+  },
+  {
+    "id": 72,
+    "name": "dmspc12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: DMS Percent Correct (12 second delay): The percentage of assessment trials containing a twelve second delay during which the subject chose the correct box on their first box choice. Calculated across all assessed trials containing a twelve second delay."
+  },
+  {
+    "id": 73,
+    "name": "dmspcad",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: DMS Percent Correct (all delays): The percentage of assessment trials containing a delay during which the subject chose the correct box on their first box choice. Calculated across all assessed trials containing a delay."
+  },
+  {
+    "id": 74,
+    "name": "dmspegc",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Probability of Error Given Correct: This measure reports the probability of an error being made when the previous trial was responded to correctly by the subject. Calculated across all assessed trials (simultaneous and all delays)."
+  },
+  {
+    "id": 75,
+    "name": "dmspege",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: DMS Probability of Error Given Error: This measure reports the probability of an error occurring when the previous trial was responded to incorrectly. Calculated across all assessed trials (simultaneous and all delays)."
+  },
+  {
+    "id": 76,
+    "name": "dmstc12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Total Correct (12 second delay): The total number of times a subject chose the correct answer on their first box choice for trials where the response stimuli appeared on screen after a 12 second delay after the target stimulus was shown. Calculated across all assessed trials which contained a delay of twelve seconds."
+  },
+  {
+    "id": 77,
+    "name": "dmstcad",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Total Correct (all delays): The total number of times a subject chose the correct answer on their first box choice for all trials where the response stimuli were presented after a delay. Calculated across all assessed trials containing a delay."
+  },
+  {
+    "id": 78,
+    "name": "dmstead",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Total Errors (all delays): The total number of times a subject failed to choose the correct box on their first selection for any trial containing a delay between the presentation of the target stimulus and response stimuli. Calculated across all assessed trials containing a delay component."
+  },
+  {
+    "id": 79,
+    "name": "housing",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 80,
+    "name": "palta12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Attempts 12 Patterns: The total number of attempts made (but not necessarily completed) by the subject during assessment problems containing a total of 12 shapes to recall."
+  },
+  {
+    "id": 81,
+    "name": "palta28",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Attempts: The total number of attempts made (but not necessarily completed) by the subject during assessment problems.  Does not include 12 box level to provide a direct comparison to Recommended Standard."
+  },
+  {
+    "id": 82,
+    "name": "palte12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 12 Patterns: The total number of times a subject selected an incorrect box when attempting to recall a pattern location on trials containing a total of 12 patterns. Calculated across all 12-pattern assessed trials."
+  },
+  {
+    "id": 83,
+    "name": "palte28",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors: The total number of times a subject selected an incorrect box when attempting to recall a pattern location. Calculated across all assessed trials.  Does not include 12 box level to provide a direct comparison to Recommended Standard."
+  },
+  {
+    "id": 84,
+    "name": "paltea2",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 2 Shapes (Adjusted): The number of times the subject chose the incorrect box for a stimulus on assessment problems, where the number of shapes required to remember was equal to 2 (PALTE2), plus an adjustment for the estimated number of errors they would have made on any other 2 pattern problems, attempts and recalls they did not reach."
+  },
+  {
+    "id": 85,
+    "name": "paltea4",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 4 Shapes (Adjusted): The number of times the subject chose the incorrect box for a stimulus on assessment problems, where the number of shapes was equal to 4 (PALTE4), plus an adjustment for the estimated number of errors they would have made on any other 4 pattern problems, attempts and recalls they did not reach."
+  },
+  {
+    "id": 86,
+    "name": "paltea6",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 6 Shapes (Adjusted): The number of times the subject chose the incorrect box for a stimulus on assessment problems, where the number of shapes was equal to 6 (PALTE6), plus an adjustment for the estimated number of errors they would have made on any other 6 pattern problems, attempts and recalls they did not reach."
+  },
+  {
+    "id": 87,
+    "name": "paltea8",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 8 Shapes (Adjusted): The number of times the subject chose the incorrect box for a stimulus on assessment problems, where the number of shapes was equal to 8 (PALTE8), plus an adjustment for the estimated number of errors they would have made on any other 8 pattern problems, attempts and recalls they did not reach."
+  },
+  {
+    "id": 88,
+    "name": "prmmcld",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PRM Mean Correct Latency Delayed: The mean latency for a subject to correctly select the appropriate pattern during the delayed forced-choice condition, measured in milliseconds."
+  },
+  {
+    "id": 89,
+    "name": "prmmcli",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PRM Mean Correct Latency Immediate: The mean latency for a subject to correctly select the appropriate pattern during the immediate forced-choice condition, measured in milliseconds."
+  },
+  {
+    "id": 90,
+    "name": "swmbe12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: SWM Between errors 12 boxes: The number of times the subject revisits a box in which a token has previously been found. Calculated across all trials with 12 tokens only."
+  },
+  {
+    "id": 91,
+    "name": "swmde12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Double errors 12 boxes: The number of times a subject commits an error that is both a within error and a between error. Calculated across all trials with 12 tokens only."
+  },
+  {
+    "id": 92,
+    "name": "swmte12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Total errors 12 boxes: The number of times a box is selected that is certain not to contain a token and therefore should not have been visited by the subject, i.e. between errors + within errors - double errors. Calculated across all trials with 12 tokens only."
+  },
+  {
+    "id": 93,
+    "name": "swmwe12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Within errors 12 boxes: The number of times a subject revisits a box already found to be empty during the same search. Calculated across all trials with 12 tokens only."
+  },
+  {
+    "id": 94,
+    "name": "dmsl12sd",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Correct Latency Standard Deviation (SD) (12 second delay): The standard deviation of response latencies for trials containing a twelve second delay between the presentation of target and response stimuli, where subjects selected the correct box on their first attempt. Calculated across all assessed trials containing a twelve second delay."
+  },
+  {
+    "id": 95,
+    "name": "dmsladsd",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Correct Latency Standard Deviation (SD) (all delays): The standard deviation of response latencies for trials containing a delay between the presentation of target stimulus and response stimuli, where subjects selected the correct box on their first attempt. Calculated across all assessed trials containing a delay."
+  },
+  {
+    "id": 96,
+    "name": "dmsmdl12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Median Correct Latency (12 seconds delay): The median latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a twelve second delay. Calculated across all assessed trials containing a twelve second delay."
+  },
+  {
+    "id": 97,
+    "name": "dmsmdlad",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Median Correct Latency (all delays): The median latency between the presentation of the response stimuli options and the subject selecting the correct box on their first attempt for trials containing a delay between target and response stimuli presentation. Calculated across all assessed trials containing a delay."
+  },
+  {
+    "id": 98,
+    "name": "dmstecad",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Error (all delays, incorrect colour): The number of times that the subject failed to select the correct box on their first selection, and instead chose the distractor stimulus that contained the same colour elements, but different physical attributes. Calculated across all assessed trials which contained a delay component."
+  },
+  {
+    "id": 99,
+    "name": "dmstedad",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Error (all delays, distractor): The number of times that the subject failed to select the correct box on their first selection, and instead chose the distractor stimulus that contained no common elements to the original target stimulus. Calculated across all assessed trials which contained a delay component."
+  },
+  {
+    "id": 100,
+    "name": "dmstepad",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "DMS Error (all delays, incorrect pattern): The number of times that the subject failed to select the correct box on their first selection, and instead chose the distractor stimulus that contained the same pattern/ physical attributes, but different colour elements. Calculated across all assessed trials which contained a delay component."
+  },
+  {
+    "id": 101,
+    "name": "palnpr28",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Number of Patterns Reached: The number of patterns presented to the subject on the last problem they reached."
+  },
+  {
+    "id": 102,
+    "name": "paltea12",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Total Errors 12 Shapes (Adjusted): The number of times the subject chose the incorrect box for a stimulus on assessment problems, where the number of shapes was equal to 12 (PALTE12), plus an adjustment for the estimated number of errors they would have made on any other 12 pattern problems, attempts and recalls they did not reach."
+  },
+  {
+    "id": 103,
+    "name": "paltea28",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: PAL Total Errors (Adjusted): The number of times the subject chose the incorrect box for a stimulus on assessment problems (PALTE), plus an adjustment for the estimated number of errors they would have made on any problems, attempts and recalls they did not reach. This measure allows you to compare performance on errors made across all subjects regardless of those who terminated early versus those completing the final stage of the task.  In this task variant PALTEA does not include 12 box level to provide a direct comparison to Recommended Standard."
+  },
+  {
+    "id": 104,
+    "name": "prmclsdd",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PRM Correct Latency (SD) Delayed: The standard deviation for the latency of a subject's response to correctly choose the appropriate pattern in the delayed forced-choice condition, measured in milliseconds."
+  },
+  {
+    "id": 105,
+    "name": "prmclsdi",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PRM Correct Latency (SD) Immediate: The standard deviation for the latency of a subject's response to correctly select the appropriate pattern in the immediate forced-choice condition, measured in milliseconds."
+  },
+  {
+    "id": 106,
+    "name": "prmmdcld",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PRM Median Correct Latency Delayed: The median latency for a subject to correctly select the appropriate pattern during the delayed forced-choice condition, measured in milliseconds."
+  },
+  {
+    "id": 107,
+    "name": "prmmdcli",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PRM Median Correct Latency Immediate: The median latency for a subject to correctly select the appropriate pattern during the immediate forced-choice condition, measured in milliseconds."
+  },
+  {
+    "id": 108,
+    "name": "swmbe468",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: SWM Between Errors: The number of times the subject incorrectly revisits a box in which a token has previously been found. Calculated across all assessed four, six and eight token trials."
+  },
+  {
+    "id": 109,
+    "name": "swmde468",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Double Errors: The number of times a subject commits an error that is both a within error and a between error. Calculated across all assessed four, six and eight token trials."
+  },
+  {
+    "id": 110,
+    "name": "swmte468",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Total Errors: The total number of times a box is selected that is certain not to contain a token and therefore should not have been visited by the subject, i.e. between errors + within errors - double errors. Calculated across all assessed four, six and eight token trials."
+  },
+  {
+    "id": 111,
+    "name": "swmwe468",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "SWM Within Errors: The number of times a subject revisits a box already shown to be empty during the same search. Calculated across all assessed four, six and eight token trials."
+  },
+  {
+    "id": 112,
+    "name": "employ_id",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 113,
+    "name": "ethnic_id",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 114,
+    "name": "income_id",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 115,
+    "name": "palfams28",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "KEY: PAL First Attempt Memory Score: The number of times a subject chose the correct box on their first attempt when recalling the pattern locations. Calculated across assessed trials, omitting 12 box level to provide a direct comparison to Recommended Standard.."
+  },
+  {
+    "id": 116,
+    "name": "palmets28",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": "PAL Mean Errors to Success: The mean number of attempts made by a subject needed for them to successfully complete the stage.  Does not include 12 box level to provide a direct comparison to Recommended Standard."
+  },
+  {
+    "id": 117,
+    "name": "employment",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 118,
+    "name": "housing_id",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 119,
+    "name": "__population",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 120,
+    "name": "children_num",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 121,
+    "name": "education_id",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 122,
+    "name": "handedness_id",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 123,
+    "name": "marital_status",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 124,
+    "name": "education_level",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 125,
+    "name": "marital_status_id",
+    "dtype": "number",
+    "related": [],
+    "isShown": false,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 160,
+    "name": "RVP_NO_KEY",
+    "desc": "",
+    "type": "aggregation",
+    "dtype": "determine",
+    "isShown": true,
+    "info": {
+      "operation": "concat",
+      "usedAttributes": [],
+      "formula": "",
+      "exec": ""
+    },
+    "related": [15, 13, 14, 12, 50, 47],
+    "recover": true
+  },
+  {
+    "id": 196,
+    "name": "SWM_NO_KEY",
+    "desc": "",
+    "type": "aggregation",
+    "dtype": "determine",
+    "isShown": false,
+    "info": {
+      "operation": "concat",
+      "usedAttributes": [],
+      "formula": "",
+      "exec": ""
+    },
+    "related": [16, 91, 92, 109, 110, 60, 58, 59, 56, 55, 57, 111, 93, 63, 61, 62, 18, 3, 17],
+    "recover": true
+  },
+  {
+    "id": 201,
+    "name": "MOT",
+    "desc": "",
+    "type": "aggregation",
+    "dtype": "determine",
+    "isShown": false,
+    "info": {
+      "operation": "concat",
+      "usedAttributes": [],
+      "formula": "",
+      "exec": ""
+    },
+    "related": [11, 9, 10, 36],
+    "recover": true
+  },
+  {
+    "id": 202,
+    "name": "PRM_NO_KEY",
+    "desc": "",
+    "type": "aggregation",
+    "dtype": "determine",
+    "isShown": false,
+    "info": {
+      "operation": "concat",
+      "usedAttributes": [],
+      "formula": "",
+      "exec": ""
+    },
+    "related": [104, 105, 106, 107, 88, 89],
+    "recover": true
+  },
+  {
+    "id": 203,
+    "name": "DMS_NO_KEY",
+    "desc": "",
+    "type": "aggregation",
+    "dtype": "determine",
+    "isShown": false,
+    "info": {
+      "operation": "concat",
+      "usedAttributes": [],
+      "formula": "",
+      "exec": ""
+    },
+    "related": [
+      78, 100, 4, 27, 70, 71, 5, 24, 22, 23, 96, 20, 64, 21, 69, 67, 68, 66, 65, 94, 95, 97, 74, 31,
+      98, 32, 8, 33, 77, 99, 76, 29, 28, 7, 30
+    ],
+    "recover": true
+  },
+  {
+    "id": 221,
+    "name": "SocDem_NO_KEY",
+    "desc": "",
+    "type": "aggregation",
+    "dtype": "determine",
+    "isShown": true,
+    "info": {
+      "operation": "concat",
+      "usedAttributes": [],
+      "formula": "",
+      "exec": ""
+    },
+    "related": [122, 118, 112, 114, 113, 125, 121, 120],
+    "recover": true
+  },
+  {
+    "id": 2297509,
+    "name": "PAL_NO_KEY",
+    "related": [87, 40, 44, 116, 37, 38, 80, 81, 84, 85, 101, 86, 39, 43, 82, 41, 42, 83, 103],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 5583020,
+    "name": "DMS",
+    "related": [536954, 203],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": false,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 536954,
+    "name": "DMS_KEY",
+    "related": [25, 72, 26, 73, 6, 75],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 5246371,
+    "name": "PAL_KEY",
+    "related": [115, 102],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": false,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 2055571,
+    "name": "PAL",
+    "related": [5246371, 2297509],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": false,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 3678632,
+    "name": "PRM_KEY",
+    "related": [45, 46],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 3734015,
+    "name": "PRM",
+    "related": [3678632, 202],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 5057891,
+    "name": "SWM_KEY",
+    "related": [90, 108, 54, 52, 53],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 6071837,
+    "name": "SWM",
+    "related": [5057891, 196],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": false,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 9002568,
+    "name": "RVP_KEY",
+    "related": [2, 48, 49],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 8875860,
+    "name": "RVP",
+    "related": [9002568, 160],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": false,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 8479566,
+    "name": "SocDem_KEY",
+    "related": [124, 35, 1, 119, 19, 117, 34, 123, 79, 51, 634],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "(r) => string(r[\"education_level\"]) + string(r[\"income\"]) + string(r[\"age\"]) + string(r[\"__population\"]) + string(r[\"__time\"]) + string(r[\"employment\"]) + string(r[\"ethnic\"]) + string(r[\"marital_status\"]) + string(r[\"housing\"]) + string(r[\"sex_id\"]) ",
+      "formula": "string($(education_level)) + string($(income)) + string($(age)) + string($(__population)) + string($(__time)) + string($(employment)) + string($(ethnic)) + string($(marital_status)) + string($(housing)) + string($(sex_id))",
+      "usedAttributes": [
+        {
+          "id": 124,
+          "name": "education_level",
+          "weight": 1,
+          "used": true
+        },
+        {
+          "id": 35,
+          "name": "income",
+          "weight": 1,
+          "used": true
+        },
+        {
+          "id": 1,
+          "name": "age",
+          "weight": 1,
+          "used": true
+        },
+        {
+          "id": 119,
+          "name": "__population",
+          "weight": 1,
+          "used": true
+        },
+        {
+          "id": 19,
+          "name": "__time",
+          "weight": 1,
+          "used": true
+        },
+        {
+          "id": 117,
+          "name": "employment",
+          "weight": 1,
+          "used": true
+        },
+        {
+          "id": 34,
+          "name": "ethnic",
+          "weight": 1,
+          "used": true
+        },
+        {
+          "id": 123,
+          "name": "marital_status",
+          "weight": 1,
+          "used": true
+        },
+        {
+          "id": 79,
+          "name": "housing",
+          "weight": 1,
+          "used": true
+        },
+        {
+          "id": 51,
+          "name": "sex_id",
+          "weight": 1,
+          "used": true
+        }
+      ]
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 7010105,
+    "name": "SocDem",
+    "related": [8479566, 221],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 4480963,
+    "name": "Blood",
+    "related": [886, 885, 884, 883, 882, 881],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": false,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  }
+]

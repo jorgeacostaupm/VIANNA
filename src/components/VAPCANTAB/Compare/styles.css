@@ -1,0 +1,39 @@
+#compare-ranking .bar.selected {
+  stroke: black;
+  stroke-width: 2px;
+  opacity: 1;
+}
+
+#compare-ranking .bar {
+  opacity: 0.5;
+}
+
+#compare-distr .selected {
+  stroke: black;
+  stroke-width: 1px;
+}
+
+#compare-lines-legend .not_selected {
+  text-decoration: line-through;
+}
+
+#compare-distr .not_show {
+  display: none;
+}
+
+.not_fill {
+  opacity: 0.2;
+}
+
+#compare-ranking .tick,
+#compare-distr .tick {
+  font-size: 18px;
+}
+
+.legend {
+  font-size: 18px;
+}
+
+.populationVariable {
+  font-size: 18px;
+}

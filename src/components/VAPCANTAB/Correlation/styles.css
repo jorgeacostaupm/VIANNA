@@ -1,0 +1,11 @@
+.tick {
+  font-size: 10px;
+}
+
+.notSelected {
+  text-decoration: line-through;
+}
+
+.not_show {
+  display: none;
+}

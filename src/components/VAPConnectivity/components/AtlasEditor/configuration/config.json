@@ -1,0 +1,35 @@
+{
+  "placeholders": {
+    "title": "Atlas Editor",
+    "selected_atlas": "Selected Atlas:",
+    "description": "Description",
+    "edit_title": "Edit"
+  },
+
+  "modal": {
+    "width": "100vw",
+    "height": "85vh",
+    "margin_top": "3vh",
+    "row_height": "100%",
+    "menu_span": "8",
+    "atlas_span": "16"
+  },
+
+  "description": {
+    "name": "Atlas name:",
+    "creator": "Atlas creator",
+    "public": "Public",
+    "rois": "ROIS",
+    "afirmative": "YES",
+    "negative": "NO",
+    "size": "small",
+    "layout": "vertical",
+    "save": "Save",
+    "column": 1
+  },
+
+  "edit": {
+    "lobules": ["Frontal", "Temporal", "Parietal", "Occipital"],
+    "hemispheres": ["left", "right"]
+  }
+}

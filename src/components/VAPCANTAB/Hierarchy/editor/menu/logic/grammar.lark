@@ -1,0 +1,68 @@
+
+DIGIT: "0".."9"
+INT: DIGIT+
+SIGNED_INT: ["+"|"-"] INT
+DECIMAL: INT "." INT? | "." INT
+_EXP: ("e"|"E") SIGNED_INT
+FLOAT: INT _EXP | DECIMAL _EXP?
+SIGNED_FLOAT: ["+"|"-"] FLOAT
+NUMBER: FLOAT | INT
+SIGNED_NUMBER: ["+"|"-"] NUMBER
+WS_INLINE: (" "|/\t/)+
+WS: /[ \t\f\r\n]/+
+CR : /\r/
+LF : /\n/
+NEWLINE: (CR? LF)+
+_STRING_INNER: /.*?/
+_STRING_ESC_INNER: _STRING_INNER /(?<!\\)(\\\\)*?/
+ESCAPED_STRING : "\"" _STRING_ESC_INNER "\""
+
+?start: or_op
+
+?or_op: and_op
+        | or_op "|" and_op -> or
+
+?and_op: eq_op             
+        | and_op "&" eq_op -> and
+
+?eq_op: comparison
+        | eq_op "==" comparison -> equality
+        | eq_op "!=" comparison -> inequality
+
+?comparison: operation1
+        | comparison  ">" operation1 -> gt
+        | comparison ">=" operation1 -> ge
+        | comparison  "<" operation1 -> lt
+        | comparison "<=" operation1 -> le
+
+?operation1: operation2   
+            | operation1 "+" operation2 -> suma
+            | operation1 "-" operation2 -> resta
+
+?operation2:  operation3
+            | operation2 "*" operation3 -> producto
+            | operation2 "/" operation3 -> division
+
+?operation3: operation4 
+            | operation3 "^" operation4 -> potencia
+
+?operation4: functions 
+            |            "~" functions -> negacion
+
+?functions: inputs 
+            | functions "[" or_op "]" -> indexing
+            | FUNCIDENT "(" or_op ("," or_op)* ")" -> function
+
+?inputs:  SIGNED_NUMBER     -> numero
+
+        | "e"               -> natural
+        | "(" or_op ")"     -> parentesis
+        | "$(" ATRIDENT ")" -> attribute
+        |  ESCAPED_STRING   -> texto
+        | "true"            -> true
+        | "false"           -> false
+
+FUNCIDENT: /[a-zA-Z0-9_]+/ 
+ATRIDENT: /[a-zA-Z0-9\-_\.\, ]+/
+%ignore WS
+
