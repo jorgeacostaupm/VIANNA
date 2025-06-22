@@ -182,5 +182,5 @@ export const kruskalWallis = {
       },
     };
   },
-  metric: { measure: "epsilon H squared", symbol: "εH²" },
+  metric: { measure: "Epsilon H Squared", symbol: "εH²" },
 };

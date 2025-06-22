@@ -1,0 +1,91 @@
+.selectedNode {
+  fill: #ffff33;
+  stroke: #000;
+  stroke-width: 5;
+}
+
+.fill {
+  width: 100%;
+  height: 100%;
+}
+
+.hiddenDot {
+  r: 1px;
+  fill: #000;
+  fill-opacity: 1;
+}
+
+.legendTitle {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.contextTooltip {
+  position: fixed;
+  pointer-events: auto;
+}
+
+.tooltip {
+  position: fixed;
+  padding: 5px;
+  font-size: 18px;
+  background: #fff;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+
+  transition: opacity 0.3s;
+  z-index: 100;
+}
+
+.infoTooltip {
+  flex-direction: row;
+  white-space: nowrap;
+}
+
+.descTooltip {
+  max-width: 30vw;
+}
+
+.custom-area:focus {
+  border: 2px black solid;
+  outline: none;
+}
+
+.custom-area.error {
+  border: 0px;
+  outline: 1px #dc2626 solid;
+}
+
+.custom-red-radio .ant-radio-button-wrapper {
+  /* texto y borde en estado normal */
+  border-color: var(--primary-color);
+}
+
+.custom-red-radio .ant-radio-button-wrapper:hover {
+  /* hover sobre botón no seleccionado */
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.custom-red-radio .ant-radio-button-wrapper:focus {
+  /* quitar sombra azul de focus */
+  box-shadow: none;
+}
+
+.custom-red-radio .ant-radio-button-wrapper-checked,
+.custom-red-radio .ant-radio-button-wrapper-checked:hover,
+.custom-red-radio .ant-radio-button-wrapper-checked:active,
+.custom-red-radio .ant-radio-button-wrapper-checked:focus {
+  /* estado seleccionado (solid) */
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #ffffff !important;
+}
+
+.custom-red-radio .ant-radio-button-wrapper-checked::after {
+  /* pseudo-elemento interno que pinta el overlay */
+  background-color: var(--primary-color) !important;
+  border-color: #ff4d4f !important;
+}

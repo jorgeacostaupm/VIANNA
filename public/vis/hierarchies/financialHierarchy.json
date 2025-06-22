@@ -1,0 +1,314 @@
+[
+  {
+    "id": 0,
+    "name": "Root",
+    "desc": "Just the root of the hierarchy",
+    "type": "root",
+    "dtype": "root",
+    "isShown": true,
+    "related": [8960526, 5511316, 3660765, 6898160, 7527055, 6454189]
+  },
+  {
+    "id": 1,
+    "name": "Year",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 2,
+    "name": "Company",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 3,
+    "name": "Category",
+    "dtype": "string",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 4,
+    "name": "Market Cap",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 5,
+    "name": "Revenue",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 6,
+    "name": "Gross Profit",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 7,
+    "name": "Net Income",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 8,
+    "name": "Earning Per Share",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 9,
+    "name": "EBITDA",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 10,
+    "name": "Share Holder Equity",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 11,
+    "name": "Cash Flow from Operating",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 12,
+    "name": "Cash Flow from Investing",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 13,
+    "name": "Cash Flow from Financial Activities",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 14,
+    "name": "Current Ratio",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 15,
+    "name": "Debt/Equity Ratio",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 16,
+    "name": "ROE",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 17,
+    "name": "ROA",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 18,
+    "name": "ROI",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 19,
+    "name": "Net Profit Margin",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 20,
+    "name": "Free Cash Flow per Share",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 21,
+    "name": "Return on Tangible Equity",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 22,
+    "name": "Number of Employees",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 23,
+    "name": "Inflation Rate in US",
+    "dtype": "number",
+    "related": [],
+    "isShown": true,
+    "type": "attribute",
+    "desc": ""
+  },
+  {
+    "id": 8960526,
+    "name": "Context",
+    "related": [1, 2, 3, 23],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 5511316,
+    "name": "Profitability",
+    "related": [4, 5, 6, 7, 8, 9, 10],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 3660765,
+    "name": "Cash Flow",
+    "related": [11, 12, 13, 20],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 6898160,
+    "name": "Return and Efficiency Ratios",
+    "related": [16, 17, 18],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 7527055,
+    "name": "Structure",
+    "related": [15, 21, 22],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  },
+  {
+    "id": 6454189,
+    "name": "Financial Position",
+    "related": [19, 14],
+    "type": "aggregation",
+    "info": {
+      "operation": "concat",
+      "exec": "",
+      "formula": "",
+      "usedAttributes": []
+    },
+    "isShown": true,
+    "desc": "",
+    "dtype": "determine",
+    "recover": true
+  }
+]

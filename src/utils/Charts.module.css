@@ -1,47 +1,3 @@
-:root {
-  --secondary-color: black;
-  --axis-color: #333;
-  --axis-font-size: 16px;
-  --chart-width: 100%;
-  --chart-height: 100%;
-}
-
-.chartContainer {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-}
-
-.correlationContainer {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  font-size: large;
-}
-
-.chartAxis {
-  font-size: large;
-}
-
-.correlationChart {
-  width: 85%;
-  height: 100%;
-}
-
-.correlationLegend {
-  width: 15%;
-  height: 100%;
-}
-
-.chartLegendContainer {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-}
-
 .viewContainer {
   position: relative;
   width: 100%;
@@ -55,18 +11,47 @@
   align-items: center;
 }
 
-.nodeInfo {
-  position: absolute;
-  top: 60px;
-  right: 10px;
-  color: var(--primary-color);
-  max-height: 90%;
-  border: 1px solid #ccc;
-  overflow: scroll;
-  background-color: white;
-  min-width: 400px;
+.correlationContainer {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.editorContainer {
+  margin: 0;
+  margin-top: 0vh;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.verticalLegendContainer {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartContainer {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.chartAxis {
+  font-size: large;
+}
+
+.chartLegendContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .legend {
@@ -74,6 +59,7 @@
   height: 100%;
   display: flex;
   overflow: auto;
+  font-size: large;
 }
 
 .legendSvg {
@@ -92,7 +78,16 @@
   height: 100%;
 }
 
+.pwSvg {
+  overflow: visible;
+  display: block;
+}
+
 .chartSvg text {
+  font-size: var(--axis-font-size);
+}
+
+.pwSvg text {
   font-size: var(--axis-font-size);
 }
 
@@ -130,20 +125,6 @@
   fill: black;
 }
 
-.chartTitle {
-  font-size: 16px;
-  font-weight: bold;
-  fill: var(--axis-color);
-}
-
-.axis {
-  font-size: 18px;
-}
-
-.legend {
-  font-size: 18px;
-}
-
 .hierarchyTooltip {
   position: absolute;
   background-color: white;
@@ -152,4 +133,25 @@
   flex-direction: row;
   border: 1px solid #ccc;
   padding: 1rem;
+}
+
+.nodeInfo {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  color: var(--primary-color);
+  max-height: 90%;
+  border: 1px solid #ccc;
+  overflow: scroll;
+  background-color: white;
+  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.emptyState {
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
 }

@@ -152,5 +152,5 @@ export const anova = {
 
     return result;
   },
-  metric: { measure: "eta squared", symbol: "η²" },
+  metric: { measure: "Eta Squared", symbol: "η²" },
 };

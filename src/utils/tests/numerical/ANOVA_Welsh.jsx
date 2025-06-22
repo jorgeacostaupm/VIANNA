@@ -146,5 +146,5 @@ export const welschAnova = {
       },
     };
   },
-  metric: { measure: "epsilon squared", symbol: "ε²" },
+  metric: { measure: "Epsilon Squared", symbol: "ε²" },
 };

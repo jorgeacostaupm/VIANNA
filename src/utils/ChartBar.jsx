@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Card, Tooltip } from "antd";
 import {
   SettingOutlined,
-  ExportOutlined,
   InfoCircleFilled,
   CloseOutlined,
+  SyncOutlined,
 } from "@ant-design/icons";
 import DownloadButton from "./DownloadButton";
 import AutoCloseTooltip from "./AutoCloseTooltip";
@@ -19,60 +19,106 @@ export default function ChartBar({
   svgIds,
   remove,
   infoTooltip = "",
+  config,
+  setConfig,
 }) {
   const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef(null);
+
+  const updateConfig = (field, value) =>
+    setConfig((prev) => ({ ...prev, [field]: value }));
+
+  /*   useEffect(() => {
+    function handleClickOutside(event) {
+      if (cardRef.current && !cardRef.current.contains(event.target)) {
+        setIsVisible(false);
+      }
+    }
+
+    if (isVisible) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isVisible]); */
 
   return (
-    <div className={styles.chartBar}>
-      <div className={`${styles.dragHandle} drag-handle`}></div>
+    <>
+      <div className={styles.chartBar}>
+        <div className={`${styles.dragHandle} drag-handle`}></div>
 
-      <div className={styles.chartTitle}>{title}</div>
+        <div
+          className={`${styles.dragHandle} drag-handle ${styles.chartTitle}`}
+        >
+          {title}
+        </div>
 
-      <div className={styles.right}>
-        {svgIds && (
-          <DownloadButton
-            svgIds={svgIds}
-            filename={`${title}_${infoTooltip}`}
-          />
-        )}
-
-        {infoTooltip && (
-          <Tooltip title={infoTooltip}>
-            <Button
-              className={buttonStyles.coloredButton}
-              shape="circle"
-              icon={<InfoCircleFilled style={iconStyle} />}
+        <div className={styles.right}>
+          {setConfig && (
+            <Tooltip
+              title={
+                config.isSync
+                  ? "Disable sync with Explorer selection"
+                  : "Enable sync with Explorer selection"
+              }
+            >
+              <Button
+                className={buttonStyles.coloredButton}
+                shape="circle"
+                icon={<SyncOutlined spin={config.isSync} style={iconStyle} />}
+                onClick={() => updateConfig("isSync", !config.isSync)}
+              />
+            </Tooltip>
+          )}
+          {svgIds && (
+            <DownloadButton
+              svgIds={svgIds}
+              filename={`${title}_${infoTooltip}`}
             />
-          </Tooltip>
-        )}
+          )}
 
-        <AutoCloseTooltip title="Chart settings">
-          <Button
-            className={buttonStyles.coloredButton}
-            shape="circle"
-            icon={<SettingOutlined style={iconStyle} />}
-            onClick={() => setIsVisible(!isVisible)}
-          />
-        </AutoCloseTooltip>
+          {infoTooltip && (
+            <Tooltip title={infoTooltip}>
+              <Button
+                className={buttonStyles.coloredButton}
+                shape="circle"
+                icon={<InfoCircleFilled style={iconStyle} />}
+              />
+            </Tooltip>
+          )}
 
-        {remove && (
-          <AutoCloseTooltip title="Close view">
+          <AutoCloseTooltip title="Chart settings">
             <Button
               className={buttonStyles.coloredButton}
               shape="circle"
-              icon={<CloseOutlined style={iconStyle} />}
-              onClick={remove}
+              icon={<SettingOutlined style={iconStyle} />}
+              onClick={() => setIsVisible(!isVisible)}
             />
           </AutoCloseTooltip>
-        )}
 
-        {isVisible && (
-          <Card size="small" className={styles.options}>
-            <div>{children}</div>
-          </Card>
-        )}
+          {remove && (
+            <AutoCloseTooltip title="Close view">
+              <Button
+                className={buttonStyles.coloredButton}
+                shape="circle"
+                icon={<CloseOutlined style={iconStyle} />}
+                onClick={remove}
+              />
+            </AutoCloseTooltip>
+          )}
+        </div>
       </div>
-    </div>
+
+      {isVisible && (
+        <Card ref={cardRef} size="small" className={styles.options}>
+          {children}
+        </Card>
+      )}
+    </>
   );
 }
 
@@ -97,12 +143,20 @@ export function NodeBar({ title, remove }) {
   );
 }
 
-export function Bar({ children, title }) {
+export function Bar({ children, title, drag = true }) {
   return (
     <div className={styles.chartBar}>
-      <div className={`${styles.dragHandle} drag-handle`}></div>
+      {drag && <div className={`${styles.dragHandle} drag-handle`}></div>}
 
-      <div className={styles.chartTitle}>{title}</div>
+      <div
+        className={
+          drag
+            ? `${styles.chartTitle} ${styles.dragHandle} drag-handle`
+            : `${styles.chartTitle}`
+        }
+      >
+        {title}
+      </div>
 
       <div className={styles.right}>{children}</div>
     </div>

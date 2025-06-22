@@ -56,7 +56,6 @@ export const chiSquareIndependence = {
 
     // 3) Función auxiliar para calcular Cramer’s V entre dos arrays de valores
     function computeCramersV(arr1, arr2) {
-      // Construimos conteos 2×c
       const cnt1 = {};
       const cnt2 = {};
       categories.forEach((cat) => {

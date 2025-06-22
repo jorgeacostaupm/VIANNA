@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { Button, Modal, Tooltip } from "antd";
 import styles from "./Buttons.module.css";
 
-export default function AppModal({ icon, title, tooltipTitle, children }) {
+export default function AppModal({
+  icon,
+  title,
+  tooltipTitle,
+  children,
+  padding = "20px",
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -22,7 +28,7 @@ export default function AppModal({ icon, title, tooltipTitle, children }) {
       <Tooltip title={tooltipTitle}>
         <Button
           shape="circle"
-          style={{ height: "auto", padding: "20px" }}
+          style={{ height: "auto", padding: padding }}
           className={styles.coloredButton}
           onClick={showModal}
         >

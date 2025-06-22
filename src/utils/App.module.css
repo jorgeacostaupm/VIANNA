@@ -1,0 +1,52 @@
+:root {
+  --primary-color: #7bb2ff;
+  --axis-color: #333;
+  --background-color: #fff;
+  --axis-font-size: large;
+}
+
+.fullscreenLayout {
+  min-height: 100vh;
+  width: 100vw;
+  background: #f0f2f5;
+  overflow: auto;
+}
+
+.bar {
+  padding: 16px 20px;
+  background-color: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100px;
+  max-height: 100px;
+  overflow: hiddens;
+}
+
+.title {
+  position: absolute;
+  left: 20;
+  cursor: pointer;
+  color: white;
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.chartTitle {
+  font-size: 16px;
+  font-weight: bold;
+  fill: var(--axis-color);
+}
+
+.coloredButton {
+  color: var(--primary-color);
+  border: none;
+  cursor: pointer;
+}
+
+.borderedButton {
+  color: var(--primary-color);
+  border: 2px solid;
+  cursor: pointer;
+  font-size: 25px;
+}

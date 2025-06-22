@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, message, Tooltip } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { capitalizeFirstLetter } from "@/components/VAPUtils/functions";
 import { Apps } from "./Constants";
 import styles from "./Buttons.module.css";
 
@@ -15,13 +14,13 @@ export default function ButtonLink({ to, children, setInit, icon }) {
   if (to === "compare") appName = Apps.COMPARE;
   if (to === "correlation") appName = Apps.CORRELATION;
   if (to === "evolution") appName = Apps.EVOLUTION;
-  if (to === "matrix") appName = Apps.MATRIX;
+  if (to === "cantab") appName = "Quarantine";
 
   const handleOpenTab = () => {
     if (initialized) {
       messageApi.open({
         type: "error",
-        content: `${capitalizeFirstLetter(appName)} is already open!`,
+        content: `${appName} is already open!`,
       });
     } else {
       dispatch(setInit(true));
