@@ -23,7 +23,7 @@ function generateFileName(baseName = "data") {
 
 const ExportTab = ({ metadata }) => {
   const allData = useSelector((state) => state.dataframe.dataframe);
-  const selectionData = useSelector((state) => state.cantab.selection);
+  const selectionData = useSelector((state) => state.dataframe.selection);
   const navioColumns = useSelector((state) => state.dataframe.navioColumns);
 
   const saveMetadata = () => {
@@ -126,12 +126,6 @@ const UploadComponent = () => {
     alignItems: "center",
     cursor: "pointer",
     backgroundColor: isDragActive ? "#e6f7ff" : "#fafafa",
-  };
-
-  const iconStyle = {
-    fontSize: "2rem",
-    color: "#1677ff",
-    fontWeight: "bold",
   };
 
   const textStyle = {

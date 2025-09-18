@@ -8,8 +8,6 @@ import {
   zoomIdentity,
   zoomTransform,
   tree,
-  pointer,
-  linkHorizontal,
   linkVertical,
 } from "d3";
 

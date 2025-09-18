@@ -1,12 +1,12 @@
 import React from "react";
-import { Button, message, Tooltip } from "antd";
+import { Button, Tooltip } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { Apps } from "./Constants";
 import styles from "./Buttons.module.css";
+import PanelButton from "./PanelButton";
 
-export default function ButtonLink({ to, children, setInit, icon }) {
+export default function LinkButton({ to, children, setInit, icon }) {
   const initialized = useSelector((state) => state[to].init);
-  const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
 
   let appName = to;
@@ -14,15 +14,10 @@ export default function ButtonLink({ to, children, setInit, icon }) {
   if (to === "compare") appName = Apps.COMPARE;
   if (to === "correlation") appName = Apps.CORRELATION;
   if (to === "evolution") appName = Apps.EVOLUTION;
-  if (to === "cantab") appName = "Quarantine";
+  if (to === "cantab") appName = Apps.QUARANTINE;
 
   const handleOpenTab = () => {
-    if (initialized) {
-      messageApi.open({
-        type: "error",
-        content: `${appName} is already open!`,
-      });
-    } else {
+    if (!initialized) {
       dispatch(setInit(true));
       window.open(
         window.location.href + "#/" + to,
@@ -34,18 +29,11 @@ export default function ButtonLink({ to, children, setInit, icon }) {
 
   return (
     <>
-      {contextHolder}
-      <Tooltip placement="bottom" title={"Open " + appName + " in a new tab"}>
-        <Button
-          shape="circle"
-          style={{ height: "auto", padding: "20px" }}
-          className={styles.coloredButton}
-          onClick={handleOpenTab}
-        >
-          {icon && icon}
-          {children}
-        </Button>
-      </Tooltip>
+      <PanelButton
+        title={"Open " + appName + " in a new tab"}
+        onClick={handleOpenTab}
+        icon={icon}
+      />
     </>
   );
 }

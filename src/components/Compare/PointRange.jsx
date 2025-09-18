@@ -11,12 +11,14 @@ import { moveTooltip } from "@/utils/functions";
 import ChartBar from "@/utils/ChartBar";
 import tests from "@/utils/tests";
 import store from "@/features/store";
+import appStyles from "@/utils/App.module.css";
+import { ConfigProvider } from "antd";
 
 export default function PointRange({ variable, test, remove }) {
   const containerRef = useRef();
   const dimensions = useResizeObserver(containerRef);
 
-  const selection = useSelector((s) => s.cantab.selection);
+  const selection = useSelector((s) => s.dataframe.selection);
   const groupVar = useSelector((s) => s.cantab.groupVar);
 
   const [result, setResult] = useState(null);
@@ -260,30 +262,24 @@ export function Options({ config, setConfig }) {
   const disabled = !isSync;
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-      <div>
-        <Text strong style={{ fontSize: 16 }}>
-          Marker Shape:
-        </Text>
-        <Radio.Group
-          className="custom-red-radio"
-          disabled={disabled}
-          style={{ marginLeft: 16 }}
-          optionType="button"
-          buttonStyle="solid"
-          value={markerShape}
-          onChange={(e) => update("markerShape", e.target.value)}
-        >
-          <Radio.Button value="circle">Circle</Radio.Button>
-          <Radio.Button value="square">Square</Radio.Button>
-          <Radio.Button value="diamond">Diamond</Radio.Button>
-        </Radio.Group>
-      </div>
+    <>
+      <Text strong>Marker Shape:</Text>
+      <Radio.Group
+        className="custom-red-radio"
+        disabled={disabled}
+        style={{ marginLeft: 16 }}
+        optionType="button"
+        buttonStyle="solid"
+        value={markerShape}
+        onChange={(e) => update("markerShape", e.target.value)}
+      >
+        <Radio.Button value="circle">Circle</Radio.Button>
+        <Radio.Button value="square">Square</Radio.Button>
+        <Radio.Button value="diamond">Diamond</Radio.Button>
+      </Radio.Group>
 
       <div>
-        <Text strong style={{ fontSize: 16 }}>
-          Marker Size:
-        </Text>
+        <Text strong>Marker Size:</Text>
         <Text
           type="secondary"
           style={{ marginLeft: 8, opacity: disabled ? 0.5 : 1 }}
@@ -301,9 +297,7 @@ export function Options({ config, setConfig }) {
       </div>
 
       <div>
-        <Text strong style={{ fontSize: 16 }}>
-          Show Caps:
-        </Text>
+        <Text strong>Show Caps:</Text>
         <Switch
           checked={showCaps}
           disabled={disabled}
@@ -313,9 +307,7 @@ export function Options({ config, setConfig }) {
       </div>
 
       <div>
-        <Text strong style={{ fontSize: 16 }}>
-          Cap Size:
-        </Text>
+        <Text strong>Cap Size:</Text>
         <Text
           type="secondary"
           style={{ marginLeft: 8, opacity: disabled ? 0.5 : 1 }}
@@ -331,6 +323,6 @@ export function Options({ config, setConfig }) {
           onChange={(v) => update("capSize", v)}
         />
       </div>
-    </Space>
+    </>
   );
 }

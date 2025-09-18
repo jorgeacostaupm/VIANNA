@@ -1,31 +1,15 @@
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import navio from "navio";
-import useResizeObserver from "@/utils/useResizeObserver";
 
-function useDebounce(value, delay) {
-  const [debounced, setDebounced] = React.useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-
-  return debounced;
-}
-
-export default function Overview({ config, data, setSelection }) {
+export default function Overview({ data, config, setSelection }) {
   const dispatch = useDispatch();
-  const containerRef = useRef(null);
   const navioRef = useRef(null);
 
   const columns = useSelector(
     (state) => state.dataframe.navioColumns,
     shallowEqual
   );
-
-  const dimensions = useResizeObserver(containerRef);
-  const debouncedDimensions = useDebounce(dimensions, 100);
 
   const handleSelection = useCallback(
     (selection) => {
@@ -35,26 +19,33 @@ export default function Overview({ config, data, setSelection }) {
   );
 
   useEffect(() => {
-    if (!data || !debouncedDimensions) return;
+    console.log("useEffect", data, config, columns, navioRef);
+    if (!data) return;
 
-    const nv = navio(navioRef.current, debouncedDimensions.height);
-    nv.attribWidth = +config.attrWidth;
-    nv.y0 = +config.y0;
+    const nv = navio(navioRef.current, config.navioHeight);
+    nv.attribWidth = config.attrWidth;
+    nv.y0 = config.navioLabelHeight;
+    nv.attribFontSize = 20;
+    nv.attribFontSizeSelected = 24;
+    nv.filterFontSize = 14;
+    nv.tooltipFontSize = 16;
+    nv.tooltipBgColor = "#fff";
+    nv.margin = 50;
+    nv.tooltipMargin = 25;
     nv.data(JSON.parse(JSON.stringify(data)));
     nv.updateCallback(handleSelection);
     nv.addAllAttribs(columns);
-  }, [data, config, columns, debouncedDimensions, handleSelection]);
+  }, [data, config, columns, handleSelection]);
 
   return (
     <div
-      ref={containerRef}
       style={{
         width: "100%",
         height: "100%",
-        paddingBottom: "20px",
+        overflow: "auto",
       }}
     >
-      <div ref={navioRef} style={{ overflow: "visible" }} />
+      <div ref={navioRef} style={{ fontSize: 14 }} />
     </div>
   );
 }

@@ -15,8 +15,8 @@ import tests from "@/utils/tests";
 
 import { setInit, setSelectedVar } from "@/features/compare/compareSlice";
 
-import { Apps } from "@/utils/Constants";
-import { useNotification } from "@/utils/cantabAppHooks";
+import { Apps, APP_NAME } from "@/utils/Constants";
+import useNotification from "@/utils/useNotification";
 import useRootStyles from "@/utils/useRootStyles";
 
 import { pubsub } from "@/utils/pubsub";
@@ -77,7 +77,7 @@ function App() {
   const generateRanking = (test) => createView("ranking", { test });
 
   return (
-    <Layout className={styles.fullscreenLayout}>
+    <Layout className={styles.fullScreenLayout}>
       <Panel
         generateDistribution={generateDistribution}
         generateTest={generateTest}
@@ -118,13 +118,11 @@ function App() {
 }
 
 export default function ComparisonApp() {
-  const [apiNotif, holder] = notification.useNotification();
-
   const groupVar = useSelector((s) => s.cantab.groupVar);
   const navioCols = useSelector((s) => s.dataframe.navioColumns);
 
-  useRootStyles({ padding: 0, maxWidth: "100vw" }, setInit, Apps.COMPARE);
-  useNotification(apiNotif);
+  useRootStyles(setInit, APP_NAME + " - " + Apps.COMPARE);
+  const holder = useNotification();
 
   useEffect(() => {
     let config = null;

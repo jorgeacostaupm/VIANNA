@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Typography, Tooltip } from "antd";
-import DragDropHierarchy from "./DragDropHierarchy";
+import DragDropHierarchy from "../DragDrop/DragDropHierarchy";
 import {
   selectNumericNodes,
   selectTextNodes,
-  selectDateNodes,
   selectDetermineNodes,
   selectAggregationNodes,
 } from "@/features/metadata/metaSlice";
-import DragDropDesc from "./DragDropDesc";
+import DragDropDesc from "../DragDrop/DragDropDesc";
 
 const { Title, Text } = Typography;
 
@@ -18,7 +17,6 @@ const DataInfoPanel = () => {
   const dt = useSelector((state) => state.metadata.attributes);
   const numericNodes = useSelector((state) => selectNumericNodes(state));
   const textNodes = useSelector((state) => selectTextNodes(state));
-  const dateNodes = useSelector((state) => selectDateNodes(state));
   const determineNodes = useSelector((state) => selectDetermineNodes(state));
   const aggregationNodes = useSelector((state) =>
     selectAggregationNodes(state)
@@ -101,15 +99,6 @@ const DataInfoPanel = () => {
         </Text>{" "}
         <Tooltip placement="right" title={safeJoin(textNodes)}>
           <Text>{textNodes?.length || 0}</Text>
-        </Tooltip>
-      </div>
-
-      <div>
-        <Text strong style={{ color: "var(--primary-color)" }}>
-          Date Nodes:
-        </Text>{" "}
-        <Tooltip placement="right" title={safeJoin(dateNodes)}>
-          <Text>{dateNodes?.length || 0}</Text>
         </Tooltip>
       </div>
     </div>

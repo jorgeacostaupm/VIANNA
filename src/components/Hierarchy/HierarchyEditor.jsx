@@ -13,19 +13,13 @@ import { undoOperation, setInit } from "@/features/metadata/metaSlice";
 import D3HierarchyEditor from "./D3HierarchyEditor";
 import EditorContextMenu from "./tools/EditorContextMenu";
 import NodeMenu from "./menu/NodeMenu";
-import PerModal from "./persistance/PerModal";
-import AutoHierModal from "./auto-hier/AutoHierModal";
 import { generateFormulaSimplified } from "./menu/logic/simplifiedFormulas";
-
 import useResizeObserver from "@/utils/useResizeObserver";
-import useRootStyles from "@/utils/useRootStyles";
 import { generateTree } from "@/utils/functions";
 import styles from "@/utils/Charts.module.css";
-import { Bar } from "@/utils/ChartBar";
-import { Apps } from "@/utils/Constants";
 import { pubsub } from "@/utils/pubsub";
-import { HierarchyButtons } from "./Buttons";
-import NoDataPlaceholder from "../../utils/NoDataPlaceholder";
+import NoDataPlaceholder from "@/utils/NoDataPlaceholder";
+import HierarchyBar from "./HierarchyBar";
 
 let editor = null;
 let treeData;
@@ -42,17 +36,9 @@ const getTree = createSelector(
 export default function HierarchyEditor() {
   const attributes = useSelector((state) => state.metadata.attributes);
 
-  useRootStyles(
-    { padding: "0px 0px", maxWidth: "100vw" },
-    setInit,
-    Apps.HIERARCHY
-  );
-
   return (
     <div className={styles.viewContainer}>
-      <Bar title={"Hierarchy Editor"} drag={false}>
-        <HierarchyButtons></HierarchyButtons>
-      </Bar>
+      <HierarchyBar></HierarchyBar>
       {attributes?.length > 0 ? (
         <Hierarchy />
       ) : (

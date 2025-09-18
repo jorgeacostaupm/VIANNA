@@ -22,7 +22,7 @@ export default function Ranking({ test, remove }) {
 
   const groupVar = useSelector((state) => state.cantab.groupVar);
   const timeVar = useSelector((state) => state.cantab.timeVar);
-  const selection = useSelector((state) => state.cantab.selection);
+  const selection = useSelector((state) => state.dataframe.selection);
   const variables = useSelector(selectNumericVars);
 
   const filterList = useSelector((state) => state.evolution.filterList);

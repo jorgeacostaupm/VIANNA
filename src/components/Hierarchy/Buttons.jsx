@@ -3,15 +3,15 @@ import { useSelector } from "react-redux";
 import { Button, Tooltip } from "antd";
 import { DownloadOutlined, SettingOutlined } from "@ant-design/icons";
 
-import { HierarchyManagement } from "../Data/DataManagement";
-import { Legend } from "./Legend";
+import { HierarchyManagementButton } from "../Data/Buttons/DataManagementButton";
+import { Legend } from "./LegendButton";
 import { hierarchySelector } from "@/features/metadata/metaSlice";
 import buttonStyles from "@/utils/Buttons.module.css";
 
 export default function Buttons() {
   return (
     <div style={{ display: "flex", gap: "10px" }}>
-      <HierarchyManagement></HierarchyManagement>
+      <HierarchyManagementButton></HierarchyManagementButton>
     </div>
   );
 }
@@ -24,23 +24,23 @@ export function HierarchyButtons() {
       <Tooltip title={"Download hierarchy"}>
         <Button
           shape="circle"
-          className={buttonStyles.coloredButton}
+          className={buttonStyles.barButton}
           onClick={() => downloadHierarchy(hierarchy)}
         >
           <DownloadOutlined style={{ fontSize: "25px" }} />
         </Button>
       </Tooltip>
 
-      <HierarchyManagement></HierarchyManagement>
-      {/*       <Tooltip title={"Chart settings"}>
+      <HierarchyManagementButton></HierarchyManagementButton>
+      <Tooltip title={"Chart settings"}>
         <Button
           shape="circle"
-          className={buttonStyles.coloredButton}
+          className={buttonStyles.barButton}
           onClick={() => downloadHierarchy(hierarchy)}
         >
           <SettingOutlined style={{ fontSize: "25px" }} />
         </Button>
-      </Tooltip> */}
+      </Tooltip>
 
       <Legend />
     </>

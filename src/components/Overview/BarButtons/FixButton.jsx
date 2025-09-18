@@ -1,0 +1,34 @@
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { PauseOutlined } from "@ant-design/icons";
+
+import { setFilteredData } from "@/features/cantab/cantabSlice";
+import { setDataframe } from "@/features/data/dataSlice";
+
+import { ORDER_VARIABLE } from "@/utils/Constants";
+import BarButton from "@/utils/BarButton";
+
+export default function FixButton() {
+  const dispatch = useDispatch();
+  const selection = useSelector((state) => state.dataframe.selection);
+  const dataframe = useSelector((state) => state.dataframe.dataframe);
+
+  const onFilter = () => {
+    const ids = selection.map((item) => item[ORDER_VARIABLE]);
+    const filteredData = dataframe.filter(
+      (item) => !ids.includes(item[ORDER_VARIABLE])
+    );
+    if (!filteredData || filteredData.length === 0) return;
+
+    dispatch(setDataframe(selection));
+    dispatch(setFilteredData(filteredData));
+  };
+
+  return (
+    <BarButton
+      title="Fix selection"
+      icon={<PauseOutlined />}
+      onClick={onFilter}
+    />
+  );
+}

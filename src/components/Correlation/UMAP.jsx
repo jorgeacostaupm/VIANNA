@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Select, Form, Slider, Button } from "antd";
+import { Select, Form, Slider, Button, Typography, Space } from "antd";
 
 import ChartBar from "@/utils/ChartBar";
 import { getUMAPData, getCategoricalKeys } from "@/utils/functions";
 import styles from "@/utils/Charts.module.css";
 import useResizeObserver from "@/utils/useResizeObserver";
 import drawPCAPlot from "./PCAPlot";
+import buttonStyles from "@/utils/Buttons.module.css";
 
 const { Option } = Select;
+const { Text } = Typography;
 
 export default function UMAP({ remove }) {
   const [config, setConfig] = useState({
@@ -26,7 +28,7 @@ export default function UMAP({ remove }) {
 
   const ref = useRef(null);
   const dimensions = useResizeObserver(ref);
-  const selection = useSelector((s) => s.cantab.selection);
+  const selection = useSelector((s) => s.dataframe.selection);
 
   useEffect(() => {
     if (trigger) {
@@ -65,7 +67,7 @@ export default function UMAP({ remove }) {
 }
 
 function Options({ config, setConfig, params, setParams, onCompute }) {
-  const data = useSelector((state) => state.cantab.selection || []);
+  const data = useSelector((state) => state.dataframe.selection || []);
   const navioColumns = useSelector(
     (state) => state.dataframe.navioColumns || []
   );
@@ -109,13 +111,21 @@ function Options({ config, setConfig, params, setParams, onCompute }) {
   };
 
   return (
-    <Form layout="vertical" style={{ maxWidth: 500 }}>
-      <Form.Item label="Grouping variable">
+    <Space direction="vertical" size="middle" style={{ width: "400px" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          gap: "15px",
+        }}
+      >
+        <Text strong>Grouping variable</Text>
         <Select
           value={config.groupVar}
           onChange={onGroupVarChange}
           placeholder="Select variable"
-          style={{ width: "100%" }}
+          style={{ flex: 1 }}
         >
           {categoricalVars.map((key) => (
             <Option key={key} value={key}>
@@ -123,42 +133,51 @@ function Options({ config, setConfig, params, setParams, onCompute }) {
             </Option>
           ))}
         </Select>
-      </Form.Item>
+      </div>
 
-      <Form.Item label="Input variables">
-        <Select
-          mode="multiple"
-          value={params.variables}
-          onChange={onVariablesChange}
-          placeholder="Select variables"
-          style={{ width: "100%" }}
-        >
-          {navioColumns.map((key) => (
-            <Option key={key} value={key}>
-              {key}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
+      <Text strong>Included Variables</Text>
+      <Select
+        mode="multiple"
+        value={params.variables}
+        onChange={onVariablesChange}
+        placeholder="Select variables"
+        style={{ width: "100%", maxWidth: "400px" }}
+      >
+        {navioColumns.map((key) => (
+          <Option key={key} value={key}>
+            {key}
+          </Option>
+        ))}
+      </Select>
 
-      <Form.Item label="Point size">
-        <Slider
-          min={1}
-          max={20}
-          value={config.pointSize}
-          onChange={onPointSizeChange}
-        />
-      </Form.Item>
-
-      <Form.Item>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+          gap: "15px",
+        }}
+      >
         <Button
-          type="primary"
           onClick={onCompute}
           disabled={params.variables.length < 2}
+          className={buttonStyles.coloredButton}
         >
           Compute UMAP
         </Button>
-      </Form.Item>
-    </Form>
+      </div>
+
+      <div>
+        <Text strong>Points radius:</Text>
+        <Text type="secondary"> {config.pointSize}px</Text>
+      </div>
+      <Slider
+        min={1}
+        max={20}
+        value={config.pointSize}
+        onChange={onPointSizeChange}
+        style={{ width: "100%" }}
+      />
+    </Space>
   );
 }

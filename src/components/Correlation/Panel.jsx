@@ -1,15 +1,12 @@
-// SelectorPanel.jsx
 import React from "react";
-import { Select, Tooltip, Button } from "antd";
+import { Select } from "antd";
 import { AreaChartOutlined } from "@ant-design/icons";
 
 import AppBar from "@/utils/AppBar";
 import { Graphs } from "@/utils/Constants";
-import styles from "@/utils/Buttons.module.css";
+import BarButton from "@/utils/BarButton";
 
-const color = "#7bb2ff";
 const { Option } = Select;
-const iconStyle = { fontSize: "25px" };
 
 function Buttons({ selectedVar, onChange, generateGraph }) {
   return (
@@ -18,7 +15,7 @@ function Buttons({ selectedVar, onChange, generateGraph }) {
         border: "3px solid white",
         borderRadius: 8,
         padding: "16px 20px",
-        backgroundColor: color,
+        backgroundColor: "var(--primary-color)",
         display: "flex",
         gap: 8,
         alignItems: "center",
@@ -27,7 +24,7 @@ function Buttons({ selectedVar, onChange, generateGraph }) {
       <Select
         onChange={onChange}
         placeholder="Select graph"
-        style={{ width: "200px" }}
+        style={{ width: "300px" }}
         size="large"
       >
         {Object.values(Graphs).map((v) => (
@@ -37,17 +34,13 @@ function Buttons({ selectedVar, onChange, generateGraph }) {
         ))}
       </Select>
 
-      <Tooltip title={"Add the selected correlation chart"}>
-        <Button
-          size="large"
-          shape="circle"
-          className={styles.coloredButton}
-          icon={<AreaChartOutlined style={iconStyle} />}
-          onClick={() => {
-            if (selectedVar) generateGraph(selectedVar);
-          }}
-        />
-      </Tooltip>
+      <BarButton
+        title={"Add the selected correlation chart"}
+        icon={<AreaChartOutlined />}
+        onClick={() => {
+          if (selectedVar) generateGraph(selectedVar);
+        }}
+      />
     </div>
   );
 }

@@ -58,9 +58,7 @@ export default function AppBar({ title, children }) {
           className={styles.title}
           ref={titleRef}
           style={{ visibility: hideTitle ? "hidden" : "visible" }}
-        >
-          {title}
-        </div>
+        ></div>
 
         <Space
           ref={spaceRef}

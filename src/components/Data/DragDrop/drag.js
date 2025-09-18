@@ -54,14 +54,7 @@ export const FileProcessorFactory = {
       case "json":
         return JsonProcessor;
       default:
-        store.getState().cantab.notApi.error({
-          message: "Data Format Not Supported",
-          description: "Format: " + fileType,
-          placement: "topRight",
-          duration: 2,
-          showProgress: true,
-          pauseOnHover: true,
-        });
+        console.error("Data Format Not Supported");
     }
   },
 };

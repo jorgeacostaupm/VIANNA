@@ -25,6 +25,7 @@
     "framer-motion": "^12.10.0",
     "jerzy": "^0.2.1",
     "jstat": "^1.9.6",
+    "lodash.debounce": "^4.0.8",
     "ml-pca": "^4.1.1",
     "navio": "^0.0.75",
     "papaparse": "^5.5.2",

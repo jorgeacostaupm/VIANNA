@@ -7,6 +7,7 @@ import {
   LineChartOutlined,
   PartitionOutlined,
   BugOutlined,
+  BugFilled,
 } from "@ant-design/icons";
 
 import { setInit as setInitMetadata } from "@/features/metadata/metaSlice";
@@ -15,8 +16,8 @@ import { setInit as setInitEvolution } from "@/features/evolution/evolutionSlice
 import { setInit as setInitCorrelation } from "@/features/correlation/correlationSlice";
 import { setInitQuarantine } from "@/features/cantab/cantabSlice";
 
-import ButtonLink from "@/utils/ButtonLink";
-import DataManagement from "./Data/DataManagement";
+import LinkButton from "@/utils/ButtonLink";
+import DataManagementButton from "./Data/Buttons/DataManagementButton";
 
 export default function Buttons() {
   const initHierarchy = useSelector((state) => state.metadata.init);
@@ -26,49 +27,47 @@ export default function Buttons() {
   const initQuarantine = useSelector((state) => state.cantab.initQuarantine);
   const dt = useSelector((state) => state.dataframe.dataframe);
 
-  const iconStyle = { fontSize: "40px" };
-
   return (
     <div style={{ display: "flex", gap: "10px" }}>
-      <DataManagement></DataManagement>
+      <DataManagementButton></DataManagementButton>
       {!initHierarchy && (
-        <ButtonLink
+        <LinkButton
           to="metadata"
           setInit={setInitMetadata}
-          icon={<PartitionOutlined style={iconStyle} />}
+          icon={<PartitionOutlined />}
         />
       )}
       {dt && (
         <>
           {!initCompare && (
-            <ButtonLink
+            <LinkButton
               to="compare"
               setInit={setInitCompare}
-              icon={<BarChartOutlined style={iconStyle} />}
+              icon={<BarChartOutlined />}
             />
           )}
 
           {!initEvolution && (
-            <ButtonLink
+            <LinkButton
               to="evolution"
               setInit={setInitEvolution}
-              icon={<LineChartOutlined style={iconStyle} />}
+              icon={<LineChartOutlined />}
             />
           )}
 
           {!initCorrelation && (
-            <ButtonLink
+            <LinkButton
               to="correlation"
               setInit={setInitCorrelation}
-              icon={<DotChartOutlined style={iconStyle} />}
+              icon={<DotChartOutlined />}
             />
           )}
 
           {!initQuarantine && (
-            <ButtonLink
+            <LinkButton
               to="cantab"
               setInit={setInitQuarantine}
-              icon={<BugOutlined style={iconStyle} />}
+              icon={<BugFilled />}
             />
           )}
         </>

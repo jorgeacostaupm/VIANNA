@@ -15,7 +15,7 @@ export default function Pairwise({ variable, test, remove }) {
   const containerRef = useRef();
   const dimensions = useResizeObserver(containerRef);
 
-  const selection = useSelector((s) => s.cantab.selection);
+  const selection = useSelector((s) => s.dataframe.selection);
   const groupVar = useSelector((s) => s.cantab.groupVar);
 
   const [config, setConfig] = useState({
@@ -73,7 +73,7 @@ function renderPairwisePlot(container, result, config, dimensions) {
   const data = result.pairwiseEffects;
   const labels = data.map((d) => d.groups.join(" vs "));
 
-  const margin = { top: 10, right: 40, bottom: 40, left: 200 };
+  const margin = { top: 10, right: 40, bottom: 40, left: 250 };
   const totalWidth = dimensions.width;
   const totalHeight = dimensions.height;
   const chartWidth = totalWidth - margin.left - margin.right;

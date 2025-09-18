@@ -5,24 +5,25 @@ import GridLayout, { WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import { useRootStyle, useNotification } from "@/utils/cantabAppHooks";
+import useNotification from "@/utils/useNotification";
 import AppBar from "@/utils/AppBar";
 import Buttons from "./Buttons";
 import OverviewApp from "./Overview/OverviewApp";
 import { pubsub } from "@/utils/pubsub";
 import styles from "@/utils/App.module.css";
+import { setInit } from "@/features/cantab/cantabSlice";
+import { APP_NAME } from "@/utils/Constants";
 
 const { publish } = pubsub;
 const ResponsiveGridLayout = WidthProvider(GridLayout);
 
-const layout = [{ i: "overview", x: 0, y: 0, w: 12, h: 10 }];
+const layout = [{ i: "overview", x: 0, y: 0, w: 12, h: 7 }];
 
-export default function App() {
+export default function MainApp() {
   const dispatch = useDispatch();
-  const [apiNotif, contextHolder] = notification.useNotification();
 
-  useRootStyle();
-  useNotification(apiNotif);
+  useRootStyles(setInit, APP_NAME);
+  const holder = useNotification();
 
   useEffect(() => {
     loadTestData(dispatch);
@@ -30,8 +31,8 @@ export default function App() {
 
   return (
     <>
-      {contextHolder}
-      <Layout className={styles.fullscreenLayout}>
+      {holder}
+      <Layout className={styles.fullScreenLayout}>
         <AppBar title="EXPLORER">
           <Buttons />
         </AppBar>
@@ -40,7 +41,7 @@ export default function App() {
           className="layout"
           layout={layout}
           cols={12}
-          rowHeight={105}
+          rowHeight={100}
           isDraggable={false}
         >
           <div key={"overview"}>
@@ -61,25 +62,31 @@ import {
   setIdVar,
   setTimeVar,
 } from "../features/cantab/cantabSlice";
+import useRootStyles from "@/utils/useRootStyles";
 
 async function loadTestData(dispatch) {
   try {
     const shortTestData = "./vis/csv/full_data.csv";
     const longTestData = "./vis/csv/largeTestData.csv";
     const financial = "./vis/csv/financial.xls";
+    const realData = "./vis/csv/realData.csv";
     const data = await api.fetchTestData(longTestData);
+
+    console.log(data);
     await dispatch(
       updateData({ data, isGenerateHierarchy: true, filename: "Test data" })
     );
 
     const largeHierrachy = "./vis/hierarchies/largeTestDatahierarchy.json";
     const financialHierarchy = "./vis/hierarchies/financialHierarchy.json";
+    const realDataHierarchy = "./vis/hierarchies/realData.json";
     const hierarchy = await api.fetchHierarchy(largeHierrachy);
+    console.log(hierarchy);
     await dispatch(updateHierarchy({ hierarchy, filename: "Test Hierarchy" }));
 
-    dispatch(setGroupVar("Country"));
-    dispatch(setTimeVar("Visit Name"));
-    dispatch(setIdVar("id"));
+    dispatch(setGroupVar("site"));
+    dispatch(setTimeVar("visit"));
+    dispatch(setIdVar("pseudon_id"));
   } catch (error) {
     handleError(error, "Error loading test data");
   }

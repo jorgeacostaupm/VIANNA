@@ -2,27 +2,19 @@ import { useEffect, useRef } from "react";
 import { Select } from "antd";
 import { useField, useFormikContext } from "formik";
 import { Typography } from "antd";
+import { DataType } from "@/utils/Constants";
 const { Text } = Typography;
 
 const dtypeMap = {
-  number: "Number",
-  string: "Text",
-  date: "Date",
-  determine: "To determine",
+  [DataType.NUMERICAL.dtype]: DataType.NUMERICAL.name,
+  [DataType.TEXT.dtype]: DataType.TEXT.name,
+  [DataType.UNKNOWN.dtype]: DataType.UNKNOWN.name,
 };
 
 const dtypeColor = {
-  number: "#377eb8",
-  date: "#4daf4a",
-  string: "#f781bf",
-  determine: "#ff7f00",
-};
-
-const dtypeTextColor = {
-  number: "white",
-  date: "white",
-  string: "white",
-  determine: "white",
+  [DataType.NUMERICAL.dtype]: DataType.NUMERICAL.color,
+  [DataType.TEXT.dtype]: DataType.TEXT.color,
+  [DataType.UNKNOWN.dtype]: DataType.UNKNOWN.color,
 };
 
 const NodeInfo = ({ nChildren, nodeType }) => {
@@ -35,9 +27,9 @@ const NodeInfo = ({ nChildren, nodeType }) => {
     const selector = selectRef.current?.querySelector(".ant-select-selector");
     if (selector) {
       selector.style.backgroundColor = dtypeColor[field.value];
-      selector.style.color = dtypeTextColor[field.value];
+      selector.style.color = "white";
       selector.style.border = "none";
-      selector.style.fontWeight = "600";
+      selector.style.fontWeight = "bold";
       selector.style.textAlign = "center";
     }
   }, [field.value]);
@@ -88,29 +80,31 @@ const NodeInfo = ({ nChildren, nodeType }) => {
         <Text strong>{nodeName}</Text>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: "10px",
-        }}
-      >
-        <Text strong>Data type:</Text>
-        <div ref={selectRef}>
-          <Select
-            value={field.value}
-            onChange={(value) => setValue(value)}
-            options={dtypeOptions}
-            style={{
-              width: 140,
-              borderRadius: 6,
-            }}
-            dropdownStyle={{ textAlign: "center" }}
-            dropdownMatchSelectWidth={false}
-          />
+      {field.value !== "none" && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <Text strong>Data type:</Text>
+          <div ref={selectRef}>
+            <Select
+              value={field.value}
+              onChange={(value) => setValue(value)}
+              options={dtypeOptions}
+              style={{
+                width: 140,
+                borderRadius: 6,
+              }}
+              dropdownStyle={{ textAlign: "center" }}
+              dropdownMatchSelectWidth={false}
+            />
+          </div>
         </div>
-      </div>
+      )}
       <div
         style={{
           display: "flex",

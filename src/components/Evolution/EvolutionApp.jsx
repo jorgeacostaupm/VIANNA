@@ -5,7 +5,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import GridLayout, { WidthProvider } from "react-grid-layout";
 
-import { useNotification } from "@/utils/cantabAppHooks";
+import useNotification from "@/utils/useNotification";
 import useRootStyles from "@/utils/useRootStyles";
 import { setInit } from "@/features/evolution/evolutionSlice";
 import Ranking from "./Ranking";
@@ -14,6 +14,7 @@ import Panel from "./Panel";
 import { pubsub } from "@/utils/pubsub";
 
 import styles from "@/utils/App.module.css";
+import { APP_NAME, Apps } from "@/utils/Constants";
 
 const { publish } = pubsub;
 const ResponsiveGridLayout = WidthProvider(GridLayout);
@@ -59,7 +60,7 @@ function App() {
   }
 
   return (
-    <Layout className={styles.fullscreenLayout}>
+    <Layout className={styles.fullScreenLayout}>
       <Panel generateEvolution={generateEvolution} />
 
       <ResponsiveGridLayout
@@ -87,15 +88,12 @@ function App() {
 }
 
 export default function EvolutionApp() {
-  const [isOk, setIsOk] = useState(false);
-  const [apiNotif, holder] = notification.useNotification();
-
   const groupVar = useSelector((s) => s.cantab.groupVar);
   const timeVar = useSelector((s) => s.cantab.timeVar);
   const navioCols = useSelector((s) => s.dataframe.navioColumns);
 
-  useRootStyles({ padding: 0, maxWidth: "100vw" }, setInit, "Evolution");
-  useNotification(apiNotif);
+  useRootStyles(setInit, APP_NAME + " - " + Apps.EVOLUTION);
+  const holder = useNotification();
 
   useEffect(() => {
     let config = null;
@@ -108,7 +106,6 @@ export default function EvolutionApp() {
         type: "error",
       };
     }
-    setIsOk(!config);
     if (config?.message) publish("notification", config);
   }, [groupVar, timeVar, navioCols]);
 

@@ -26,26 +26,6 @@ function areObjectsEqual(obj1, obj2) {
   return keys1.every((key) => obj1[key] === obj2[key]);
 }
 
-function wasTouched(initial, newOb) {
-  if (initial.id !== newOb.id) {
-    throw "They are different nodes";
-  }
-
-  let ret = {};
-  ret["name"] = initial["name"] === newOb["name"];
-  ret["desc"] = initial["desc"] === newOb["desc"];
-  ret["type"] = initial["type"] === newOb["type"];
-  ret["dtype"] = initial["dtype"] === newOb["dtype"];
-  ret["related"] = initial["related"].length === newOb["related"].length;
-
-  ret["info"] = true;
-  if (initial["type"] === "aggregation") {
-    ret["info"] = areObjectsEqual(initial["info"], newOb["info"]);
-  }
-
-  return ret;
-}
-
 const NodeMenu = ({ nodeInfo }) => {
   const [node, setNode] = useState(null);
   const [nodeId, setNodeId] = useState(null);
@@ -89,19 +69,7 @@ const NodeMenu = ({ nodeInfo }) => {
     return;
   }
 
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
   const onSubmit = async (values) => {
-    const touchFields = wasTouched(node, values);
-    if (!touchFields["name"]) {
-      publish("modifyNodeInfo", { node: values });
-      if (node.id !== 0) {
-        dispatch(
-          renameColumn({ prevName: node["name"], newName: values["name"] })
-        );
-      }
-      await sleep(250); // para evitar condición de carrera con el renombre si lo hubo
-    }
     dispatch(updateAttribute({ ...values, recover: true }));
   };
 
@@ -117,7 +85,6 @@ const NodeMenu = ({ nodeInfo }) => {
 
   const closeTab = () => toggleMenu((prev) => !prev);
 
-  console.log(node);
   return (
     openMenu && (
       <div className={styles.nodeInfo}>
@@ -154,7 +121,7 @@ const NodeMenu = ({ nodeInfo }) => {
               {values.type === "aggregation" ? (
                 availableNodes.length === 0 ? (
                   <CustomMeasure
-                    children={nodeInfo.filter((n) => n.id !== 0)}
+                    nodes={nodeInfo.filter((n) => n.id !== 0)}
                     formula={values.info.formula}
                     save={<SaveButton></SaveButton>}
                   ></CustomMeasure>
@@ -181,16 +148,16 @@ export default NodeMenu;
 
 function SaveButton() {
   const { values, isValid, errors } = useFormikContext();
-  console.log("🧪 Formula:", values.info?.formula);
+  /* console.log("🧪 Formula:", values.info?.formula);
   console.log("✅ isValid:", isValid);
-  console.log("❌ errors:", errors);
+  console.log("❌ errors:", errors); */
 
   return (
     <div style={{ justifyContent: "center", display: "flex" }}>
       <Tooltip title="Save">
         <Button
           shape="circle"
-          className={buttonStyles.coloredButton}
+          className={buttonStyles.barButton}
           style={{
             height: "auto",
             padding: "10px",

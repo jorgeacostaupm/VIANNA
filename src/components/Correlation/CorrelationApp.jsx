@@ -6,9 +6,9 @@ import { Layout, notification } from "antd";
 import { setSelectedChart } from "@/features/correlation/correlationSlice";
 import { setInit } from "@/features/correlation/correlationSlice";
 
-import { Apps, Graphs } from "@/utils/Constants";
+import { Apps, Graphs, APP_NAME } from "@/utils/Constants";
 import { pubsub } from "@/utils/pubsub";
-import { useNotification } from "@/utils/cantabAppHooks";
+import useNotification from "@/utils/useNotification";
 import useRootStyles from "@/utils/useRootStyles";
 import Panel from "./Panel";
 import Scatterplot from "./Scatterplot";
@@ -56,7 +56,7 @@ function App() {
   }
 
   return (
-    <Layout className={styles.fullscreenLayout}>
+    <Layout className={styles.fullScreenLayout}>
       <Panel
         selectedVar={selectedChart}
         onVarChange={(v) => dispatch(setSelectedChart(v))}
@@ -90,22 +90,18 @@ function App() {
 }
 
 export default function CorrelationApp() {
-  const [isOk, setIsOk] = useState(false);
-  const [apiNotif, holder] = notification.useNotification();
-
   const groupVar = useSelector((s) => s.cantab.groupVar);
-  const selection = useSelector((state) => state.cantab.selection);
+  const selection = useSelector((state) => state.dataframe.selection);
   const navioCols = useSelector((s) => s.dataframe.navioColumns);
 
-  useRootStyles({ padding: 0, maxWidth: "100vw" }, setInit, Apps.CORRELATION);
-  useNotification(apiNotif);
+  useRootStyles(setInit, APP_NAME + " - " + Apps.CORRELATION);
+  const holder = useNotification();
 
   useEffect(() => {
     let config = null;
     if (!groupVar || !selection || !navioCols) {
       config = {};
     }
-    setIsOk(!config);
     if (config?.message) publish("notification", config);
   }, [groupVar, selection, navioCols]);
 

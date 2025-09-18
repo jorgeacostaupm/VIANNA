@@ -12,7 +12,7 @@ import ChartBar from "@/utils/ChartBar";
 import styles from "@/utils/Charts.module.css";
 
 export default function CategoricDistributions({ variable, remove }) {
-  const selection = useSelector((s) => s.cantab.selection);
+  const selection = useSelector((s) => s.dataframe.selection);
   const groupVar = useSelector((s) => s.cantab.groupVar);
   const [config, setConfig] = useState({
     chartType: "stacked",

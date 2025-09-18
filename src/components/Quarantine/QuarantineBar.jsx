@@ -19,7 +19,7 @@ import {
 import { updateData } from "@/features/data/dataSlice";
 import {
   setQuarantineData,
-  selectAllVars,
+  selectNavioVars,
 } from "@/features/cantab/cantabSlice";
 
 import buttonStyles from "@/utils/Buttons.module.css";
@@ -27,12 +27,11 @@ import styles from "@/utils/ChartBar.module.css";
 import { generateFileName } from "@/utils/functions";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 
-import { ColorScales } from "../Overview/OverviewBar";
-import SwitchButton from "../Overview/SwitchButton";
-/* import { Settings } from "../Overview/OverviewButtons"; */
+import LegendButton from "../Overview/BarButtons/LegendButton";
+import SwitchButton from "../Overview/BarButtons/SwitchButton";
+import BarButton from "@/utils/BarButton";
 
 const { Text } = Typography;
-const iconStyle = { fontSize: "20px" };
 
 export default function QuarantineBar({ title, config, setConfig }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -41,41 +40,20 @@ export default function QuarantineBar({ title, config, setConfig }) {
   const updateConfig = (field, value) =>
     setConfig((prev) => ({ ...prev, [field]: value }));
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (cardRef.current && !cardRef.current.contains(event.target)) {
-        setIsVisible(false);
-      }
-    }
-
-    if (isVisible) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isVisible]);
-
   return (
     <>
       <div className={styles.chartBar}>
         <div className={styles.chartTitle}>{title}</div>
 
         <div className={styles.right}>
-          <RestoreData />
+          <RestoreDataButton />
           <SwitchButton />
-          <ColorScales />
-          <Tooltip title={"Chart configuration"}>
-            <Button
-              className={buttonStyles.coloredButton}
-              shape="circle"
-              icon={<SettingOutlined style={iconStyle} />}
-              onClick={() => setIsVisible((prev) => !prev)}
-            />
-          </Tooltip>
+          <LegendButton />
+          <BarButton
+            title={"Chart settings"}
+            icon={<SettingOutlined />}
+            onClick={() => setIsVisible((prev) => !prev)}
+          />
         </div>
       </div>
 
@@ -83,9 +61,7 @@ export default function QuarantineBar({ title, config, setConfig }) {
         <Card ref={cardRef} size="small" className={styles.options}>
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <div>
-              <Text strong style={{ fontSize: 16 }}>
-                Attribute width:
-              </Text>
+              <Text strong>Attribute width:</Text>
               <Text type="secondary"> {config.attrWidth}px</Text>
               <Slider
                 min={10}
@@ -97,9 +73,7 @@ export default function QuarantineBar({ title, config, setConfig }) {
             </div>
 
             <div>
-              <Text strong style={{ fontSize: 16 }}>
-                Label space:
-              </Text>
+              <Text strong>Label space:</Text>
               <Text type="secondary"> {config.y0}px</Text>
               <Slider
                 min={100}
@@ -119,7 +93,7 @@ export default function QuarantineBar({ title, config, setConfig }) {
   );
 }
 
-function RestoreData() {
+function RestoreDataButton() {
   const dispatch = useDispatch();
   const selection = useSelector((state) => state.cantab.quarantineSelection);
   const quarantineData = useSelector((state) => state.cantab.quarantineData);
@@ -145,15 +119,11 @@ function RestoreData() {
   }
 
   return (
-    <Tooltip title={"Send selection to Navio"}>
-      <Button
-        shape="circle"
-        className={buttonStyles.coloredButton}
-        onClick={resetQuarantineSelection}
-      >
-        <RollbackOutlined style={iconStyle} />
-      </Button>
-    </Tooltip>
+    <BarButton
+      title={"Send selection to the Explorer"}
+      onClick={resetQuarantineSelection}
+      icon={<RollbackOutlined />}
+    />
   );
 }
 
@@ -164,7 +134,8 @@ function EditColumns() {
   const selection = useSelector((state) => state.cantab.quarantineSelection);
   const data = useSelector((state) => state.cantab.quarantineData);
   const [column, setColumn] = useState(null);
-  const vars = useSelector(selectAllVars);
+  const vars = useSelector(selectNavioVars);
+  const attributes = useSelector((state) => state.metadata.attributes);
   const ids = selection?.map((item) => item[ORDER_VARIABLE]);
 
   const onInputChange = (e) => {
@@ -180,14 +151,26 @@ function EditColumns() {
     });
 
     dispatch(setQuarantineData(updatedData));
+
+    const matchedAggregations = attributes.filter(
+      (attr) =>
+        attr.type === "aggregation" &&
+        attr.info?.usedAttributes?.some((d) => d.name === column)
+    );
+
+    if (matchedAggregations.length > 0) {
+      dispatch(
+        generateAggregationBatch({
+          cols: matchedAggregations,
+        })
+      );
+    }
   };
 
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        <Text strong style={{ fontSize: 16 }}>
-          Select a column to edit
-        </Text>
+        <Text strong>Select a column to edit</Text>
         <Select
           value={column}
           onChange={setColumn}
@@ -195,9 +178,7 @@ function EditColumns() {
           options={vars.map((key) => ({ label: key, value: key }))}
         />
 
-        <Text strong style={{ fontSize: 16 }}>
-          New value
-        </Text>
+        <Text strong>New value</Text>
         <Input
           value={inputValue}
           onChange={onInputChange}
@@ -213,23 +194,11 @@ function EditColumns() {
           marginTop: "10px",
         }}
       >
-        <Tooltip
-          placement="left"
-          title={`Change selection ${column} values to ${inputValue}`}
-        >
-          <Button
-            shape="circle"
-            onClick={onEditSelection}
-            className={buttonStyles.coloredButton}
-            style={{
-              height: "auto",
-              padding: "10px",
-              border: "2px solid",
-            }}
-          >
-            <EditOutlined style={iconStyle} />
-          </Button>
-        </Tooltip>
+        <BarButton
+          onClick={onEditSelection}
+          className={buttonStyles.barButton}
+          icon={<EditOutlined />}
+        />
       </div>
     </>
   );
@@ -274,9 +243,7 @@ function ExportButtons() {
         flexDirection: "column",
       }}
     >
-      <Text strong style={{ fontSize: 16 }}>
-        Export Data:
-      </Text>
+      <Text strong>Export Data:</Text>
 
       <div
         style={{
@@ -289,14 +256,14 @@ function ExportButtons() {
       >
         <Button
           style={{ border: "2px solid" }}
-          className={buttonStyles.coloredButton}
+          className={buttonStyles.barButton}
           onClick={() => saveData2CSV(selectionData, "selection_data")}
         >
           Selection
         </Button>
         <Button
           style={{ border: "2px solid" }}
-          className={buttonStyles.coloredButton}
+          className={buttonStyles.barButton}
           onClick={() => saveData2CSV(allData, "all_data")}
         >
           All

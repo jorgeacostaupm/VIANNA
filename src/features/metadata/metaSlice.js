@@ -426,27 +426,27 @@ export const hierarchySelector = (state) => state.metadata.attributes;
 export default metaSlice.reducer;
 
 import { createSelector } from "reselect";
+import { DataType } from "@/utils/Constants";
 
 const selectHierarchy = (state) => state.metadata.attributes;
 
 export const selectNumericNodes = createSelector(
   [selectHierarchy],
   (hierarchy) =>
-    hierarchy.filter((n) => n.dtype === "number").map((n) => n.name)
+    hierarchy
+      .filter((n) => n.dtype === DataType.NUMERICAL.dtype)
+      .map((n) => n.name)
 );
 
 export const selectTextNodes = createSelector([selectHierarchy], (hierarchy) =>
-  hierarchy.filter((n) => n.dtype === "string").map((n) => n.name)
+  hierarchy.filter((n) => n.dtype === DataType.TEXT.dtype).map((n) => n.name)
 );
-
-export const selectDateNodes = createSelector([selectHierarchy], (hierarchy) =>
-  hierarchy.filter((n) => n.dtype === "date").map((n) => n.name)
-);
-
 export const selectDetermineNodes = createSelector(
   [selectHierarchy],
   (hierarchy) =>
-    hierarchy.filter((n) => n.dtype === "determine").map((n) => n.name)
+    hierarchy
+      .filter((n) => n.dtype === DataType.UNKNOWN.dtype)
+      .map((n) => n.name)
 );
 
 export const selectAggregationNodes = createSelector(

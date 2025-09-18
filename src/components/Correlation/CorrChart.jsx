@@ -10,7 +10,7 @@ const { publish } = pubsub;
 export default function CorrChart({ config, params, drawChart, getChartData }) {
   const ref = useRef(null);
   const dimensions = useResizeObserver(ref);
-  const selection = useSelector((s) => s.cantab.selection);
+  const selection = useSelector((s) => s.dataframe.selection);
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -24,7 +24,6 @@ export default function CorrChart({ config, params, drawChart, getChartData }) {
       const configuration = {
         message: "Error computing data",
         description: error.message,
-        placement: "bottomRight",
         type: "error",
       };
       publish("notification", configuration);

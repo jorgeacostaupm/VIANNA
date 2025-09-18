@@ -6,7 +6,6 @@ import {
   zoomIdentity,
   zoomTransform,
   tree,
-  pointer,
   linkHorizontal,
 } from "d3";
 import * as d3 from "d3";
@@ -19,8 +18,21 @@ import {
 import store from "@/features/store";
 
 import { pubsub } from "@/utils/pubsub";
+import { DataType } from "@/utils/Constants";
 
 let { publish, subscribe } = pubsub;
+
+const dtypeColors = {
+  [DataType.NUMERICAL.dtype]: DataType.NUMERICAL.color,
+  [DataType.TEXT.dtype]: DataType.TEXT.color,
+  [DataType.UNKNOWN.dtype]: DataType.UNKNOWN.color,
+  none: "lightgrey",
+};
+
+function colorNode(node) {
+  const dtype = node.data?.dtype || "none";
+  return dtypeColors[dtype];
+}
 
 const margins = {
   top: 0,
@@ -136,6 +148,7 @@ export default class D3HierarchyEditor {
     function brushMove() {}
 
     function brushEnd({ selection }) {
+      console.log("here selection", selection);
       if (!selection) return;
       const [[x0, y0], [x1, y1]] = selection;
       const svgNode = vis.svg.node();
@@ -394,7 +407,6 @@ export default class D3HierarchyEditor {
     });
     this.longestString = maxLength;
     this.nNodes = numberNodes;
-    console.log("longest", this.longestString);
   }
 
   setBackgroundMesh() {
@@ -511,20 +523,6 @@ export default class D3HierarchyEditor {
       .attr("transform", `translate(${source.y}, ${source.x})`) // move node to parent
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0);
-
-    function colorNode(node) {
-      const dtype = node.data?.dtype || "none";
-      const dtypeColors = {
-        number: "#377eb8", // dark blue
-        date: "#4daf4a", // dark green
-        string: "#f781bf", // dark magenta
-        determine: "#ff7f00", // orange
-        root: "#ff7f00", // fallback
-        none: "#ff7f00",
-      };
-
-      return dtypeColors[dtype];
-    }
 
     const nodeEnter = gnode
       .enter()

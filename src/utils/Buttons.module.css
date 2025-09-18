@@ -1,5 +1,39 @@
-.coloredButton {
+.barButton {
   color: var(--primary-color);
+  cursor: pointer;
+  font-size: 25px;
+  border: 2px solid transparent;
+}
+
+.barButton:hover {
+  border: 3px solid var(--primary-color);
+}
+
+.coloredButton {
+  background-color: var(--primary-color);
+  color: white;
+  border: 2px solid transparent;
+  transition: border 0.2s;
+  font-size: 20px;
+}
+
+.coloredButton:hover {
+  border: 2px solid var(--primary-color);
+}
+
+.panelButton {
+  color: var(--primary-color);
+  border: 2px solid transparent;
+  width: 70px !important;
+  height: 70px !important;
+  font-size: 35px !important;
+}
+
+.panelButton:hover {
+  border: 5px solid var(--primary-color);
+}
+
+.warningButton {
   border: none;
   cursor: pointer;
 }

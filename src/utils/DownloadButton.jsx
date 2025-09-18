@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Button, Tooltip } from "antd";
+
 import { DownloadOutlined } from "@ant-design/icons";
 import AutoCloseTooltip from "./AutoCloseTooltip";
 import styles from "./Buttons.module.css";
-import { iconStyle } from "./ChartBar";
+import BarButton from "./BarButton";
 
 export default function DownloadButton({ svgIds = [], filename = "chart" }) {
   const [loading, setLoading] = useState(false);
@@ -72,14 +72,10 @@ export default function DownloadButton({ svgIds = [], filename = "chart" }) {
   };
 
   return (
-    <AutoCloseTooltip title="Download view as png">
-      <Button
-        className={styles.coloredButton}
-        shape="circle"
-        loading={loading}
-        icon={<DownloadOutlined style={iconStyle} />}
-        onClick={handleDownload}
-      ></Button>
-    </AutoCloseTooltip>
+    <BarButton
+      title="Download view as png"
+      icon={<DownloadOutlined />}
+      onClick={handleDownload}
+    />
   );
 }

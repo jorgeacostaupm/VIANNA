@@ -1,17 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { setDataframe, updateData } from "../data/dataSlice";
+import {
+  editData,
+  setDataframe,
+  setSelection,
+  updateData,
+} from "../data/dataSlice";
 import {
   generateAggregation,
   generateAggregationBatch,
 } from "../data/modifyReducers";
-import {
-  DEFAULT_GROUP_VARIABLE,
-  DEFAULT_TIMESTAMP_VARIABLE,
-  DEFAULT_ID_VARIABLE,
-} from "@/utils/Constants";
 
 import { pubsub } from "@/utils/pubsub";
-import { identifyTypes } from "@/utils/functions";
+import { getVariableTypes } from "@/utils/functions";
 import { HIDDEN_VARIABLES, VariableTypes } from "@/utils/Constants";
 const { publish } = pubsub;
 
@@ -61,6 +61,7 @@ const initialState = {
   notApi: null,
   init: false,
   initQuarantine: false,
+  hasEmptyValues: false,
 
   attrWidth: 20,
 
@@ -76,7 +77,6 @@ const initialState = {
   groups: null,
   ids: null,
 
-  selection: null,
   selectionTimestamps: null,
   selectionGroups: null,
   selectionIds: null,
@@ -94,16 +94,24 @@ const cantabSlice = createSlice({
     setInit: (state, action) => {
       state.init = action.payload;
     },
-    setInitQuarantine: (state, action) => {
-      state.initQuarantine = action.payload;
-    },
+
     setFilteredData: (state, action) => {
       state.filteredData = action.payload;
     },
 
+    setInitQuarantine: (state, action) => {
+      state.initQuarantine = action.payload;
+    },
     setQuarantineData: (state, action) => {
       state.quarantineData = action.payload;
       state.quarantineSelection = action.payload;
+    },
+    setQuarantineSelection: (state, action) => {
+      state.quarantineSelection = action.payload;
+    },
+
+    setAttrWidth: (state, action) => {
+      state.attrWidth = action.payload;
     },
 
     setScenarioRunResults: (state, action) => {
@@ -112,76 +120,59 @@ const cantabSlice = createSlice({
     setSelectedIds: (state, action) => {
       state.selectedIds = action.payload;
     },
-
-    setSelection: (state, action) => {
-      state.selection = action.payload;
-      state.selectionGroups = [
-        ...new Set(action.payload.map((d) => d[state.groupVar])),
-      ];
-      state.selectionTimestamps = [
-        ...new Set(action.payload.map((d) => d[state.timeVar])),
-      ];
-    },
-    setQuarantineSelection: (state, action) => {
-      state.quarantineSelection = action.payload;
-    },
-    setAttrWidth: (state, action) => {
-      state.attrWidth = action.payload;
-    },
   },
   extraReducers: (builder) => {
+    builder.addCase(setDataframe, (state, action) => {
+      const items = action.payload;
+      const groups = [...new Set(items?.map((d) => d[state.groupVar]))];
+      const timestamps = [...new Set(items?.map((d) => d[state.timeVar]))];
+      state.groups = groups;
+      state.timestamps = timestamps;
+      state.selectionGroups = groups;
+      state.selectionTimestamps = timestamps;
+    });
+
+    builder.addCase(setSelection, (state, action) => {
+      const items = action.payload;
+      const groups = [...new Set(items?.map((d) => d[state.groupVar]))];
+      const timestamps = [...new Set(items?.map((d) => d[state.timeVar]))];
+      state.groups = groups;
+      state.timestamps = timestamps;
+      state.selectionGroups = groups;
+      state.selectionTimestamps = timestamps;
+    });
+
     builder
-      .addCase(setDataframe, (state, action) => {
-        const items = action.payload;
-        state.selection = items;
-        const groups = [...new Set(items?.map((d) => d[state.groupVar]))];
-        const timestamps = [...new Set(items?.map((d) => d[state.timeVar]))];
-        state.groups = groups;
-        state.selectionGroups = groups;
-        state.timestamps = timestamps;
-        state.selectionTimestamps = timestamps;
-      })
       .addCase(setTimeVar.fulfilled, (state, action) => {
         state.timeVar = action.payload.timeVar;
         state.timestamps = action.payload.timestamps;
-        state.selectionTimestamps = action.payload.timestamps;
       })
       .addCase(setGroupVar.fulfilled, (state, action) => {
         state.groupVar = action.payload.groupVar;
         state.groups = action.payload.groups;
-        state.selectionGroups = action.payload.groups;
       })
       .addCase(setIdVar.fulfilled, (state, action) => {
         state.idVar = action.payload.idVar;
         state.ids = action.payload.ids;
-        state.selectionIds = action.payload.ids;
       });
 
-    builder.addCase(updateData.fulfilled, (state, action) => {
-      const items = action.payload.items;
-      state.quarantineData = null;
-      state.selection = items;
-      state.varTypes = identifyTypes(items);
-      state.timeVar = null;
-      state.groupVar = null;
-      state.idVar = null;
-      const groups = [];
-      const timestamps = [];
+    builder
+      .addCase(updateData.fulfilled, (state, action) => {
+        state.quarantineData = null;
+        state.varTypes = action.payload.varTypes;
+        state.timeVar = null;
+        state.groupVar = null;
+        state.idVar = null;
+        state.groups = [];
+        state.timestamps = [];
 
-      state.groups = groups;
-      state.selectionGroups = groups;
-      state.timestamps = timestamps;
-      state.selectionTimestamps = timestamps;
-
-      const configuration = {
-        message: "Data Loaded",
-        description: "",
-        placement: "bottomRight",
-        type: "success",
-      };
-      publish("notification", configuration);
-    }),
-      builder.addCase(updateData.rejected, (state, action) => {
+        const configuration = {
+          message: "Data Updated!",
+          type: "success",
+        };
+        publish("notification", configuration);
+      })
+      .addCase(updateData.rejected, (state, action) => {
         const configuration = {
           message: "Error Loading Data",
           description: action.payload,
@@ -190,16 +181,18 @@ const cantabSlice = createSlice({
         publish("notification", configuration);
       });
 
-    builder.addCase(generateAggregation.fulfilled, (state, action) => {
-      const items = action.payload;
-      state.varTypes = identifyTypes(items);
-      const configuration = {
-        message: "Aggregation Computed",
-        type: "success",
-      };
-      publish("notification", configuration);
-    }),
-      builder.addCase(generateAggregation.rejected, (state, action) => {
+    builder
+      .addCase(generateAggregation.fulfilled, (state, action) => {
+        const { quarantineData, data } = action.payload;
+        state.quarantineData = quarantineData;
+        state.varTypes = getVariableTypes(data);
+        const configuration = {
+          message: "Aggregation Computed",
+          type: "success",
+        };
+        publish("notification", configuration);
+      })
+      .addCase(generateAggregation.rejected, (state, action) => {
         const configuration = {
           message: "Error Computing Aggregation",
           type: "error",
@@ -207,16 +200,18 @@ const cantabSlice = createSlice({
         publish("notification", configuration);
       });
 
-    builder.addCase(generateAggregationBatch.fulfilled, (state, action) => {
-      const items = action.payload;
-      state.varTypes = identifyTypes(items);
-      const configuration = {
-        message: "Aggregations Computed",
-        type: "success",
-      };
-      publish("notification", configuration);
-    }),
-      builder.addCase(generateAggregationBatch.rejected, (state, action) => {
+    builder
+      .addCase(generateAggregationBatch.fulfilled, (state, action) => {
+        const { quarantineData, data } = action.payload;
+        state.quarantineData = quarantineData;
+        state.varTypes = getVariableTypes(data);
+        const configuration = {
+          message: "Aggregations Computed",
+          type: "success",
+        };
+        publish("notification", configuration);
+      })
+      .addCase(generateAggregationBatch.rejected, (state, action) => {
         const configuration = {
           message: "Error Computing Aggregations",
           type: "error",
@@ -230,7 +225,6 @@ export default cantabSlice.reducer;
 export const {
   setInit,
 
-  setSelection,
   setFilteredData,
 
   setAttrWidth,
@@ -250,13 +244,14 @@ const selectNavioColumns = (state) => state.dataframe.navioColumns;
 
 export const selectNumericVars = createSelector(
   [selectVarTypes, selectNavioColumns],
-  (varTypes, navioColumns) =>
-    Object.entries(varTypes)
+  (varTypes, navioColumns) => {
+    return Object.entries(varTypes)
       .filter(
         ([key, type]) =>
           type === VariableTypes.NUMERICAL && navioColumns?.includes(key)
       )
-      .map(([key]) => key)
+      .map(([key]) => key);
+  }
 );
 
 export const selectCategoricalVars = createSelector(
@@ -295,7 +290,7 @@ export const selectVars = createSelector(
       .map(([key]) => key)
 );
 
-export const selectAllVars = createSelector(
+export const selectNavioVars = createSelector(
   [selectVarTypes, selectNavioColumns],
   (varTypes, navioColumns) =>
     Object.entries(varTypes)

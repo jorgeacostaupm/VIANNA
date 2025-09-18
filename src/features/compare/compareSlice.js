@@ -118,7 +118,8 @@ export const checkAssumptions = createAsyncThunk(
   "compare/checkAssumptions",
   async (_, { getState, rejectWithValue }) => {
     try {
-      const { selection, groupVar } = getState().cantab;
+      const { selection } = getState().dataframe;
+      const { groupVar } = getState().cantab;
       const { selectedVar } = getState().compare;
 
       const table = aq.from(selection);
@@ -287,6 +288,8 @@ const compareSlice = createSlice({
       .addCase(checkAssumptions.rejected, (state, action) => {
         state.assumptionsLoading = false;
         state.assumptionsError = action.error.message;
+        z;
+        console.error(action.error.message);
       });
 
     builder.addCase(updateData.fulfilled, (state) => {

@@ -1,24 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, shallowEqual } from "react-redux";
 
-import { setSelection } from "@/features/cantab/cantabSlice";
 import Overview from "./Overview";
 import OverviewBar from "./OverviewBar";
 import NoDataPlaceholder from "@/utils/NoDataPlaceholder";
-import { navioLabelHeight } from "@/utils/Constants";
 import styles from "@/utils/Charts.module.css";
+import { setSelection } from "@/features/data/dataSlice";
 
 export default function OverviewApp() {
   const dt = useSelector((state) => state.dataframe.dataframe, shallowEqual);
-
-  const [config, setConfig] = useState({ attrWidth: 30, y0: navioLabelHeight });
+  const config = useSelector((state) => state.dataframe.config);
 
   return (
     <div className={styles.viewContainer}>
-      <OverviewBar title="Overview" config={config} setConfig={setConfig} />
+      <OverviewBar title="Overview" />
 
       {dt && dt.length > 0 ? (
-        <Overview config={config} data={dt} setSelection={setSelection} />
+        <Overview data={dt} config={config} setSelection={setSelection} />
       ) : (
         <NoDataPlaceholder></NoDataPlaceholder>
       )}

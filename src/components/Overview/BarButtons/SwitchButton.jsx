@@ -1,13 +1,10 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Tooltip } from "antd";
-import { SyncOutlined } from "@ant-design/icons";
+import { RetweetOutlined } from "@ant-design/icons";
 
-import buttonStyles from "@/utils/Buttons.module.css";
 import { setDataframe } from "@/features/data/dataSlice";
 import { setQuarantineData } from "@/features/cantab/cantabSlice";
-
-const iconStyle = { fontSize: "20px" };
+import BarButton from "@/utils/BarButton";
 
 export default function SwitchButton() {
   const dispatch = useDispatch();
@@ -20,14 +17,10 @@ export default function SwitchButton() {
   }
 
   return (
-    <Tooltip title={"Switch data between Quarantine and Explorer"}>
-      <Button
-        className={buttonStyles.coloredButton}
-        shape="circle"
-        onClick={onClick}
-      >
-        {<SyncOutlined style={iconStyle} />}
-      </Button>
-    </Tooltip>
+    <BarButton
+      title={"Switch data between Quarantine and Explorer"}
+      onClick={onClick}
+      icon={<RetweetOutlined />}
+    />
   );
 }

@@ -32,13 +32,12 @@ export default function Scatterplot({ remove }) {
             ? `Scatterplot Matrix by ${params.groupVar}`
             : "Scatterplot Matrix"
         }
-        infoTooltip={"test"}
         svgIds={["spmatrix", "splegend"]}
         remove={remove}
         config={config}
         setConfig={setConfig}
       >
-        <Options
+        <Settings
           config={config}
           setConfig={setConfig}
           containerDims={dimensions}
@@ -55,8 +54,8 @@ export default function Scatterplot({ remove }) {
   );
 }
 
-function Options({ config, setConfig, containerDims }) {
-  const data = useSelector((state) => state.cantab.selection || []);
+function Settings({ config, setConfig, containerDims }) {
+  const data = useSelector((state) => state.dataframe.selection || []);
   const navioColumns = useSelector(
     (state) => state.dataframe.navioColumns || []
   );
@@ -117,27 +116,32 @@ function Options({ config, setConfig, containerDims }) {
   };
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-      <Text strong style={{ fontSize: 16 }}>
-        Group variable:
-      </Text>
-      <Select
-        value={config.groupVar}
-        onChange={onGroupVarChange}
-        placeholder="Select variable"
-        style={{ width: "100%" }}
+    <Space direction="vertical" size="middle" style={{ width: "400px" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          gap: "15px",
+        }}
       >
-        {categoricalVars.map((key) => (
-          <Option key={key} value={key}>
-            {key}
-          </Option>
-        ))}
-      </Select>
+        <Text strong>Grouping Variable</Text>
+        <Select
+          value={config.groupVar}
+          onChange={onGroupVarChange}
+          placeholder="Select variable"
+          style={{ flex: 1 }}
+        >
+          {categoricalVars.map((key) => (
+            <Option key={key} value={key}>
+              {key}
+            </Option>
+          ))}
+        </Select>
+      </div>
 
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <Text strong style={{ fontSize: 16 }}>
-          Variables to show:
-        </Text>
+        <Text strong>Included Variables</Text>
         <Text type="secondary">(máx.{maxVars} due to actual window size)</Text>
       </div>
 
@@ -146,7 +150,7 @@ function Options({ config, setConfig, containerDims }) {
         value={config.variables}
         onChange={onVariablesChange}
         placeholder="Select variables"
-        style={{ width: "100%" }}
+        style={{ width: "100%", maxWidth: "400px" }}
         disabled={!config.isSync}
       >
         {navioColumns.map((key) => (
@@ -157,9 +161,7 @@ function Options({ config, setConfig, containerDims }) {
       </Select>
 
       <div>
-        <Text strong style={{ fontSize: 16 }}>
-          Points radius:
-        </Text>
+        <Text strong>Points radius:</Text>
         <Text type="secondary"> {config.pointSize}px</Text>
       </div>
 

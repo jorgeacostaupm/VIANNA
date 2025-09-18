@@ -4,16 +4,17 @@ import GridLayout, { WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import { useNotification } from "@/utils/cantabAppHooks";
 import HierarchyEditor from "./HierarchyEditor";
 import styles from "@/utils/App.module.css";
-
+import { Apps, APP_NAME } from "@/utils/Constants";
+import { setInit } from "@/features/metadata/metaSlice";
+import useRootStyles from "@/utils/useRootStyles";
+import useNotification from "@/utils/useNotification";
 const ResponsiveGridLayout = WidthProvider(GridLayout);
 
 export default function HierarchyApp() {
-  const [apiNotif, contextHolder] = notification.useNotification();
-
-  useNotification(apiNotif);
+  useRootStyles(setInit, APP_NAME + " - " + Apps.HIERARCHY);
+  const holder = useNotification();
 
   const layout = [
     {
@@ -27,8 +28,8 @@ export default function HierarchyApp() {
 
   return (
     <>
-      {contextHolder}
-      <Layout className={styles.fullscreenLayout}>
+      {holder}
+      <Layout className={styles.fullScreenLayout}>
         <ResponsiveGridLayout
           className="layout"
           layout={layout}

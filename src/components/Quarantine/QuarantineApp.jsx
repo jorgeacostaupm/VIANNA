@@ -12,11 +12,10 @@ import {
 } from "@/features/cantab/cantabSlice";
 import Overview from "../Overview/Overview";
 import QuarantineBar from "./QuarantineBar";
-import { useNotification } from "@/utils/cantabAppHooks";
+import useNotification from "@/utils/useNotification";
 import useRootStyles from "@/utils/useRootStyles";
-import { Apps } from "@/utils/Constants";
+import { navioLabelHeight, APP_NAME, Apps } from "@/utils/Constants";
 import NoDataPlaceholder from "@/utils/NoDataPlaceholder";
-import { navioLabelHeight } from "../../utils/Constants";
 
 const ResponsiveGridLayout = WidthProvider(GridLayout);
 const layout = [
@@ -30,18 +29,12 @@ const layout = [
 ];
 
 export default function QuarantineApp() {
-  const [apiNotif, contextHolder] = notification.useNotification();
-
-  useNotification(apiNotif);
-  useRootStyles(
-    { padding: 0, maxWidth: "100vw" },
-    setInitQuarantine,
-    "Quarantine"
-  );
+  useRootStyles(setInitQuarantine, APP_NAME + " - " + Apps.QUARANTINE);
+  const holder = useNotification();
 
   return (
     <>
-      {contextHolder}
+      {holder}
       <Layout
         style={{
           height: "100vh",
@@ -69,12 +62,11 @@ export default function QuarantineApp() {
 
 const Quarantine = () => {
   const dt = useSelector((state) => state.cantab.quarantineData, shallowEqual);
-
-  const [config, setConfig] = useState({ attrWidth: 30, y0: navioLabelHeight });
+  const config = useSelector((state) => state.dataframe.config);
 
   return (
     <div className={styles.viewContainer}>
-      <QuarantineBar title="Quarantine" config={config} setConfig={setConfig} />
+      <QuarantineBar title="Quarantine" config={config} setConfig={() => {}} />
 
       {dt && dt.length > 0 ? (
         <Overview

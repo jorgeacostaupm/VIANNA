@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Select, Typography, Divider, Tooltip } from "antd";
-import DragDropData from "./DragDropData";
+import DragDropData from "../DragDrop/DragDropData";
 import {
   setGroupVar,
   setTimeVar,
   setIdVar,
 } from "@/features/cantab/cantabSlice";
 import {
-  selectAllVars,
+  selectNavioVars,
   selectCategoricalVars,
   selectNumericVars,
   selectUnkownVars,
@@ -24,7 +24,7 @@ const DataInfoPanel = () => {
   const idVar = useSelector((state) => state.cantab.idVar);
   const groupVar = useSelector((state) => state.cantab.groupVar);
   const timeVar = useSelector((state) => state.cantab.timeVar);
-  const vars = useSelector(selectAllVars);
+  const vars = useSelector(selectNavioVars);
   const numericVars = useSelector(selectNumericVars);
   const categoricalVars = useSelector(selectCategoricalVars);
   const unknownVars = useSelector(selectUnkownVars);

@@ -1,5 +1,4 @@
 import * as yup from "yup";
-import { DataTypes } from "../../../utils/Constants";
 
 export const NodeSchema = yup.object({
   id: yup.number().required("All nodes require ID"),
@@ -9,7 +8,7 @@ export const NodeSchema = yup.object({
     .required("All nodes require a data type.")
     .test(
       "not-to-determine",
-      "Data type must be specified (not 'To determine').",
+      "Data type must be specified (not 'Unknown').",
       (value) => value && value.trim() !== "" && value.trim() !== "determine"
     ),
   desc: yup.string().default(""),

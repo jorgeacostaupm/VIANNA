@@ -12,6 +12,7 @@ let parser = get_parser();
 import { AttributePaste } from "./CustomAggregate";
 
 const CustomMeasure = ({ nodes, formula, save }) => {
+  console.log(nodes);
   const { errors, setFieldError, setFieldValue, values, setTouched } =
     useFormikContext();
 

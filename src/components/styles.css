@@ -1,7 +1,11 @@
-.selectedNode {
-  fill: #ffff33;
-  stroke: #000;
-  stroke-width: 5;
+body {
+  margin: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+.tick {
+  cursor: default;
 }
 
 .fill {
@@ -46,6 +50,11 @@
 
 .descTooltip {
   max-width: 30vw;
+}
+
+.selectedNode {
+  fill: #ffd92f;
+  stroke: #000;
 }
 
 .custom-area:focus {

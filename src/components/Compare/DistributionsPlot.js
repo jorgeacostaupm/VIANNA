@@ -123,7 +123,7 @@ export default class DistributionsPlot {
     } = vis.config;
 
     vis.chart.selectAll(".density").remove();
-    const points = store.getState().cantab.selection.map((point) => ({
+    const points = store.getState().dataframe.selection.map((point) => ({
       id: point[vis.idVar],
       value: point[vis.variable],
       [ORDER_VARIABLE]: point[ORDER_VARIABLE],
@@ -256,6 +256,8 @@ export default class DistributionsPlot {
       vis.xMax
     );
 
+    console.log(vis.selectionGroups, "groups");
+
     vis.densities = vis.selectionGroups.map((group) => {
       const values = vis.data
         .filter(function (d) {
@@ -317,75 +319,82 @@ export default class DistributionsPlot {
         vis.chart.selectAll(".density").classed("tmp-blur", true);
         d3.select(this).classed("tmp-noblur", true).raise();
 
-        const valores = vis.data
-          .filter((pt) => pt.type === d.group)
-          .map((pt) => +pt.value);
-
-        const media = jstat.mean(valores);
-        const sd = jstat.stdev(valores);
-
-        const stats = [
-          ["µ", media],
-          ["–σ", media - sd],
-          ["+σ", media + sd],
-        ];
-
-        stats.forEach(([label, val], i) => {
-          vis.chart
-            .append("line")
-            .attr("class", `stat-line stat-line--${i}`)
-            .attr("x1", vis.xScale(val))
-            .attr("x2", vis.xScale(val))
-            .attr("y1", 0)
-            .attr("y2", vis.height)
-            .attr("stroke", "#000")
-            .attr("stroke-dasharray", i === 0 ? null : "2,2")
-            .attr("stroke-width", 1);
-
-          if (label === "µ") {
-            vis.chart
-              .append("text")
-              .attr("class", `stat-label stat-label--${i}`)
-              .attr("x", vis.xScale(val))
-              .attr("y", -10)
-              .style("font-weight", "bold")
-              .attr("text-anchor", "end")
-              .text(`${label}: ${val.toFixed(2)}`);
-
-            vis.chart
-              .append("text")
-              .attr("class", `stat-label stat-label--${i}`)
-              .attr("x", vis.xScale(val) + 5)
-              .attr("y", -10)
-              .style("font-weight", "bold")
-              .attr("text-anchor", "start")
-              .text(`${"σ"}: ${sd.toFixed(2)}`);
-          } else {
-            vis.chart
-              .append("text")
-              .attr("class", `stat-label stat-label--${i}`)
-              .attr(
-                "x",
-                label === "–σ" ? vis.xScale(val) - 5 : vis.xScale(val) + 5
-              )
-              .attr("y", vis.height * 0.1)
-              .attr("text-anchor", label === "–σ" ? "end" : "start")
-              .text(`${label}: ${val.toFixed(2)}`);
-          }
-        });
+        vis.showStats(d.group);
       })
       .on("mouseout", function () {
         vis.chart
           .selectAll(".density")
           .classed("tmp-blur", false)
           .classed("tmp-noblur", false);
-        vis.chart.selectAll(".stat-line").remove();
-        vis.chart.selectAll(".stat-label").remove();
       });
 
     vis.x_axis_g.call(d3.axisBottom(vis.xScale));
 
     vis.y_axis_g.call(d3.axisLeft(vis.yScale));
+  }
+
+  hideStats() {
+    this.chart.selectAll(".stat-line").remove();
+    this.chart.selectAll(".stat-label").remove();
+  }
+
+  showStats(group) {
+    const valores = this.data
+      .filter((pt) => pt.type === group)
+      .map((pt) => +pt.value);
+
+    const media = jstat.mean(valores);
+    const sd = jstat.stdev(valores);
+
+    const stats = [
+      ["µ", media],
+      ["–σ", media - sd],
+      ["+σ", media + sd],
+    ];
+
+    stats.forEach(([label, val], i) => {
+      this.chart
+        .append("line")
+        .attr("class", `stat-line stat-line--${i}`)
+        .attr("x1", this.xScale(val))
+        .attr("x2", this.xScale(val))
+        .attr("y1", 0)
+        .attr("y2", this.height)
+        .attr("stroke", "#000")
+        .attr("stroke-dasharray", i === 0 ? null : "2,2")
+        .attr("stroke-width", 1);
+
+      if (label === "µ") {
+        this.chart
+          .append("text")
+          .attr("class", `stat-label stat-label--${i}`)
+          .attr("x", this.xScale(val))
+          .attr("y", -10)
+          .style("font-weight", "bold")
+          .attr("text-anchor", "end")
+          .text(`${label}: ${val.toFixed(2)}`);
+
+        this.chart
+          .append("text")
+          .attr("class", `stat-label stat-label--${i}`)
+          .attr("x", this.xScale(val) + 5)
+          .attr("y", -10)
+          .style("font-weight", "bold")
+          .attr("text-anchor", "start")
+          .text(`${"σ"}: ${sd.toFixed(2)}`);
+      } else {
+        this.chart
+          .append("text")
+          .attr("class", `stat-label stat-label--${i}`)
+          .attr(
+            "x",
+            label === "–σ" ? this.xScale(val) - 5 : this.xScale(val) + 5
+          )
+          .attr("y", this.height * 0.1)
+          .attr("text-anchor", label === "–σ" ? "end" : "start")
+          .text(`${label}: ${val.toFixed(2)}`);
+      }
+    });
   }
 
   updateHistogram() {
@@ -565,12 +574,14 @@ export default class DistributionsPlot {
               .filter((dd) => dd.group === d)
               .classed("highlight", true)
               .raise();
+            if (this.estimator === "density") this.showStats(d);
           })
           .on("mouseout", () => {
             vis.chart
               .selectAll(".density")
               .filter((dd) => dd.group === d)
               .classed("highlight", false);
+            if (this.estimator === "density") this.hideStats();
           });
 
         label.on("click", (e) => {

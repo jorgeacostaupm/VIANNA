@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Button, Card, Tooltip } from "antd";
+import React from "react";
 import {
   SettingOutlined,
   InfoCircleFilled,
   CloseOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
+import { ConfigProvider } from "antd";
 import DownloadButton from "./DownloadButton";
-import AutoCloseTooltip from "./AutoCloseTooltip";
 import styles from "./ChartBar.module.css";
-import buttonStyles from "./Buttons.module.css";
-
-export const iconStyle = { fontSize: "25px" };
+import BarButton from "./BarButton";
+import PopoverButton from "./PopoverButton";
 
 export default function ChartBar({
   children,
@@ -22,32 +20,11 @@ export default function ChartBar({
   config,
   setConfig,
 }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const cardRef = useRef(null);
-
   const updateConfig = (field, value) =>
     setConfig((prev) => ({ ...prev, [field]: value }));
 
-  /*   useEffect(() => {
-    function handleClickOutside(event) {
-      if (cardRef.current && !cardRef.current.contains(event.target)) {
-        setIsVisible(false);
-      }
-    }
-
-    if (isVisible) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isVisible]); */
-
   return (
-    <>
+    <ConfigProvider theme={{ token: { fontSize: 20 } }}>
       <div className={styles.chartBar}>
         <div className={`${styles.dragHandle} drag-handle`}></div>
 
@@ -59,20 +36,15 @@ export default function ChartBar({
 
         <div className={styles.right}>
           {setConfig && (
-            <Tooltip
+            <BarButton
               title={
                 config.isSync
                   ? "Disable sync with Explorer selection"
                   : "Enable sync with Explorer selection"
               }
-            >
-              <Button
-                className={buttonStyles.coloredButton}
-                shape="circle"
-                icon={<SyncOutlined spin={config.isSync} style={iconStyle} />}
-                onClick={() => updateConfig("isSync", !config.isSync)}
-              />
-            </Tooltip>
+              icon={<SyncOutlined spin={config.isSync} />}
+              onClick={() => updateConfig("isSync", !config.isSync)}
+            />
           )}
           {svgIds && (
             <DownloadButton
@@ -82,43 +54,28 @@ export default function ChartBar({
           )}
 
           {infoTooltip && (
-            <Tooltip title={infoTooltip}>
-              <Button
-                className={buttonStyles.coloredButton}
-                shape="circle"
-                icon={<InfoCircleFilled style={iconStyle} />}
-              />
-            </Tooltip>
+            <PopoverButton
+              content={infoTooltip}
+              icon={<InfoCircleFilled />}
+              title={"Chart Information"}
+            />
           )}
 
-          <AutoCloseTooltip title="Chart settings">
-            <Button
-              className={buttonStyles.coloredButton}
-              shape="circle"
-              icon={<SettingOutlined style={iconStyle} />}
-              onClick={() => setIsVisible(!isVisible)}
-            />
-          </AutoCloseTooltip>
-
+          <PopoverButton
+            content={children}
+            icon={<SettingOutlined></SettingOutlined>}
+            title={"Chart Settings"}
+          />
           {remove && (
-            <AutoCloseTooltip title="Close view">
-              <Button
-                className={buttonStyles.coloredButton}
-                shape="circle"
-                icon={<CloseOutlined style={iconStyle} />}
-                onClick={remove}
-              />
-            </AutoCloseTooltip>
+            <BarButton
+              title="Close view"
+              icon={<CloseOutlined />}
+              onClick={remove}
+            />
           )}
         </div>
       </div>
-
-      {isVisible && (
-        <Card ref={cardRef} size="small" className={styles.options}>
-          {children}
-        </Card>
-      )}
-    </>
+    </ConfigProvider>
   );
 }
 
@@ -129,14 +86,7 @@ export function NodeBar({ title, remove }) {
 
       <div className={styles.right}>
         {remove && (
-          <AutoCloseTooltip title="Close">
-            <Button
-              className={buttonStyles.coloredButton}
-              shape="circle"
-              icon={<CloseOutlined style={iconStyle} />}
-              onClick={remove}
-            />
-          </AutoCloseTooltip>
+          <BarButton title="Close" icon={<CloseOutlined />} onClick={remove} />
         )}
       </div>
     </div>
@@ -162,3 +112,26 @@ export function Bar({ children, title, drag = true }) {
     </div>
   );
 }
+
+/*   useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        cardRef.current &&
+        !cardRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setIsVisible(false);
+      }
+    }
+
+    if (isVisible) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isVisible]); */

@@ -61,16 +61,14 @@ function Options({ config, setConfig, params, setParams }) {
   };
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-      <Text strong style={{ fontSize: 16 }}>
-        Select Variables:
-      </Text>
+    <Space direction="vertical" size="middle" style={{ width: "400px" }}>
+      <Text strong>Included Variables</Text>
       <Select
         mode="multiple"
         value={params.variables}
         onChange={onVariablesChange}
         placeholder=""
-        style={{ width: "100%" }}
+        style={{ width: "100%", maxWidth: "400px" }}
         disabled={!config.isSync}
       >
         {navioColumns.map((key) => (

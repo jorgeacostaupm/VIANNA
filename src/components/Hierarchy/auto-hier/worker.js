@@ -10,6 +10,7 @@ import {
   pruneTree,
   quantile,
 } from "./semantic/semantic";
+import { DataType } from "@/utils/Constants";
 
 function hierarchicalToMeta(clusters, variables, maxDepth) {
   // start with variables (reset index)
@@ -29,7 +30,7 @@ function hierarchicalToMeta(clusters, variables, maxDepth) {
         desc: "",
         isShown: true,
         type: "aggregation",
-        dtype: "determine",
+        dtype: DataType.UNKNOWN.dtype,
         info: {
           operation: "concat",
           usedAttributes: [],
@@ -50,7 +51,7 @@ function hierarchicalToMeta(clusters, variables, maxDepth) {
         name: `Aggregation ${id}`,
         desc: "",
         type: "aggregation",
-        dtype: "determine",
+        dtype: DataType.UNKNOWN.dtype,
         isShown: true,
         info: {
           operation: "concat",
@@ -72,7 +73,7 @@ function hierarchicalToMeta(clusters, variables, maxDepth) {
     name: "root",
     desc: "Root",
     type: "root",
-    dtype: "none",
+    dtype: DataType.UNKNOWN.dtype,
     isShown: true,
     related: rootConnections,
   };

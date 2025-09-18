@@ -22,10 +22,13 @@ export default function Ranking({ test, remove }) {
   const dimensions = useResizeObserver(ref);
 
   const groupVar = useSelector((state) => state.cantab.groupVar);
-  const selection = useSelector((state) => state.cantab.selection);
+  const selection = useSelector((state) => state.dataframe.selection);
   const numericVars = useSelector(selectNumericVars);
+
   const categoricVars = useSelector(selectCategoricalVars);
   const hierarchy = useSelector((state) => state.metadata.attributes);
+
+  console.log(numericVars, categoricVars);
 
   const [ranking, setRanking] = useState(null);
   const [data, setData] = useState(null);

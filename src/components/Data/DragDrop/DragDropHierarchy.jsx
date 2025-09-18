@@ -7,17 +7,14 @@ import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { FileProcessorFactory } from "./drag";
 
 import buttonStyles from "@/utils/Buttons.module.css";
-import styles from "./Data.module.css";
+import styles from "../Data.module.css";
 import { updateHierarchy } from "@/features/metadata/metaSlice";
+import BarButton from "@/utils/BarButton";
 
-const { Text } = Typography;
-
-const iconStyle = { fontSize: "24px" };
 const ACCEPTED_FORMATS = ".json";
 
 export default function DragAndDropHierarchy() {
   const dispatch = useDispatch();
-  const notApi = useSelector((state) => state.cantab.notApi);
 
   const [filename, setFilename] = useState(null);
   const [parsedData, setParsedData] = useState(null);
@@ -33,42 +30,33 @@ export default function DragAndDropHierarchy() {
     }
   };
 
-  const handleFileDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles?.[0];
+  const handleFileDrop = useCallback((acceptedFiles) => {
+    const file = acceptedFiles?.[0];
 
-      if (!file || !(file instanceof File)) {
-        console.warn("Dropped item is not a valid file:", file);
-        return;
+    if (!file || !(file instanceof File)) {
+      console.warn("Dropped item is not a valid file:", file);
+      return;
+    }
+
+    const reader = new FileReader();
+    const extension = file.name.split(".").pop().toLowerCase();
+
+    reader.onload = () => {
+      try {
+        const processor = FileProcessorFactory.getProcessor(extension);
+        processor.process(reader.result, setParsedData);
+        setFilename(file.name);
+      } catch (error) {
+        console.error("Processing error:", error);
       }
+    };
 
-      const reader = new FileReader();
-      const extension = file.name.split(".").pop().toLowerCase();
-
-      reader.onload = () => {
-        try {
-          const processor = FileProcessorFactory.getProcessor(extension);
-          processor.process(reader.result, setParsedData);
-          setFilename(file.name);
-        } catch (error) {
-          notApi.error({
-            message: "Error processing file",
-            description: error.message,
-            placement: "bottomRight",
-            duration: 3,
-          });
-          console.error("Processing error:", error);
-        }
-      };
-
-      if (["xls", "xlsx"].includes(extension)) {
-        reader.readAsBinaryString(file);
-      } else {
-        reader.readAsText(file);
-      }
-    },
-    [notApi]
-  );
+    if (["xls", "xlsx"].includes(extension)) {
+      reader.readAsBinaryString(file);
+    } else {
+      reader.readAsText(file);
+    }
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: handleFileDrop,
@@ -96,21 +84,12 @@ export default function DragAndDropHierarchy() {
       </div>
 
       <div className={styles.controls}>
-        <Tooltip title="Upload parsed data">
-          <Button
-            shape="circle"
-            className={buttonStyles.coloredButton}
-            style={{
-              height: "auto",
-              padding: "20px",
-              border: "2px solid",
-            }}
-            onClick={handleUpload}
-            disabled={!parsedData}
-          >
-            <UploadOutlined style={iconStyle} />
-          </Button>
-        </Tooltip>
+        <BarButton
+          title="Upload parsed data"
+          onClick={handleUpload}
+          disabled={!parsedData}
+          icon={<UploadOutlined />}
+        />
       </div>
     </>
   );

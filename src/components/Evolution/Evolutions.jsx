@@ -17,7 +17,7 @@ export default function Evolutions({ variable, remove }) {
   const refLegend = useRef(null);
   const dimensions = useResizeObserver(ref);
 
-  const selection = useSelector((s) => s.cantab.selection);
+  const selection = useSelector((s) => s.dataframe.selection);
   const groupVar = useSelector((s) => s.cantab.groupVar);
   const timeVar = useSelector((s) => s.cantab.timeVar);
   const idVar = useSelector((s) => s.cantab.idVar);
@@ -76,7 +76,6 @@ export default function Evolutions({ variable, remove }) {
       <ChartBar
         title={`${variable} Evolution`}
         svgIds={["evolution-lines-legend", "evolution-lines"]}
-        infoTooltip="Evolution plots"
         remove={remove}
         config={config}
         setConfig={setConfig}
@@ -120,42 +119,16 @@ function Options({ config, setConfig }) {
     setConfig((prev) => ({ ...prev, [field]: value }));
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+    <>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Text strong style={{ fontSize: 16 }}>
-          Show Observations
-        </Text>
+        <Text strong>Show Means</Text>
+        <Switch checked={showMeans} onChange={(v) => update("showMeans", v)} />
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Text strong>Show Observations</Text>
         <Switch checked={showObs} onChange={(v) => update("showObs", v)} />
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Text strong style={{ fontSize: 16 }}>
-          Show Means
-        </Text>
-        <Switch checked={showMeans} onChange={(v) => update("showMeans", v)} />
-      </div>
-
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Text strong style={{ fontSize: 16 }}>
-          Custom Y range
-        </Text>
-        <Switch
-          checked={useCustomRange}
-          onChange={(checked) => update("useCustomRange", checked)}
-        />
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        Y min:
-        <InputNumber
-          value={range[0]}
-          onChange={(val) => update("range", [val ?? range[0], range[1]])}
-        />
-        Y max:
-        <InputNumber
-          value={range[1]}
-          onChange={(val) => update("range", [range[0], val ?? range[1]])}
-        />
-      </div>
       <Divider></Divider>
 
       <SliderControl
@@ -186,16 +159,34 @@ function Options({ config, setConfig }) {
         max={10}
         onChange={(v) => update("subjectStrokeWidth", v)}
       />
-    </Space>
+
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Text strong>Custom Y range</Text>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        min:
+        <InputNumber
+          value={range[0]}
+          onChange={(val) => update("range", [val ?? range[0], range[1]])}
+        />
+        max:
+        <InputNumber
+          value={range[1]}
+          onChange={(val) => update("range", [range[0], val ?? range[1]])}
+        />
+        <Switch
+          checked={useCustomRange}
+          onChange={(checked) => update("useCustomRange", checked)}
+        />
+      </div>
+    </>
   );
 }
 
 function SliderControl({ label, value, min, max, onChange }) {
   return (
     <div>
-      <Text strong style={{ fontSize: 16 }}>
-        {label}
-      </Text>
+      <Text strong>{label}</Text>
       <Text type="secondary" style={{ marginLeft: 8 }}>
         {value}px
       </Text>

@@ -17,7 +17,7 @@ export default function Distributions({ variable, remove }) {
   const refLegend = useRef(null);
   const dims = useResizeObserver(ref);
 
-  const selection = useSelector((s) => s.cantab.selection);
+  const selection = useSelector((s) => s.dataframe.selection);
   const groupVar = useSelector((s) => s.cantab.groupVar);
 
   const [data, setData] = useState(null);
@@ -80,12 +80,11 @@ export default function Distributions({ variable, remove }) {
       <ChartBar
         title={`${variable} Distribution`}
         svgIds={data && ["compare-lines-legend", "compare-distr"]}
-        infoTooltip="Distribution plots: density, histogram, swarm"
         remove={remove}
         config={config}
         setConfig={setConfig}
       >
-        <Options config={config} setConfig={setConfig} />
+        <Settings config={config} setConfig={setConfig} />
       </ChartBar>
 
       {!data && <NoDataPlaceholder></NoDataPlaceholder>}
@@ -109,7 +108,7 @@ export default function Distributions({ variable, remove }) {
   );
 }
 
-function Options({ config, setConfig }) {
+function Settings({ config, setConfig }) {
   const {
     estimator,
     nPoints,
@@ -129,31 +128,25 @@ function Options({ config, setConfig }) {
     setConfig((prev) => ({ ...prev, [field]: value }));
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-      <div>
-        <Text strong style={{ fontSize: 16 }}>
-          Select graph:
-        </Text>
-        <Radio.Group
-          className="custom-red-radio"
-          style={{ marginLeft: 16, color: "red" }}
-          optionType="button"
-          buttonStyle="solid"
-          value={estimator}
-          onChange={(e) => update("estimator", e.target.value)}
-        >
-          <Radio.Button value="density">Density</Radio.Button>
-          <Radio.Button value="histogram">Histogram</Radio.Button>
-          <Radio.Button value="swarm">Swarm Plot</Radio.Button>
-        </Radio.Group>
-      </div>
+    <>
+      <Text strong>Graph</Text>
+      <Radio.Group
+        className="custom-red-radio"
+        style={{ marginLeft: 16, color: "red" }}
+        optionType="button"
+        buttonStyle="solid"
+        value={estimator}
+        onChange={(e) => update("estimator", e.target.value)}
+      >
+        <Radio.Button value="density">Density</Radio.Button>
+        <Radio.Button value="histogram">Histogram</Radio.Button>
+        <Radio.Button value="swarm">Swarm Plot</Radio.Button>
+      </Radio.Group>
 
       {estimator !== "swarm" && (
         <>
           <div>
-            <Text strong style={{ fontSize: 16 }}>
-              Bins:
-            </Text>
+            <Text strong>Bins:</Text>
             <Text type="secondary"> {nPoints}</Text>
             <Slider
               min={1}
@@ -166,9 +159,7 @@ function Options({ config, setConfig }) {
           {estimator === "density" && (
             <>
               <div>
-                <Text strong style={{ fontSize: 16 }}>
-                  Margin:
-                </Text>
+                <Text strong>Margin:</Text>
                 <Text type="secondary"> {(margin * 100).toFixed(0)}%</Text>
                 <Slider
                   min={0}
@@ -180,29 +171,27 @@ function Options({ config, setConfig }) {
                 />
               </div>
 
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Text strong style={{ fontSize: 16 }}>
-                  Custom X range
-                </Text>
-                <Switch
-                  checked={useCustomRange}
-                  onChange={(checked) => update("useCustomRange", checked)}
-                />
+              <div style={{ display: "flex", gap: 20 }}>
+                <Text strong>Custom X range</Text>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                X min:
+                min:
                 <InputNumber
                   value={range[0]}
                   onChange={(val) =>
                     update("range", [val ?? range[0], range[1]])
                   }
                 />
-                X max:
+                max:
                 <InputNumber
                   value={range[1]}
                   onChange={(val) =>
                     update("range", [range[0], val ?? range[1]])
                   }
+                />
+                <Switch
+                  checked={useCustomRange}
+                  onChange={(checked) => update("useCustomRange", checked)}
                 />
               </div>
             </>
@@ -213,9 +202,7 @@ function Options({ config, setConfig }) {
       {estimator === "swarm" && (
         <>
           <div>
-            <Text strong style={{ fontSize: 16 }}>
-              Point size:
-            </Text>
+            <Text strong>Point size:</Text>
             <Text type="secondary"> {pointSize}px</Text>
             <Slider
               min={1}
@@ -227,9 +214,7 @@ function Options({ config, setConfig }) {
           </div>
 
           <div>
-            <Text strong style={{ fontSize: 16 }}>
-              X force:
-            </Text>
+            <Text strong>X force:</Text>
             <Text type="secondary"> {xForce.toFixed(2)}</Text>
             <Slider
               min={0}
@@ -241,9 +226,7 @@ function Options({ config, setConfig }) {
           </div>
 
           <div>
-            <Text strong style={{ fontSize: 16 }}>
-              Y force:
-            </Text>
+            <Text strong>Y force:</Text>
             <Text type="secondary"> {yForce.toFixed(2)}</Text>
             <Slider
               min={0}
@@ -255,9 +238,7 @@ function Options({ config, setConfig }) {
           </div>
 
           <div>
-            <Text strong style={{ fontSize: 16 }}>
-              Collide force:
-            </Text>
+            <Text strong>Collide force:</Text>
             <Text type="secondary"> {collideForce.toFixed(2)}</Text>
             <Slider
               min={0}
@@ -269,9 +250,7 @@ function Options({ config, setConfig }) {
           </div>
 
           <div>
-            <Text strong style={{ fontSize: 16 }}>
-              Alpha:
-            </Text>
+            <Text strong>Alpha:</Text>
             <Text type="secondary"> {alpha.toFixed(2)}</Text>
             <Slider
               min={0}
@@ -283,9 +262,7 @@ function Options({ config, setConfig }) {
           </div>
 
           <div>
-            <Text strong style={{ fontSize: 16 }}>
-              Alpha decay:
-            </Text>
+            <Text strong>Alpha decay:</Text>
             <Text type="secondary"> {alphaDecay.toFixed(2)}</Text>
             <Slider
               min={0}
@@ -297,9 +274,7 @@ function Options({ config, setConfig }) {
           </div>
 
           <div>
-            <Text strong style={{ fontSize: 16 }}>
-              Timeout (ms):
-            </Text>
+            <Text strong>Timeout (ms):</Text>
             <Text type="secondary"> {timeout}</Text>
             <Slider
               min={0}
@@ -311,6 +286,6 @@ function Options({ config, setConfig }) {
           </div>
         </>
       )}
-    </Space>
+    </>
   );
 }

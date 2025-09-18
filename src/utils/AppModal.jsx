@@ -28,12 +28,10 @@ export default function AppModal({
       <Tooltip title={tooltipTitle}>
         <Button
           shape="circle"
-          style={{ height: "auto", padding: padding }}
-          className={styles.coloredButton}
+          className={styles.barButton}
           onClick={showModal}
-        >
-          {icon && icon}
-        </Button>
+          icon={icon}
+        ></Button>
       </Tooltip>
       <Modal
         title={title}

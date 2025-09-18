@@ -15,7 +15,7 @@ const { Text } = Typography;
 export default function PCA({ remove }) {
   const ref = useRef(null);
   const dimensions = useResizeObserver(ref);
-  const selection = useSelector((s) => s.cantab.selection);
+  const selection = useSelector((s) => s.dataframe.selection);
 
   const [data, setData] = useState(null);
   const [config, setConfig] = useState({
@@ -51,7 +51,7 @@ export default function PCA({ remove }) {
         config={config}
         setConfig={setConfig}
       >
-        <Options
+        <Settings
           config={config}
           setConfig={setConfig}
           params={params}
@@ -65,8 +65,8 @@ export default function PCA({ remove }) {
   );
 }
 
-function Options({ config, setConfig, params, setParams }) {
-  const data = useSelector((state) => state.cantab.selection || []);
+function Settings({ config, setConfig, params, setParams }) {
+  const data = useSelector((state) => state.dataframe.selection || []);
   const navioColumns = useSelector(
     (state) => state.dataframe.navioColumns || []
   );
@@ -96,32 +96,37 @@ function Options({ config, setConfig, params, setParams }) {
   };
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-      <Text strong style={{ fontSize: 16 }}>
-        Group variable:
-      </Text>
-      <Select
-        value={config.groupVar}
-        onChange={(v) => update("groupVar", v)}
-        placeholder="Select variable"
-        style={{ width: "100%" }}
+    <Space direction="vertical" size="middle" style={{ width: "400px" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          gap: "15px",
+        }}
       >
-        {navioColumns.map((key) => (
-          <Option key={key} value={key}>
-            {key}
-          </Option>
-        ))}
-      </Select>
+        <Text strong>Grouping variable</Text>
+        <Select
+          value={config.groupVar}
+          onChange={(v) => update("groupVar", v)}
+          placeholder="Select variable"
+          style={{ flex: 1 }}
+        >
+          {navioColumns.map((key) => (
+            <Option key={key} value={key}>
+              {key}
+            </Option>
+          ))}
+        </Select>
+      </div>
 
-      <Text strong style={{ fontSize: 16 }}>
-        Select Variables:
-      </Text>
+      <Text strong>Included Variables</Text>
       <Select
         mode="multiple"
         value={params.variables}
         onChange={onVariablesChange}
         placeholder="Select variables"
-        style={{ width: "100%" }}
+        style={{ width: "100%", maxWidth: "400px" }}
         disabled={!config.isSync}
       >
         {navioColumns.map((key) => (
@@ -130,18 +135,15 @@ function Options({ config, setConfig, params, setParams }) {
           </Option>
         ))}
       </Select>
-
       <div>
-        <Text strong style={{ fontSize: 16 }}>
-          Points radius:
-        </Text>
+        <Text strong>Points radius:</Text>
         <Text type="secondary"> {config.pointSize}px</Text>
       </div>
       <Slider
         min={1}
         max={20}
-        value={config.pointSize}
-        onChange={(v) => update("pointSize", v)}
+        defaultValue={config.pointSize}
+        onChangeComplete={(v) => update("pointSize", v)}
         style={{ width: "100%" }}
       />
     </Space>

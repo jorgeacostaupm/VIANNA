@@ -254,14 +254,12 @@ export function getPCAData(data, params) {
     return { pc: pc + 1, variance: explained[pc], variables: sorted };
   });
 
-  const summary = topVars
-    .map(
-      ({ pc, variance, variables }) =>
-        `${pc === 1 ? "X" : "Y"} explains ${(variance * 100).toFixed(
-          2
-        )}% of variance, influenced by ${variables.join(", ")}.`
-    )
-    .join(" ");
+  const summary = topVars.map(
+    ({ pc, variance, variables }) =>
+      `${pc === 1 ? "X" : "Y"} explains ${(variance * 100).toFixed(
+        2
+      )}% of variance, influenced by ${variables.join(", ")}. \n`
+  );
 
   const points = projected.map(([pc1, pc2], i) => ({
     pc1,
@@ -347,7 +345,7 @@ export function getDistributionData(data, column, groupVar) {
         !Number.isFinite(value)
       ) {
         errors.push(
-          `Invalid value: "${value}" in column "${column}" (group "${type}"`
+          `Invalid value: "${value}" in column "${column}" (group "${type})"`
         );
       } else {
         resultArray.push({ type, value });
@@ -360,6 +358,8 @@ export function getDistributionData(data, column, groupVar) {
       `Invalid values found:\n` + errors.map((msg) => ` • ${msg}`).join("\n")
     );
   }
+
+  console.log(resultArray);
 
   return resultArray;
 }
@@ -622,6 +622,162 @@ export function generateFileName(baseName = "data") {
   return fileName;
 }
 
+export function hasEmptyValues(data, state) {
+  if (!data || data.length === 0) return false;
+
+  const hasEmptyValues = data.some((row) =>
+    Object.values(row).some(
+      (value) =>
+        value === null ||
+        value === undefined ||
+        (typeof value === "number" && isNaN(value))
+    )
+  );
+
+  console.log("hasEmpty", hasEmptyValues);
+  state.hasEmptyValues = hasEmptyValues;
+  if (hasEmptyValues) {
+    const configuration = {
+      message: "Selection has empty values",
+      type: "warning",
+    };
+    publish("notification", configuration);
+  }
+}
+
+export function pickColumns(items, columns) {
+  if (!Array.isArray(items)) return []; // comprueba null, undefined o no array
+
+  return items.map((item) => {
+    const obj = { [ORDER_VARIABLE]: item[ORDER_VARIABLE] };
+    columns.forEach((col) => {
+      if (Object.prototype.hasOwnProperty.call(item, col)) {
+        obj[col] = item[col];
+      }
+    });
+    return obj;
+  });
+}
+
+export const getVariableTypes = (data, options = {}) => {
+  const {
+    maxNumDistictForCategorical = 10,
+    maxNumDistictForOrdered = 90,
+    howManyItemsShouldSearchForNotNull = 100,
+    addAllAttribsIncludeObjects = false,
+    addAllAttribsIncludeArrays = false,
+  } = options;
+
+  const result = {};
+
+  if (!data || data.length === 0) {
+    return result;
+  }
+
+  const columnNames = Object.keys(data[0]);
+
+  // Función para obtener el valor de un atributo (soporta funciones)
+  const getAttrib = (item, attrib) => {
+    if (typeof attrib === "function") {
+      try {
+        return attrib(item);
+      } catch (e) {
+        return undefined;
+      }
+    } else {
+      return item[attrib];
+    }
+  };
+
+  // Función para encontrar el primer valor no nulo
+  const findNotNull = (data, attr) => {
+    let val;
+    for (
+      let i = 0;
+      i < howManyItemsShouldSearchForNotNull && i < data.length;
+      i++
+    ) {
+      val = getAttrib(data[i], attr);
+      if (val !== null && val !== undefined && val !== "") {
+        return val;
+      }
+    }
+    return val;
+  };
+
+  columnNames.forEach((col) => {
+    if (col === "__seqId" || col === "__i" || col === "selected") {
+      return; // Saltar atributos internos de Navio
+    }
+
+    const firstNotNull = findNotNull(data, col);
+
+    if (
+      firstNotNull === null ||
+      firstNotNull === undefined ||
+      firstNotNull === ""
+    ) {
+      // Contar valores distintos en la muestra
+      const distinctValues = new Set(
+        data
+          .slice(0, howManyItemsShouldSearchForNotNull)
+          .map((d) => getAttrib(d, col))
+          .filter((v) => v !== null && v !== undefined && v !== "")
+      ).size;
+
+      if (distinctValues < maxNumDistictForCategorical) {
+        result[col] = "string";
+      } else if (distinctValues < maxNumDistictForOrdered) {
+        result[col] = "number";
+      } else {
+        result[col] = "string";
+      }
+    } else if (typeof firstNotNull === "number") {
+      // Verificar si hay valores negativos para divergente
+      const hasNegative = data.some((d) => {
+        const val = getAttrib(d, col);
+        return val !== null && val !== undefined && val < 0;
+      });
+
+      result[col] = hasNegative ? "number" : "number";
+    } else if (firstNotNull instanceof Date) {
+      result[col] = "date";
+    } else if (typeof firstNotNull === "boolean") {
+      result[col] = "string";
+    } else if (Array.isArray(firstNotNull)) {
+      if (addAllAttribsIncludeArrays) {
+        result[col] = "string";
+      }
+      // Si no se incluyen arrays, no se agrega al resultado
+    } else if (typeof firstNotNull === "object") {
+      if (addAllAttribsIncludeObjects) {
+        result[col] = "string";
+      }
+      // Si no se incluyen objetos, no se agrega al resultado
+    } else {
+      // Para otros tipos (principalmente strings), contar valores distintos
+      const distinctValues = new Set(
+        data
+          .slice(0, howManyItemsShouldSearchForNotNull)
+          .map((d) => getAttrib(d, col))
+          .filter((v) => v !== null && v !== undefined && v !== "")
+      ).size;
+
+      if (distinctValues < maxNumDistictForCategorical) {
+        result[col] = "string";
+      } else if (distinctValues < maxNumDistictForOrdered) {
+        result[col] = "number";
+      } else {
+        result[col] = "string";
+      }
+    }
+  });
+
+  console.log("resrse", result);
+
+  return result;
+};
+
 // TOOLTIP FUNCTIONS
 
 export function moveTooltip(e, tooltip, chart) {
@@ -635,63 +791,6 @@ export function moveTooltip(e, tooltip, chart) {
 }
 
 export function renderContextTooltip(tooltip, d, idVar) {}
-// NOTIFICATION FUNCTIONS
-
-let notApiInstance;
-
-export const useNotApi = () => {
-  return notApiInstance;
-};
-
-export const setNotApi = (api) => {
-  notApiInstance = api;
-};
-
-let notificationHandler = null;
-
-export const subscribeToNotification = (api) => {
-  if (notificationHandler) return;
-
-  notificationHandler = (data) => {
-    api.open({
-      message: data.message || "Notification",
-      description: data.description || "",
-      type: data.type || "info", // 'info', 'success', 'warning', 'error'
-      placement: data.placement || "bottomRight",
-      duration: data.duration || data.type === "error" ? null : 3,
-      pauseOnHover: data.pauseOnHover || false,
-      showProgress: data.pauseOnHover || false,
-    });
-  };
-
-  pubsub.subscribe("notification", notificationHandler);
-};
-
-export const unsubscribeFromNotification = () => {
-  if (notificationHandler) {
-    pubsub.unsubscribe("notification", notificationHandler);
-    notificationHandler = null;
-  }
-};
-
-export function showNotification(
-  type,
-  message,
-  description,
-  pauseOnHover = false,
-  showProgress = false,
-  duration = 2
-) {
-  useNotApi()[type]({
-    message,
-    description,
-    placement: "topRight",
-    duration,
-    pauseOnHover,
-    showProgress,
-  });
-  return;
-}
 
 // add functions to arquero :)
 import { addFunction } from "arquero";

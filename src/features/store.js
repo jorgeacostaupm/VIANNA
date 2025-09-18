@@ -9,6 +9,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
   createStateSyncMiddleware,
   withReduxStateSync,
+  initStateWithPrevTab,
 } from "redux-state-sync";
 
 const root_reducer = combineReducers({
@@ -31,5 +32,7 @@ const store = configureStore({
     return middlewares;
   },
 });
+
+initStateWithPrevTab(store);
 
 export default store;

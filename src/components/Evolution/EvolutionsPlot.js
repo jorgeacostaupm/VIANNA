@@ -79,7 +79,7 @@ export default class EvolutionsPlot {
     vis.selectionGroups = store.getState().cantab.selectionGroups;
     vis.groups = store.getState().cantab.groups;
 
-    vis.selection = store.getState().cantab.selection;
+    vis.selection = store.getState().dataframe.selection;
     vis.timestamps = store.getState().cantab.selectionTimestamps;
     vis.timestamps = vis.timestamps.map((t) => "" + t).sort();
 

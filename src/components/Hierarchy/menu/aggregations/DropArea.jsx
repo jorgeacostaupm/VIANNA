@@ -188,7 +188,7 @@ const DropArea = ({
         <Tooltip title={"Add all variables"}>
           <Button
             shape="circle"
-            className={buttonStyles.coloredButton}
+            className={buttonStyles.barButton}
             onClick={() => modeAllNodes(true)}
             style={{
               height: "auto",
@@ -204,7 +204,7 @@ const DropArea = ({
 
         <Tooltip title={"Delete all variables"}>
           <Button
-            className={buttonStyles.coloredButton}
+            className={buttonStyles.barButton}
             shape="circle"
             onClick={() => modeAllNodes(false)}
             style={{
