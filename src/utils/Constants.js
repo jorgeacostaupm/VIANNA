@@ -19,7 +19,7 @@ export const DATASETS = {
     filename: "Test data",
   },
   dev: {
-    dataPath: "./vis/csv/realData.csv",
+    dataPath: "./vis/csv/private/realData.csv",
     hierarchyPath: "./vis/hierarchies/realDataHier.json",
     descriptionsPath: "./vis/descriptions/descriptions.csv",
     filename: "AI-Mind data",

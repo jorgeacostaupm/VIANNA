@@ -24,5 +24,4 @@ dist-ssr
 *.sw?
 
 # private data
-
-public/vis/csv/realData.csv
+public/vis/csv/private/*
