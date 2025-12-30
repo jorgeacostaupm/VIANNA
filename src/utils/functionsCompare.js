@@ -1,3 +1,4 @@
+import store from "@/store/store";
 import * as aq from "arquero";
 
 export function getDistributionData(data, column, groupVar, timeVar, idVar) {
@@ -55,8 +56,9 @@ export function getDistributionData(data, column, groupVar, timeVar, idVar) {
 
 export function getCategoricDistributionData(selection, variable, groupVar) {
   const groups = [...new Set(selection.map((item) => item[groupVar]))];
-  const categories = [...new Set(selection.map((item) => item[variable]))];
-  console.log(groups, categories);
+
+  const df = store.getState().dataframe.present.dataframe;
+  const categories = [...new Set(df.map((item) => item[variable]))];
 
   const counts = {};
   groups.forEach((g) => {
@@ -74,6 +76,10 @@ export function getCategoricDistributionData(selection, variable, groupVar) {
     }
   });
 
+  const categoriesWithValues = categories.filter((c) =>
+    groups.some((g) => counts[g][c] > 0)
+  );
+
   const chartData = groups.map((g) => {
     const obj = { [groupVar]: g };
     categories.forEach((c) => {
@@ -82,5 +88,11 @@ export function getCategoricDistributionData(selection, variable, groupVar) {
     return obj;
   });
 
-  return { chartData, categories, catVar: variable, groupVar };
+  return {
+    chartData,
+    categories,
+    categoriesWithValues,
+    catVar: variable,
+    groupVar,
+  };
 }

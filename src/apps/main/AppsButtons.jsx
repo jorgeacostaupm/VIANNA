@@ -8,11 +8,11 @@ import {
   BugFilled,
 } from "@ant-design/icons";
 
-import { setInit as setInitMetadata } from "@/store/slices/metaSlice";
+import { setInitQuarantine } from "@/store/slices/cantabSlice";
 import { setInit as setInitCompare } from "@/store/slices/compareSlice";
+import { setInit as setInitMetadata } from "@/store/slices/metaSlice";
 import { setInit as setInitEvolution } from "@/store/slices/evolutionSlice";
 import { setInit as setInitCorrelation } from "@/store/slices/correlationSlice";
-import { setInitQuarantine } from "@/store/slices/cantabSlice";
 
 import LinkButton from "@/utils/ButtonLink";
 import DataManagementButton from "@/components/Data/Buttons/DataManagementButton";

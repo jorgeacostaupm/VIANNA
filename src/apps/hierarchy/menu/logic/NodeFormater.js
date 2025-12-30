@@ -17,9 +17,7 @@ class FormulaError extends Error {
 }
 
 const validateArguments = (functionName, actualArgs, expectedArgs) => {
-  console.log(functionName, actualArgs, expectedArgs);
   if (expectedArgs >= 0 && actualArgs.length !== expectedArgs) {
-    console.log("THROWS ERROR");
     throw new FormulaError(
       `Function "${functionName}" expects ${expectedArgs} argument(s), got ${actualArgs.length}`
     );
@@ -154,7 +152,6 @@ export default class NodeFormatter {
     }
 
     if (functionName === "zscoreByValues") {
-      console.log("ARGS", args);
       const columnName = extractColumnName(args[0], functionName);
       const mean = args[1];
       const stdev = args[2];

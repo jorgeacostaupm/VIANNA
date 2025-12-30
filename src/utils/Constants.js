@@ -15,14 +15,12 @@ export const DATASETS = {
   prod: {
     dataPath: "./vis/csv/testData.csv",
     hierarchyPath: "./vis/hierarchies/testDataHier.json",
-    descriptionsPath: "./vis/descriptions/descriptions.csv",
-    filename: "Test data",
+    descriptionsPath: "./vis/descriptions/ai-mind variable descriptions.csv",
   },
   dev: {
-    dataPath: "./vis/csv/private/realData.csv",
-    hierarchyPath: "./vis/hierarchies/realDataHier.json",
-    descriptionsPath: "./vis/descriptions/descriptions.csv",
-    filename: "AI-Mind data",
+    dataPath: "./vis/csv/private/ai-mind data Sept 2025.csv",
+    hierarchyPath: "./vis/hierarchies/ai-mind hierarchy.json",
+    descriptionsPath: "./vis/descriptions/ai-mind variable descriptions.csv",
   },
 };
 

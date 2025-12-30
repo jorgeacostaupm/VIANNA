@@ -17,7 +17,6 @@ export default function ChartSelector({ addView }) {
         onChange={(v) => setChart(v)}
         placeholder="Select graph"
         style={{ width: "300px" }}
-        size="large"
       >
         {Object.keys(registry).map((v) => (
           <Option key={v} value={v}>

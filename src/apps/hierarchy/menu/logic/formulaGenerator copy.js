@@ -135,7 +135,6 @@ export const SPECIAL_FUNCTIONS = {
 export function buildAggregation(tokens) {
   let nodes = [];
   let columnOperations = [];
-  console.log("HERE", tokens);
   function format_op(attr) {
     let output = "";
     switch (attr["data"]) {

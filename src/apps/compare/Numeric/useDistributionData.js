@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { pubsub } from "@/utils/pubsub";
+import { selectVars } from "@/store/slices/cantabSlice";
 const { publish } = pubsub;
 
 export default function useDistributionData(getData, variable, isSync = true) {
@@ -10,9 +11,10 @@ export default function useDistributionData(getData, variable, isSync = true) {
   const groupVar = useSelector((s) => s.cantab.present.groupVar);
   const timeVar = useSelector((s) => s.cantab.present.timeVar);
   const idVar = useSelector((s) => s.cantab.present.idVar);
+  const variables = useSelector(selectVars);
 
   useEffect(() => {
-    if (!isSync) return;
+    if (!isSync || !variables.includes(variable)) return;
 
     try {
       const result = getData(selection, variable, groupVar, timeVar, idVar);

@@ -17,7 +17,7 @@ export default function useGroupedBarChart({
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
 
     const { width, height } = dimensions;
-    const { chartData, categories, groupVar } = data;
+    const { chartData, categories, categoriesWithValues, groupVar } = data;
 
     d3.select(chartRef.current).selectAll("*").remove();
     d3.select(legendRef.current).selectAll("*").remove();
@@ -46,6 +46,8 @@ export default function useGroupedBarChart({
       .range([0, chartWidth])
       .padding(0.2);
 
+    const color = d3.scaleOrdinal().domain(categories).range(colorScheme);
+
     const x1 = d3
       .scaleBand()
       .domain(categories.sort())
@@ -59,14 +61,11 @@ export default function useGroupedBarChart({
       .nice()
       .range([chartHeight, 0]);
 
-    const color = d3.scaleOrdinal().domain(categories).range(colorScheme);
-
     chart
       .append("g")
       .attr("transform", `translate(0,${chartHeight})`)
       .call(d3.axisBottom(x0))
-      .selectAll("text")
-      .style("text-anchor", "end");
+      .selectAll("text");
 
     chart.append("g").call(d3.axisLeft(y).ticks(null, "d"));
 
@@ -102,8 +101,7 @@ export default function useGroupedBarChart({
         d3.select(event.currentTarget).attr("opacity", 1);
       });
 
-    console.log(categories, categories.sort());
-    renderLegend(legend, categories.sort(), color);
+    renderLegend(legend, categoriesWithValues, color);
   }, [data, config, dimensions]);
 }
 

@@ -84,7 +84,7 @@ export function NodeBar({ title, remove }) {
   );
 }
 
-export function Bar({ children, title, drag = true }) {
+export function Bar({ children, title }) {
   return (
     <div className={styles.chartBar}>
       <div className={`${styles.dragHandle} drag-handle ${styles.chartTitle}`}>
@@ -95,26 +95,3 @@ export function Bar({ children, title, drag = true }) {
     </div>
   );
 }
-
-/*   useEffect(() => {
-    function handleClickOutside(event) {
-      if (
-        cardRef.current &&
-        !cardRef.current.contains(event.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target)
-      ) {
-        setIsVisible(false);
-      }
-    }
-
-    if (isVisible) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isVisible]); */

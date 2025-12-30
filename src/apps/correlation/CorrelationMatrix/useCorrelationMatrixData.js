@@ -43,7 +43,6 @@ export default function useCorrelationMatrixData(
 
 function getInfo(correlations, nTop) {
   let info = "";
-  console.log(correlations);
   const topCorrelations = correlations
     .filter((corr) => corr.x !== corr.y)
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))

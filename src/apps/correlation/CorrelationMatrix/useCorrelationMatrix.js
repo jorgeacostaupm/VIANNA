@@ -13,12 +13,10 @@ export default function useCorrelationMatrix({ chartRef, data, config }) {
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current) return;
 
-    // Después de definir variables, antes de calcular márgenes:
     const allVars = data.map((d) => d.x);
     const varsSet = new Set(allVars);
     const variables = Array.from(varsSet);
 
-    // Crear SVG temporal con misma rotación que usas
     const tempContainer = document.createElement("div");
     tempContainer.style.position = "absolute";
     tempContainer.style.visibility = "hidden";
@@ -39,34 +37,24 @@ export default function useCorrelationMatrix({ chartRef, data, config }) {
     text.setAttribute("transform", "rotate(-45)");
     tempSvg.appendChild(text);
 
-    // Forzar renderizado
     const bbox = text.getBBox();
 
-    // Calcular espacio necesario hacia arriba
-    // bbox.y es la coordenada Y de la esquina superior izquierda del texto rotado
-    // Si es negativo, significa que se extiende arriba del punto de origen (0,0)
     const upwardExtension = bbox.y < 0 ? Math.abs(bbox.y) : 0;
 
-    // Tu offset actual es -10px
     const totalTopSpace = upwardExtension + 10;
 
-    // Limpiar
     document.body.removeChild(tempContainer);
 
-    // Margen final
     const margin = {
-      top: Math.max(100, totalTopSpace + 30) + 20, // +30px padding adicional
+      top: Math.max(100, totalTopSpace + 30) + 20,
       right: 100,
       bottom: 40,
       left: 140,
     };
 
-    // Ajustar left margin si el texto rotado se extiende mucho a la izquierda también
     if (bbox.x < 0) {
       margin.left = Math.max(margin.left, Math.abs(bbox.x) + 50);
     }
-
-    console.log("MARGIN:", margin);
 
     const { range } = config;
 

@@ -13,14 +13,11 @@ export default function useHistogram({ chartRef, legendRef, data, config }) {
   const [hide, setHide] = useState([]);
   const [blur, setBlur] = useState(selectionGroups);
 
-  console.log("config", config);
-
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
 
     const { width, height } = dimensions;
     const { nPoints } = config;
-    console.log(nPoints);
     const [xMin, xMax] = getNumericDomain(data);
     const pointEstimator = computeEstimator(nPoints, xMin, xMax);
     const densities = getDensities(data, selectionGroups, pointEstimator);
@@ -156,16 +153,6 @@ function getDensities(data, selectionGroups, pointEstimator) {
 }
 
 function getYMax(densities) {
-  console.log(
-    densities,
-    Math.max(
-      ...densities
-        .map((d) => d.value)
-        .flat()
-        .map((d) => d[1])
-    )
-  );
-
   return Math.max(
     ...densities
       .map((d) => d.value)

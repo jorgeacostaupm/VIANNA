@@ -32,6 +32,11 @@ export const selectAggregationNodes = createSelector(
     hierarchy.filter((n) => n.type === "aggregation").map((n) => n.name)
 );
 
+export const selectDescribedNodes = createSelector(
+  [selectHierarchy],
+  (hierarchy) => hierarchy.filter((n) => n.desc).map((n) => n.name)
+);
+
 /* export const selectNavioColumns = createSelector(
   [selectMetadataAttributes],
   (attrs) => {

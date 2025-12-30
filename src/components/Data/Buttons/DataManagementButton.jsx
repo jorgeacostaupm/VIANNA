@@ -6,6 +6,7 @@ import TabData from "../Tabs/TabData";
 import TabHierarchy from "../Tabs/TabHierarchy";
 import styles from "../Data.module.css";
 import PanelButton from "@/utils/PanelButton";
+import TabDescriptions from "../Tabs/TabDescriptions";
 
 const items = [
   {
@@ -18,11 +19,11 @@ const items = [
     label: "Hierarchy",
     children: <TabHierarchy />,
   },
-  /*   {
-    key: "test",
-    label: "Custom Tests",
-    children: <TabTest />,
-  }, */
+  {
+    key: "descriptions",
+    label: "Descriptions",
+    children: <TabDescriptions />,
+  },
 ];
 
 export default function DataManagementButton() {

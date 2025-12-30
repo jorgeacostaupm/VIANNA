@@ -32,7 +32,6 @@ function Chart({ data, config, id }) {
 export default function LineChart({ id, variable, remove }) {
   const [config, setConfig] = useState(defaultConfig);
   const [data] = useEvolutionData(variable, config.isSync);
-  console.log(data);
 
   const chart = useMemo(() => {
     if (!data || data.length === 0) {

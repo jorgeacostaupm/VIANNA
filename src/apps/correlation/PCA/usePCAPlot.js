@@ -50,12 +50,8 @@ export default function usePCAPlot({ chartRef, legendRef, data, config }) {
         .style("display", "none");
     }
 
-    console.log(data);
-
     const xExtent = d3.extent(data, (d) => d.pc1);
     const yExtent = d3.extent(data, (d) => d.pc2);
-
-    console.log(xExtent, groupVar);
 
     const xScale = d3
       .scaleLinear()

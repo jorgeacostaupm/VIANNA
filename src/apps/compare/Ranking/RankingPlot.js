@@ -1,6 +1,5 @@
 import * as d3 from "d3";
 import store from "@/store/store";
-import { addFilteringVariable } from "@/store/slices/compareSlice";
 import { formatDecimal, moveTooltip } from "@/utils/functions";
 
 export default class RankingPlot {
@@ -13,7 +12,6 @@ export default class RankingPlot {
     this.filterList = [];
     this.xAccesor = (d) => d.variable;
     this.yAccesor = (d) => Math.abs(+d.value);
-    this.addFilteringVariable = addFilteringVariable;
     this.initVis();
   }
 

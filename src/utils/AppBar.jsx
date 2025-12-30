@@ -1,58 +1,21 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Row, Space, Popover } from "antd";
+import React, { useRef } from "react";
+import { Row, Space, Popover, Col } from "antd";
 import styles from "./App.module.css";
 
 export default function AppBar({ description = null, children }) {
-  const containerRef = useRef(null);
-  const titleRef = useRef(null);
-  const spaceRef = useRef(null);
-  const [hideTitle, setHideTitle] = useState(false);
-
-  const checkOverlap = useCallback(() => {
-    const container = containerRef.current;
-    const titleEl = titleRef.current;
-    const spaceEl = spaceRef.current;
-
-    if (!container || !titleEl || !spaceEl) return;
-
-    const containerWidth = container.offsetWidth;
-    const titleWidth = titleEl.offsetWidth;
-    const spaceWidth = spaceEl.offsetWidth;
-
-    const margin = 40;
-    const totalNeeded = titleWidth + spaceWidth + margin;
-
-    setHideTitle(totalNeeded > containerWidth);
-  }, []);
-
-  useEffect(() => {
-    const resizeObserver = new ResizeObserver(checkOverlap);
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-    if (titleRef.current) {
-      resizeObserver.observe(titleRef.current);
-    }
-    if (spaceRef.current) {
-      resizeObserver.observe(spaceRef.current);
-    }
-
-    window.addEventListener("resize", checkOverlap);
-
-    checkOverlap();
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", checkOverlap);
-    };
-  }, [checkOverlap]);
-
   return (
-    <div className={styles.bar} ref={containerRef}>
-      <Row align="middle">
+    <Row
+      align="middle"
+      wrap={false}
+      style={{
+        background: "var(--primary-color)",
+        padding: "0 16px",
+        height: 65,
+      }}
+    >
+      {/* Logo fijo */}
+      <Col flex="none">
         <Popover
-          className={styles.title}
           content={
             <div
               style={{
@@ -68,27 +31,29 @@ export default function AppBar({ description = null, children }) {
           trigger="hover"
           placement="bottomRight"
         >
-          <div
-            ref={titleRef}
-            style={{ visibility: hideTitle ? "hidden" : "visible" }}
-          >
-            <img src="./favicon_no_bg.svg" alt="VANA" />
-          </div>
+          <img src="./app_name.svg" alt="VANA" />
         </Popover>
+      </Col>
 
-        <Space
-          ref={spaceRef}
-          style={{
-            background: "var(--primary-color)",
-            right: 20,
-            position: "absolute",
-          }}
-          size="large"
-          align="center"
-        >
+      <Col flex="auto" />
+
+      <Col
+        flex="none"
+        style={{
+          maxWidth: "70vw",
+          height: "100%",
+          overflowX: "auto",
+          overflowY: "hidden",
+          display: "flex",
+          alignItems: "center",
+          whiteSpace: "nowrap",
+          padding: "0px 10px",
+        }}
+      >
+        <Space size="large" align="center">
           {children}
         </Space>
-      </Row>
-    </div>
+      </Col>
+    </Row>
   );
 }

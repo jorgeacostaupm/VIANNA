@@ -1,55 +1,44 @@
 import React, { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useDropzone } from "react-dropzone";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 
-import { FileProcessorFactory } from "./drag";
-
 import styles from "../Data.module.css";
-import { setDescriptions } from "../../../store/slices/metaSlice";
-import BarButton from "@/utils/BarButton";
+import ColoredButton from "@/utils/ColoredButton";
+import { updateDescriptions } from "@/store/async/metaAsyncReducers";
 
 const ACCEPTED_FORMATS = ".csv";
 
 export default function DragDropDesc() {
   const dispatch = useDispatch();
-  const hierarchy = useSelector((state) => state.metadata.attributes);
 
   const [filename, setFilename] = useState(null);
-  const [parsedData, setParsedData] = useState(null);
+  const [parsedData, setParsedData] = useState(null); // ahora es string
 
   const handleUpload = () => {
     if (parsedData) {
-      dispatch(setDescriptions(parsedData));
+      console.log(parsedData); // texto completo del CSV
+      dispatch(updateDescriptions({ descriptions: parsedData, filename }));
     }
   };
 
   const handleFileDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles?.[0];
 
-    if (!file || !(file instanceof File)) {
-      console.warn("Dropped item is not a valid file:", file);
-      return;
-    }
+    if (!file) return;
 
     const reader = new FileReader();
-    const extension = file.name.split(".").pop().toLowerCase();
 
     reader.onload = () => {
-      try {
-        const processor = FileProcessorFactory.getProcessor(extension);
-        processor.process(reader.result, setParsedData);
-        setFilename(file.name);
-      } catch (error) {
-        console.error("Processing error:", error);
-      }
+      setParsedData(reader.result); // 👈 texto plano
+      setFilename(file.name);
     };
 
-    if (["xls", "xlsx"].includes(extension)) {
-      reader.readAsBinaryString(file);
-    } else {
-      reader.readAsText(file);
-    }
+    reader.onerror = () => {
+      console.error("Error reading file");
+    };
+
+    reader.readAsText(file); // 👈 SIEMPRE texto
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -66,7 +55,7 @@ export default function DragDropDesc() {
           <div className={styles.dropContent}>
             {!filename && <PlusOutlined />}
             <span className={styles.text}>
-              {filename || "Click or drop a file"}
+              {filename || "Click or drop a CSV file"}
             </span>
             {!filename && (
               <span className={styles.subtitle}>
@@ -78,12 +67,14 @@ export default function DragDropDesc() {
       </div>
 
       <div className={styles.controls}>
-        <BarButton
-          title="Upload parsed data"
+        <ColoredButton
           onClick={handleUpload}
-          disabled={!parsedData || !hierarchy}
+          disabled={!parsedData}
           icon={<UploadOutlined />}
-        />
+          shape="default"
+        >
+          Upload Descriptions
+        </ColoredButton>
       </div>
     </>
   );

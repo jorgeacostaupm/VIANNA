@@ -15,6 +15,13 @@ export function generateId() {
   return "id-" + Date.now().toString(36);
 }
 
+export function getFileName(route) {
+  return route
+    .split("/")
+    .pop()
+    .replace(/\.[^/.]+$/, "");
+}
+
 export function formatDecimal(value, options = {}) {
   const {
     decimalPlaces = 3,
@@ -449,7 +456,6 @@ export function getVisibleNodes(tree) {
       queue.push(...node.children);
     }
   }
-  console.log(filteredNodes);
   return filteredNodes;
 }
 

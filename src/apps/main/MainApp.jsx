@@ -5,15 +5,17 @@ import GridLayout, { WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import useNotification from "@/utils/useNotification";
-import useRootStyles from "@/utils/useRootStyles";
 import AppBar from "@/utils/AppBar";
-import AppsButtons from "./AppsButtons";
 import styles from "@/utils/App.module.css";
-import { setInit } from "@/store/slices/cantabSlice";
+import useRootStyles from "@/utils/useRootStyles";
+import useNotification from "@/utils/useNotification";
 import { APP_NAME, APP_DESC } from "@/utils/Constants";
+
+import { setInit } from "@/store/slices/cantabSlice";
+
 import Explorer from "../explorer";
 import loadTestData from "./loadTestData";
+import AppsButtons from "./AppsButtons";
 
 const ResponsiveGridLayout = WidthProvider(GridLayout);
 

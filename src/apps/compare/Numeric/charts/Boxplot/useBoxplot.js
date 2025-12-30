@@ -10,7 +10,6 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
   const groups = useSelector((s) => s.cantab.present.groups);
   const selectionGroups = useSelector((s) => s.cantab.present.selectionGroups);
-  const [hide, setHide] = useState([]);
 
   const { pointSize, showPoints } = config;
 
@@ -40,7 +39,7 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
 
     const color = d3.scaleOrdinal().domain(groups).range(colorScheme);
 
-    let tmp = deepCopy(groups).sort();
+    let tmp = deepCopy(selectionGroups).sort();
     const x = d3.scaleBand().domain(tmp).range([0, chartWidth]).padding(0.4);
 
     const grouped = d3.group(data, (d) => d.type);
@@ -57,10 +56,8 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
 
     let yDomain;
     if (showPoints) {
-      // Dominio basado en todos los puntos
       yDomain = [d3.min(data, (d) => d.value), d3.max(data, (d) => d.value)];
     } else {
-      // Dominio basado solo en whiskers
       yDomain = [
         d3.min(boxStatsByGroup, (d) => d.lower),
         d3.max(boxStatsByGroup, (d) => d.upper),
@@ -76,7 +73,6 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
 
     chart.append("g").call(d3.axisLeft(y));
 
-    // ---- BOXPLOT FUNCTIONS ----
     function computeBoxStats(values) {
       values = values.sort(d3.ascending);
       const q1 = d3.quantile(values, 0.25);
@@ -89,7 +85,6 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
       return { q1, median, q3, lower, upper };
     }
 
-    // ---- DRAW BOXPLOTS ----
     const groupsG = chart
       .selectAll(".boxplot")
       .data(groups)
@@ -197,15 +192,6 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
 
     renderLegend(legend, selectionGroups, color, null, null, null, null);
   }, [data, dimensions, groups, selectionGroups, showPoints]);
-
-  useEffect(() => {
-    if (!chartRef.current) return;
-
-    const chart = d3.select(chartRef.current);
-    chart
-      .selectAll("circle.point")
-      .classed("hide", (d) => hide.includes(d.type));
-  }, [hide]);
 
   useEffect(() => {
     if (!chartRef.current) return;

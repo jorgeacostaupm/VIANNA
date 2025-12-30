@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { pubsub } from "@/utils/pubsub";
 import tests from "@/utils/tests";
 import { runShapiroWilk, runLevene } from "@/utils/stats";
-import { updateData } from "./dataSlice";
+import { updateData } from "../async/dataAsyncReducers";
 import * as aq from "arquero";
 
 const { publish } = pubsub;
@@ -22,28 +22,6 @@ const initialState = {
 
   rankingResult: null,
   rankingLoading: false,
-  nBars: 15,
-  desc: true,
-  filterList: [],
-  isNumeric: true,
-  pValue: 0.05,
-
-  pwShowCaps: true,
-  pwCapSize: 6,
-  pwShape: "circle",
-  pwShapeSize: 6,
-
-  prShowCaps: true,
-  prCapSize: 6,
-  prShape: "circle",
-  prShapeSize: 6,
-
-  estimator: "histogram",
-  nPoints: 100,
-  distrRange: 0.5,
-  pointSize: 5,
-  blurGroups: [],
-  hideGroups: [],
 
   testResult: null,
   testLoading: false,
@@ -158,7 +136,6 @@ const compareSlice = createSlice({
     setIsNumeric: (state, action) => {
       state.isNumeric = action.payload;
     },
-
     setSelectedVar: (state, action) => {
       state.selectedVar = action.payload;
     },
@@ -167,74 +144,6 @@ const compareSlice = createSlice({
     },
     setTestResult: (state, action) => {
       state.testResult = action.payload;
-    },
-
-    // BARCHART
-    setNBars: (state, action) => {
-      state.nBars = action.payload;
-    },
-    setDesc: (state, action) => {
-      state.desc = action.payload;
-    },
-    addFilteringVariable: (state, action) => {
-      state.filterList.push(action.payload);
-    },
-    setFilteringList: (state, action) => {
-      state.filterList = action.payload;
-    },
-    setPValue: (state, action) => {
-      state.pValue = action.payload;
-    },
-    setResult: (state, action) => {
-      state.rankingResult = action.payload;
-    },
-
-    // DISTRCHART
-    setEstimator: (state, action) => {
-      state.estimator = action.payload;
-    },
-    setPointSize: (state, action) => {
-      state.pointSize = action.payload;
-    },
-    setDistrRange: (state, action) => {
-      state.distrRange = action.payload;
-    },
-    setNPoints: (state, action) => {
-      state.nPoints = action.payload;
-    },
-    setBlurGroups: (state, action) => {
-      state.blurGroups = action.payload;
-    },
-    setHideGroups: (state, action) => {
-      state.hideGroups = action.payload;
-    },
-
-    // PWCHART
-    setPwShowCaps: (state, action) => {
-      state.pwShowCaps = action.payload;
-    },
-    setPwCapSize: (state, action) => {
-      state.pwCapSize = action.payload;
-    },
-    setPwShape: (state, action) => {
-      state.pwShape = action.payload;
-    },
-    setPwShapeSize: (state, action) => {
-      state.pwShapeSize = action.payload;
-    },
-
-    // PRCHART
-    setPrShowCaps: (state, action) => {
-      state.prShowCaps = action.payload;
-    },
-    setPrCapSize: (state, action) => {
-      state.prCapSize = action.payload;
-    },
-    setPrShape: (state, action) => {
-      state.prShape = action.payload;
-    },
-    setPrShapeSize: (state, action) => {
-      state.prShapeSize = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -305,28 +214,4 @@ export const {
   setSelectedVar,
   setSelectedTest,
   setTestResult,
-
-  setNBars,
-  setPValue,
-  setDesc,
-  setFilteringList,
-  addFilteringVariable,
-  setResult,
-
-  setEstimator,
-  setDistrRange,
-  setPointSize,
-  setNPoints,
-  setBlurGroups,
-  setHideGroups,
-
-  setPwShowCaps,
-  setPwCapSize,
-  setPwShape,
-  setPwShapeSize,
-
-  setPrShowCaps,
-  setPrCapSize,
-  setPrShape,
-  setPrShapeSize,
 } = compareSlice.actions;

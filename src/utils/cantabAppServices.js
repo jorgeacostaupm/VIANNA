@@ -62,27 +62,7 @@ export const fetchDescriptionsCSV = async (url) => {
 
   const csvText = await response.text();
 
-  // Parsear CSV con Arquero
-  const table = aq.fromCSV(csvText);
+  console.log(csvText);
 
-  // Normalizar a diccionario por measure_name
-  const descMap = {};
-
-  console.log("sfdkfsjlks", csvText);
-
-  table.objects().forEach((row) => {
-    const key = row.measure_name?.trim();
-    if (!key) return;
-
-    descMap[key] = {
-      description: row.measure_description?.trim() || "",
-      decimalPlaces: row["Decimal Places"]
-        ? Number(row["Decimal Places"])
-        : null,
-      task: row.Task?.trim() || null,
-      variant: row.Variant?.trim() || null,
-    };
-  });
-
-  return descMap;
+  return csvText;
 };

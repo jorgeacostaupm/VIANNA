@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-
+import * as aq from "arquero";
 import {
   generateEmpty,
   generateColumn,
@@ -7,8 +7,13 @@ import {
   removeBatch,
   generateColumnBatch,
 } from "./dataAsyncReducers";
-import { generateTree, getRandomInt, getVisibleNodes } from "@/utils/functions";
-import { convertColumnType } from "../slices/dataSlice";
+import {
+  generateTree,
+  getFileName,
+  getRandomInt,
+  getVisibleNodes,
+} from "@/utils/functions";
+import { convertColumnType } from "./dataAsyncReducers";
 
 import { get_parser } from "@/apps/hierarchy/menu/logic/parser";
 import buildAggregation from "@/apps/hierarchy/menu/logic/formulaGenerator";
@@ -334,7 +339,7 @@ export const updateHierarchy = createAsyncThunk(
       const navioColumns = getVisibleNodes(tree);
       dispatch(generateColumnBatch({ cols: hierarchy }));
       return {
-        filename,
+        filename: getFileName(filename),
         hierarchy,
         navioColumns,
       };
@@ -347,22 +352,44 @@ export const updateHierarchy = createAsyncThunk(
 
 export const updateDescriptions = createAsyncThunk(
   "metadata/updateDescriptions",
-  async ({ descriptions }, { getState, rejectWithValue }) => {
+  async ({ descriptions, filename }, { getState, rejectWithValue }) => {
     try {
-      console.log(descriptions);
-      const attributes = getState().metadata.attributes.map((attr) => {
-        const entry = descriptions[attr.name];
+      const table = aq.fromCSV(descriptions);
 
-        return {
-          ...attr,
-          desc: entry?.description || "",
+      const descMap = table.objects().reduce((acc, row) => {
+        const key = row.measure_name?.trim();
+        if (!key) return acc;
+
+        acc[key] = {
+          description: row.measure_description?.trim() ?? "",
+          decimalPlaces:
+            row["Decimal Places"] != null
+              ? Number(row["Decimal Places"])
+              : null,
+          task: row.Task?.trim() ?? null,
+          variant: row.Variant?.trim() ?? null,
         };
+
+        return acc;
+      }, {});
+
+      const attributes = getState().metadata.attributes.map((attr) => {
+        const entry = descMap[attr.name];
+
+        return entry
+          ? {
+              ...attr,
+              desc: entry.description,
+            }
+          : attr;
       });
 
-      return { attributes };
+      return {
+        attributes,
+        filename: getFileName(filename),
+      };
     } catch (error) {
-      console.error("updateDescriptions failed:", error);
-      return rejectWithValue(error.message || "Unknown error");
+      return rejectWithValue(error?.message ?? "Failed to update descriptions");
     }
   }
 );

@@ -5,7 +5,7 @@ import { EditOutlined, HighlightOutlined } from "@ant-design/icons";
 
 import PopoverButton from "@/utils/PopoverButton";
 import ColoredButton from "@/utils/ColoredButton";
-import { replaceValuesWithNull } from "@/store/slices/dataSlice";
+import { replaceValuesWithNull } from "@/store/async/dataAsyncReducers";
 
 function EditColumn() {
   const dispatch = useDispatch();

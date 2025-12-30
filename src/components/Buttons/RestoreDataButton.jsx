@@ -7,7 +7,7 @@ import buttonStyles from "@/utils/Buttons.module.css";
 import { generateFileName } from "@/utils/functions";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import BarButton from "@/utils/BarButton";
-import { updateData } from "@/store/slices/dataSlice";
+import { updateData } from "@/store/async/dataAsyncReducers";
 import { setQuarantineData, selectNavioVars } from "@/store/slices/cantabSlice";
 
 export default function RestoreDataButton() {

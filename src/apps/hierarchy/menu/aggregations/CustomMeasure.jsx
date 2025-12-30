@@ -38,7 +38,6 @@ const CustomMeasure = ({ formula }) => {
   const validateFormula = (e) => {
     let parsed;
     try {
-      console.log("tttt", e.target.value);
       parsed = parser.parse(e.target.value);
     } catch {
       setFieldError("info.formula", "Invalid formula");
@@ -67,7 +66,6 @@ const CustomMeasure = ({ formula }) => {
   };
 
   const handleInputChange = (event) => {
-    console.log("aui===");
     setFormula(event.target.value);
     validateFormula(event);
   };

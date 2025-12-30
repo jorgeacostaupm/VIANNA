@@ -19,7 +19,7 @@ export default function useStackedBarChart({
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
 
     const { width, height } = dimensions;
-    const { chartData, categories, groupVar } = data;
+    const { chartData, categories, categoriesWithValues, groupVar } = data;
 
     d3.select(chartRef.current).selectAll("*").remove();
     d3.select(legendRef.current).selectAll("*").remove();
@@ -64,8 +64,7 @@ export default function useStackedBarChart({
       .append("g")
       .attr("transform", `translate(0,${chartHeight})`)
       .call(d3.axisBottom(x))
-      .selectAll("text")
-      .style("text-anchor", "end");
+      .selectAll("text");
 
     chart.append("g").call(d3.axisLeft(y).ticks(null, "d"));
 
@@ -110,6 +109,6 @@ export default function useStackedBarChart({
         d3.select(e.currentTarget).attr("opacity", 1);
       });
 
-    renderLegend(legend, categories.sort(), color);
+    renderLegend(legend, categoriesWithValues, color);
   }, [data, config, dimensions]);
 }

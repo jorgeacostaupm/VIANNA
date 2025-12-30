@@ -12,7 +12,7 @@ import DragDropDesc from "../DragDrop/DragDropDesc";
 
 const { Title, Text } = Typography;
 
-const DataInfoPanel = () => {
+const Info = () => {
   const filename = useSelector((state) => state.metadata.filename);
   const dt = useSelector((state) => state.metadata.attributes);
   const numericNodes = useSelector((state) => selectNumericNodes(state));
@@ -40,11 +40,9 @@ const DataInfoPanel = () => {
 
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
-          Name:
+          File Name:
         </Text>{" "}
-        <Text>
-          {filename ? filename.split(".").slice(0, -1).join(".") : "—"}
-        </Text>
+        <Text>{filename ? filename : "—"}</Text>
       </div>
 
       <div>
@@ -106,31 +104,6 @@ const UploadPanel = () => {
   );
 };
 
-const UploadDesc = () => {
-  return (
-    <div
-      style={{
-        width: "50%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        gap: "1rem",
-        borderLeft: "1px solid #eee",
-        padding: "20px",
-        boxSizing: "border-box",
-      }}
-    >
-      <Title
-        level={4}
-        style={{ marginBottom: 4, color: "var(--primary-color)" }}
-      >
-        Upload Descriptions
-      </Title>
-      <DragDropDesc />
-    </div>
-  );
-};
-
 export default function TabHierarchy() {
   return (
     <div
@@ -142,7 +115,7 @@ export default function TabHierarchy() {
         gap: "1rem",
       }}
     >
-      <DataInfoPanel />
+      <Info />
       <UploadPanel />
     </div>
   );

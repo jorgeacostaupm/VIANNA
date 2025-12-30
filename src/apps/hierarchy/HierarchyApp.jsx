@@ -36,7 +36,7 @@ export default function HierarchyApp() {
           cols={12}
           rowHeight={95}
           containerPadding={[10, 10]}
-          draggableHandle=".drag-handle"
+          isDraggable={false}
         >
           <div key="hierarchy">
             <HierarchyEditor />

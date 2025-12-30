@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import * as aq from "arquero";
 
 import undoable, { includeAction } from "redux-undo";
@@ -10,20 +10,16 @@ import {
   removeColumn,
 } from "../async/dataAsyncReducers";
 
-import { ORDER_VARIABLE } from "@/utils/Constants";
-import {
-  updateHierarchy,
-  buildMetaFromVariableTypes,
-} from "../async/metaAsyncReducers";
+import { updateHierarchy } from "../async/metaAsyncReducers";
 
 import {
   generateTree,
   getVisibleNodes,
   hasEmptyValues,
   pickColumns,
-  getVariableTypes,
 } from "@/utils/functions";
-import { setQuarantineData } from "./cantabSlice";
+
+import { updateData, replaceValuesWithNull } from "../async/dataAsyncReducers";
 
 const initialState = {
   filename: null,
@@ -47,138 +43,6 @@ const initialState = {
 
   nullifiedValues: [],
 };
-
-export const convertColumnType = createAsyncThunk(
-  "dataframe/convertColumnType",
-  async ({ column, dtype }, { getState, dispatch, rejectWithValue }) => {
-    try {
-      const state = getState();
-      let dataframe = aq.from(state.dataframe.present.dataframe);
-
-      let newDf;
-      switch (dtype) {
-        case "number":
-          const data = dataframe.objects();
-          const hasInvalid = data.some((row) => {
-            const val = row[column];
-            if (val === null || val === undefined || val === "") return false;
-            return isNaN(Number(val));
-          });
-
-          if (hasInvalid) {
-            const proceed = window.confirm(
-              `⚠️ There are non-numeric values in "${column}".
-They will be converted to null, and you may lose information.
-Do you want to continue?`
-            );
-
-            if (!proceed) {
-              // Salir sin hacer cambios
-              return rejectWithValue("Update aborted by user");
-            }
-          }
-          newDf = dataframe.derive({
-            [column]: (r) => {
-              const val = r[column];
-              if (val === null || val === undefined || val === "") return null; // vacíos se vuelven null
-              const num = Number(val);
-              return isNaN(num) ? null : num; // solo valores no numéricos se vuelven null
-            },
-          });
-          break;
-
-        case "string":
-          newDf = dataframe.derive({
-            [column]: aq.escape((r) =>
-              r[column] == null ? null : aq.op.string(r[column])
-            ),
-          });
-          break;
-
-        default:
-          throw new Error(`Unsupported dtype: ${dtype}`);
-      }
-
-      const newData = newDf.objects();
-
-      dispatch(setDataframe(newData));
-
-      return newData;
-    } catch (err) {
-      console.error(err);
-      return rejectWithValue("Error converting column type");
-    }
-  }
-);
-
-export const replaceValuesWithNull = createAsyncThunk(
-  "dataframe/replaceValuesWithNull",
-  async (value, { getState, dispatch, rejectWithValue }) => {
-    try {
-      const state = getState();
-      let dataframe = state.dataframe.present.dataframe;
-      let quarantineData = state.cantab.present.quarantineData || [];
-      const cols = state.metadata.attributes;
-
-      dataframe = dataframe.map((row) => {
-        const newRow = { ...row };
-        Object.keys(newRow).forEach((key) => {
-          if (newRow[key] == value) {
-            newRow[key] = null;
-          }
-        });
-        return newRow;
-      });
-
-      quarantineData = quarantineData.map((row) => {
-        const newRow = { ...row };
-        Object.keys(newRow).forEach((key) => {
-          if (newRow[key] == value) {
-            newRow[key] = null;
-          }
-        });
-        return newRow;
-      });
-
-      dispatch(setDataframe(dataframe));
-      dispatch(setQuarantineData(quarantineData));
-
-      await dispatch(generateColumnBatch({ cols }));
-
-      return {
-        value,
-      };
-    } catch (err) {
-      return rejectWithValue("Something went wrong nullifiying values");
-    }
-  }
-);
-
-export const updateData = createAsyncThunk(
-  "dataframe/load-import",
-  async (
-    { data, filename, isGenerateHierarchy },
-    { dispatch, rejectWithValue }
-  ) => {
-    try {
-      let dt = aq.from(data);
-      let meta = getVariableTypes(data);
-      dt = dt.derive({ [ORDER_VARIABLE]: aq.op.row_number() });
-      if (isGenerateHierarchy) {
-        dispatch(buildMetaFromVariableTypes(meta));
-      }
-      return {
-        filename: filename,
-        items: dt.objects(),
-        column_names: dt.columnNames().filter((d) => d !== ORDER_VARIABLE),
-        isNewColumns: isGenerateHierarchy,
-        varTypes: meta,
-      };
-    } catch (err) {
-      return rejectWithValue("Something is wrong with API data");
-    }
-  }
-);
 
 export const dataSlice = createSlice({
   name: "dataframe",
@@ -237,17 +101,18 @@ export const dataSlice = createSlice({
     });
 
     builder.addCase(updateData.fulfilled, (state, action) => {
-      state.filename = action.payload.filename;
+      const { columnNames, filename, items, isNewColumns } = action.payload;
+      state.filename = filename;
 
-      if (action.payload.isNewColumns) {
-        state.navioColumns = action.payload.column_names;
-        state.original = action.payload.column_names;
+      if (isNewColumns) {
+        state.navioColumns = columnNames;
+        state.original = columnNames;
       }
 
-      const selection = pickColumns(action.payload.items, state.navioColumns);
+      const selection = pickColumns(items, state.navioColumns);
       hasEmptyValues(selection, state);
 
-      state.dataframe = action.payload.items;
+      state.dataframe = items;
       state.selection = selection;
       state.version = 0;
       state.nullifiedValues = [];

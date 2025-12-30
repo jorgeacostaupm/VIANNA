@@ -37,10 +37,8 @@ const CustomAggregate = ({ nodes, formula, save }) => {
     let parsed;
     try {
       const input = e.target.value.trim() === "" ? '""' : e.target.value;
-      console.log("input", input, e.target.value);
       parsed = parser.parse(input);
     } catch (error) {
-      console.log(error);
       setFieldError("info.formula", "Invalid formula");
       return;
     }

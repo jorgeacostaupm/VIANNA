@@ -30,7 +30,7 @@ export default function VariableSelector({ generateEvolution }) {
         value={selectedVar}
         onChange={(v) => dispatch(setSelectedVar(v))}
         placeholder="Search or select variable"
-        style={{ minWidth: "250px" }}
+        style={{ width: "250px" }}
         showSearch={true}
         filterOption={filterOption}
         optionFilterProp="children"

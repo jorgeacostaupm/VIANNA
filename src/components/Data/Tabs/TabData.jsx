@@ -13,7 +13,7 @@ import {
 const { Title, Text } = Typography;
 const safeJoin = (arr) => (arr && arr.length ? arr.join(", ") : "—");
 
-const DataInfoPanel = () => {
+const Info = () => {
   const dispatch = useDispatch();
   const filename = useSelector((state) => state.dataframe.present.filename);
   const dt = useSelector((state) => state.dataframe.present.dataframe);
@@ -47,11 +47,9 @@ const DataInfoPanel = () => {
       </Title>
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
-          Name:
+          File Name:
         </Text>{" "}
-        <Text>
-          {filename ? filename.split(".").slice(0, -1).join(".") : "—"}
-        </Text>
+        <Text>{filename ? filename : "—"}</Text>
       </div>
 
       <div>
@@ -59,20 +57,6 @@ const DataInfoPanel = () => {
           Nº Rows:
         </Text>{" "}
         <Text>{dt?.length || 0}</Text>
-      </div>
-
-      <div>
-        <Text strong style={{ color: "var(--primary-color)" }}>
-          Nº Numerical Variables:
-        </Text>{" "}
-        <Text>{numericVars.length}</Text>
-      </div>
-
-      <div>
-        <Text strong style={{ color: "var(--primary-color)" }}>
-          Nº Categorical variables:
-        </Text>{" "}
-        <Text>{categoricalVars.length}</Text>
       </div>
 
       <Divider style={{ margin: "1rem 0" }} />
@@ -139,7 +123,7 @@ export default function TabData() {
         width: "100%",
       }}
     >
-      <DataInfoPanel />
+      <Info />
       <UploadPanel />
     </div>
   );

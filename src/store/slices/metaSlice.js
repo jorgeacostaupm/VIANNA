@@ -15,38 +15,10 @@ import {
 import { pubsub } from "@/utils/pubsub";
 const { publish } = pubsub;
 
-/*
-Slice con una lista de metadatos para todas las columnas:
-metadatos:
-- id columna
-- nombre columna
-- tipo attributo | agregación
-- relacionados ( hijos de jerarquía )
-- isShown: boolean
-- agregación:
-    - tipo
-    - formula (string)
-    - atributos usados (orden) (suma, concatenación, media)
-        - id
-        - used (true)
-        - weight 
-        
-*/
-
-/*
-{
-    {
-        change: nodeMove, removeAggregation, changeNode,
-        associatedId: affected node id,
-        associatedParent: affected node parent id,
-        associatedData: node copy
-    }
-}
-*/
-
 const initialState = {
   init: false,
   filename: null,
+  descriptionsFilename: null,
   attributes: [],
   source: null,
   loadingStatus: "ready",
@@ -72,8 +44,6 @@ export const metaSlice = createSlice({
 
     changeOrder: create.reducer((state, action) => {
       const { sourceID, parentID, newIndex } = action.payload;
-
-      console.log("change ORDER", sourceID, parentID, newIndex);
 
       const parentNode = state.attributes.find((node) =>
         node.related.includes(sourceID)
@@ -265,9 +235,8 @@ export const metaSlice = createSlice({
 
     builder.addCase(updateDescriptions.fulfilled, (state, action) => {
       const { attributes, filename } = action.payload;
-      console.log("updateDescript", attributes);
       state.attributes = attributes;
-      state.loadingStatus = "done";
+      state.descriptionsFilename = filename;
       state.version = state.version === 0 ? 1 : 0;
     });
 
@@ -413,8 +382,6 @@ export const metaSlice = createSlice({
             associatedData: { ...state.attributes[idx] },
           });
         }
-
-        console.log("NODE:", node);
 
         state.attributes[idx] = {
           ...state.attributes[idx],

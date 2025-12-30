@@ -1,8 +1,8 @@
 import React from "react";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector } from "react-redux";
 
-import Navio from "@/components/Navio";
 import Bar from "./Bar";
+import Navio from "@/components/Navio";
 import NoDataPlaceholder from "@/utils/NoDataPlaceholder";
 import styles from "@/utils/Charts.module.css";
 import { setSelection } from "@/store/slices/dataSlice";

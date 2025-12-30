@@ -95,8 +95,6 @@ const NodeMenu = () => {
 
   const closeTab = () => toggleMenu((prev) => !prev);
 
-  console.log(node);
-
   return (
     openMenu && (
       <div className={styles.nodeInfo}>

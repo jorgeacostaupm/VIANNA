@@ -18,7 +18,6 @@ export default function Navio({ data, config, setSelection }) {
   );
 
   useEffect(() => {
-    console.log("useEffect Overview");
     if (!data) return;
 
     const nv = navio(navioRef.current, config.navioHeight);

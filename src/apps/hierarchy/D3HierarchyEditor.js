@@ -478,7 +478,6 @@ export default class D3HierarchyEditor {
     return d3
       .drag()
       .on("start", function (event, node) {
-        console.log("drag start");
         if (node.id === graph.root.id) return;
 
         graph._dragStartX = event.x;
@@ -493,10 +492,8 @@ export default class D3HierarchyEditor {
         if (!graph._hasDragged) {
           const dx = Math.abs(event.x - graph._dragStartX);
           const dy = Math.abs(event.y - graph._dragStartY);
-          console.log(dx, dy);
 
           if (dx < 5 && dy < 5) {
-            console.log("its click");
             return; // todavía es click
           }
 
@@ -706,7 +703,6 @@ export default class D3HierarchyEditor {
         }
       })
       .on("end", function (event, node) {
-        console.log("drag end");
         if (graph.targetNode) {
           // caso: reasignar nodo/nodos
           if (graph.nodesDragged.length === 1) graph.onChangeHierarchy();
@@ -719,7 +715,6 @@ export default class D3HierarchyEditor {
             .empty();
 
           if (hasHighlightedSibling) {
-            console.log("change order");
             graph.onChangeOrder(node, graph.newIndex);
           } else {
             graph.drawHierarchy(graph.root);
@@ -1219,262 +1214,3 @@ export default class D3HierarchyEditor {
     subscribe("inspectNode", this.inspectNode.bind(this));
   }
 }
-
-/*   getDragBehaviour() {
-    const graph = this;
-
-    return d3
-      .drag()
-
-
-
-
-
-      .on("start", function (event, node) {
-        console.log("drag start");
-        if (node.id === graph.root.id) return;
-
-        const selectedNodes = graph.svg
-          .selectAll(".circleG")
-          .filter(function (d) {
-            return d3
-              .select(this)
-              .select(".showCircle")
-              .classed("selectedNode");
-          })
-          .data();
-
-        graph.isMultiSelect =
-          selectedNodes.length > 1 && selectedNodes.some((d) => d === node);
-
-        graph.nodesDragged = graph.isMultiSelect ? selectedNodes : [node];
-
-        graph.onInitialNodeDrag(node, graph.isMultiSelect);
-
-        const parent = node.parent;
-
-        if (parent && parent.children) {
-          const siblings = parent.children.slice();
-
-          const xs = siblings.map((s) => s.x);
-          const ys = siblings.map((s) => s.y);
-          graph._dragSiblingXPositions = xs;
-
-          graph._dragSiblingMinX = Math.min(...xs);
-          graph._dragSiblingMaxX = Math.max(...xs);
-          graph._dragSiblingMinY = Math.min(...ys) - spacing;
-          graph._dragSiblingMaxY = Math.max(...ys) + spacing;
-
-          graph._dragOriginalIndex = graph._dragSiblingXPositions.indexOf(
-            node.x
-          );
-          graph._originalX = node.x;
-          graph._currentHoverIndex = graph._dragOriginalIndex;
-        }
-      })
-
-      .on("drag", function (event, node) {
-        console.log("dragging");
-        graph.tooltip.style("visibility", "hidden");
-        graph.onDrag = true;
-
-        if (node.id === graph.root.id) return;
-
-        graph.svg.style("cursor", "grabbing");
-
-        const movingNodes = [node].flatMap((n) =>
-          n.descendants ? n.descendants() : [n]
-        );
-
-        movingNodes.forEach((d) => {
-          d.x += event.dy;
-          d.y += event.dx;
-        });
-
-        graph.main
-          .select("#nodes")
-          .selectAll(".circleG")
-          .filter((d) => movingNodes.some((mn) => mn.id === d.id))
-          .attr("transform", (d) => `translate(${d.y},${d.x})`)
-          .lower();
-
-        graph.main
-          .select("#links")
-          .selectAll("path")
-          .filter((l) => {
-            return (
-              movingNodes.some((n) => n.id === l.source.id) &&
-              movingNodes.some((n) => n.id === l.target.id)
-            );
-          })
-          .attr("d", (l) => curveSShape(l));
-
-        if (graph.nodesDragged.length === 1) {
-          if (
-            node.x < graph._dragSiblingMinX - 150 ||
-            node.x > graph._dragSiblingMaxX + 150 ||
-            node.y < graph._dragSiblingMinY ||
-            node.y > graph._dragSiblingMaxY
-          ) {
-            graph.main
-              .selectAll(".circleG")
-              .classed("highlight-sibling", false);
-          } else {
-            const parent = node.parent;
-            if (!parent || !parent.children) return;
-
-            const siblings = parent.children.filter(
-              (sib) => sib.id !== node.id
-            );
-
-            if (siblings.length === 0) return;
-
-            const sortedSiblings = siblings.slice().sort((a, b) => a.x - b.x);
-
-            let leftSibling = null;
-            let rightSibling = null;
-            let newIndex = graph._dragOriginalIndex;
-
-            for (let i = 0; i < sortedSiblings.length; i++) {
-              if (node.x < sortedSiblings[i].x) {
-                rightSibling = sortedSiblings[i];
-                leftSibling = i > 0 ? sortedSiblings[i - 1] : null;
-                newIndex = i;
-                break;
-              }
-            }
-
-            if (rightSibling === null) {
-              leftSibling = sortedSiblings[sortedSiblings.length - 1];
-              rightSibling = null;
-              newIndex = sortedSiblings.length;
-            }
-
-            function rangeUnordered(a, b) {
-              const start = Math.min(a, b);
-              const end = Math.max(a, b);
-              const result = [];
-
-              for (let i = start; i <= end; i++) {
-                result.push(i);
-              }
-
-              return result;
-            }
-
-            const range = rangeUnordered(newIndex, graph._dragOriginalIndex);
-            parent.children.forEach((childNode, i) => {
-              const subtree = childNode.descendants
-                ? childNode.descendants()
-                : [childNode];
-
-              // Guardar posiciones originales si aún no están guardadas
-              subtree.forEach((d) => {
-                if (d._originalX === undefined) d._originalX = d.x;
-                if (d._originalY === undefined) d._originalY = d.y;
-              });
-
-              if (i === graph._dragOriginalIndex) return;
-
-              const moveLeft =
-                range.includes(i) && i < graph._dragOriginalIndex;
-              const moveRight =
-                range.includes(i) && i > graph._dragOriginalIndex;
-
-              if (moveLeft || moveRight) {
-                const referenceIndex = moveLeft ? i + 1 : i - 1;
-                const space = Math.abs(
-                  childNode.x - graph._dragSiblingXPositions[referenceIndex]
-                );
-
-                subtree.forEach((d) => {
-                  d.x += moveLeft ? space : -space;
-
-                  graph.main
-                    .selectAll(".circleG")
-                    .filter((nodeD) => nodeD.id === d.id)
-                    .attr("transform", `translate(${d.y},${d.x})`);
-                });
-
-                graph.main
-                  .select("#links")
-                  .selectAll("path")
-                  .filter(
-                    (l) =>
-                      subtree.some((n) => n.id === l.source.id) ||
-                      subtree.some((n) => n.id === l.target.id)
-                  )
-                  .attr("d", (l) => curveSShape(l));
-              } else {
-                // Nodo que no debe moverse: restaurar posición original
-                subtree.forEach((d) => {
-                  d.x = d._originalX;
-                  d.y = d._originalY;
-
-                  graph.main
-                    .selectAll(".circleG")
-                    .filter((nodeD) => nodeD.id === d.id)
-                    .attr("transform", `translate(${d.y},${d.x})`);
-                });
-
-                // Recalcular enlaces para el subtree no movido
-                graph.main
-                  .select("#links")
-                  .selectAll("path")
-                  .filter(
-                    (l) =>
-                      subtree.some((n) => n.id === l.source.id) ||
-                      subtree.some((n) => n.id === l.target.id)
-                  )
-                  .attr("d", (l) => curveSShape(l));
-              }
-            });
-
-            // Actualizar nuevo índice y destacar los hermanos
-            graph.newIndex = newIndex;
-
-            graph.main
-              .selectAll(".circleG")
-              .classed("highlight-sibling", false)
-              .filter(
-                (d) => d.id === leftSibling?.id || d.id === rightSibling?.id
-              )
-              .classed("highlight-sibling", true);
-          }
-        }
-      })
-      .on("end", function (event, node) {
-        console.log("drag end");
-        if (graph.targetNode) {
-          // caso: reasignar nodo/nodos
-          if (graph.nodesDragged.length === 1) graph.onChangeHierarchy();
-          else graph.addSelectedNodes({ parent: graph.targetNode.id });
-        } else if (graph.nodesDragged.length === 1 && graph.onDrag) {
-          // caso: cambiar posicion de nodo
-
-          const hasHighlightedSibling = !graph.main
-            .selectAll(".circleG.highlight-sibling")
-            .empty();
-
-          if (hasHighlightedSibling) {
-            console.log("change order");
-            graph.onChangeOrder(node, graph.newIndex);
-          } else {
-            graph.drawHierarchy(graph.root);
-          }
-          d3.select(this).select(".showCircle").classed("selectedNode", false);
-        } else if (!graph.onDrag) {
-          // caso: click
-          graph.onNodeClick(node);
-        } else {
-          graph.drawHierarchy(graph.root, true);
-        }
-        graph.targetNode = null;
-        graph.nodesDragged = [];
-        graph.onDrag = false;
-        graph.svg.style("cursor", "default");
-        graph.main.selectAll(".circleG").style("display", "block");
-        graph.main.selectAll(".link").style("display", "block");
-        graph.main.selectAll(".circleG").classed("highlight-sibling", false);
-      });
-  } */

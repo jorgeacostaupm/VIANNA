@@ -78,7 +78,6 @@ export default function OperationModal({
   };
 
   const onConfirm = () => {
-    console.log("PARAMS", params);
     dispatch(
       applyOperation({
         operation,

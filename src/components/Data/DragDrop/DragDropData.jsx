@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 
 import { FileProcessorFactory } from "./drag";
-import { updateData } from "@/store/slices/dataSlice";
+import { updateData } from "@/store/async/dataAsyncReducers";
 import styles from "../Data.module.css";
 import ColoredButton from "@/utils/ColoredButton";
 

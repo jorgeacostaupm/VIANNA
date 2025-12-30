@@ -52,7 +52,6 @@ const SPECIAL_PROCESSORS = [
     name: "zscoreByValues",
     pattern: /__ZSCORE_BY_VALUES__\("(.+?)",\s*([\d.]+),\s*([\d.]+)\)/g,
     processor: (match) => {
-      console.log(match);
       const colName = match[1];
       const mean = +match[2];
       const stdev = +match[3];

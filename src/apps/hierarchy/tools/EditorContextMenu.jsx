@@ -125,8 +125,6 @@ export default function HierarchyEditorContextMenu({ editor }) {
       })
       .data();
 
-    console.log("NODES:", nodes);
-
     setSelectedNodes(nodes);
     setOperationModalOpen(true);
   };

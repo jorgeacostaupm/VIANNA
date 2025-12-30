@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const wideCharts = ["ranking", "numeric", "categoric", "evolution"];
 const squareCharts = ["scatter", "corr", "pca"];
@@ -6,6 +7,8 @@ const squareCharts = ["scatter", "corr", "pca"];
 export default function useGridViews(defaultW = 3, defaultH = 4) {
   const [views, setViews] = useState([]);
   const [layout, setLayout] = useState([]);
+  const dfFilename = useSelector((s) => s.dataframe.present.filename);
+  const hierFilename = useSelector((s) => s.metadata.filename);
 
   const addView = useCallback((type, props = {}) => {
     console.log("ADD VIEW:", type);
@@ -29,6 +32,11 @@ export default function useGridViews(defaultW = 3, defaultH = 4) {
     setViews((p) => p.filter((v) => v.id !== id));
     setLayout((p) => p.filter((l) => l.i !== id));
   }, []);
+
+  useEffect(() => {
+    setViews([]);
+    setLayout([]);
+  }, [dfFilename, hierFilename]);
 
   return { views, layout, setLayout, addView, removeView };
 }

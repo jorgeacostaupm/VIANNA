@@ -2,13 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import undoable, { includeAction } from "redux-undo";
 
+import { setDataframe, setSelection } from "./dataSlice";
 import {
+  updateData,
   convertColumnType,
   replaceValuesWithNull,
-  setDataframe,
-  setSelection,
-  updateData,
-} from "./dataSlice";
+} from "../async/dataAsyncReducers";
+
 import {
   generateColumn,
   generateColumnBatch,
@@ -180,8 +180,10 @@ const cantabSlice = createSlice({
 
     builder
       .addCase(updateData.fulfilled, (state, action) => {
+        const { varTypes } = action.payload;
+        state.varTypes = varTypes;
+
         state.quarantineData = null;
-        state.varTypes = action.payload.varTypes;
         state.timeVar = null;
         state.groupVar = null;
         state.idVar = null;
@@ -214,7 +216,7 @@ const cantabSlice = createSlice({
     });
     builder.addCase(updateDescriptions.rejected, (state, action) => {
       const configuration = {
-        message: "Error in updating descriptions!",
+        message: "Error updating descriptions",
         description: action.payload,
         type: "error",
         pauseOnHover: true,

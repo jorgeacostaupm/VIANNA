@@ -14,11 +14,7 @@ export default function DownloadButton({ filename = "chart", svgIds = [] }) {
 
 function handleDownload(filename, svgIds) {
   try {
-    const combinedSvg = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "svg"
-    );
-    combinedSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    const svgs = [];
 
     let totalWidth = 0;
     let maxHeight = 0;
@@ -27,20 +23,35 @@ function handleDownload(filename, svgIds) {
       const svg = document.getElementById(id);
       if (!svg) continue;
 
-      const clone = svg.cloneNode(true);
       const { width, height } = svg.getBoundingClientRect();
 
-      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      g.setAttribute("transform", `translate(${totalWidth}, 0)`);
-      g.appendChild(clone);
-
-      combinedSvg.appendChild(g);
+      svgs.push({ svg, width, height });
       totalWidth += width;
       maxHeight = Math.max(maxHeight, height);
     }
 
+    const combinedSvg = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "svg"
+    );
+    combinedSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     combinedSvg.setAttribute("width", totalWidth);
     combinedSvg.setAttribute("height", maxHeight);
+
+    let currentX = 0;
+
+    for (const { svg, width, height } of svgs) {
+      const clone = svg.cloneNode(true);
+      const offsetY = (maxHeight - height) / 2;
+
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("transform", `translate(${currentX}, ${offsetY})`);
+
+      g.appendChild(clone);
+      combinedSvg.appendChild(g);
+
+      currentX += width;
+    }
 
     const styleEl = document.createElementNS(
       "http://www.w3.org/2000/svg",
@@ -53,13 +64,13 @@ function handleDownload(filename, svgIds) {
           return Array.from(sheet.cssRules)
             .map((rule) => rule.cssText)
             .join("\n");
-        } catch (e) {
+        } catch {
           return "";
         }
       })
       .join("\n");
-    styleEl.textContent = cssRules;
 
+    styleEl.textContent = cssRules;
     combinedSvg.insertBefore(styleEl, combinedSvg.firstChild);
 
     const serialized = new XMLSerializer().serializeToString(combinedSvg);
@@ -69,6 +80,7 @@ function handleDownload(filename, svgIds) {
       .toISOString()
       .replace(/[:.]/g, "-")
       .slice(0, -1);
+
     const fullFilename = `${filename}_${timestamp}.svg`;
 
     const link = document.createElement("a");

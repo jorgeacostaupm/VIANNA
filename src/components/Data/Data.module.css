@@ -3,20 +3,6 @@
   font-size: large;
 }
 
-.customTabs :global(.ant-switch-checked) {
-  background: var(--primary-color);
-}
-
-.customTabs :global(.ant-tabs-ink-bar) {
-  font-size: large;
-  background-color: var(--primary-color);
-}
-
-.customTabs :global(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
-  font-size: large;
-  color: var(--primary-color);
-}
-
 .dropzone {
   height: 150px;
   width: 100%;
