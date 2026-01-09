@@ -10,7 +10,7 @@ import store from "@/store/store";
 
 import { pubsub } from "@/utils/pubsub";
 import { DataType } from "@/utils/Constants";
-import { fixTooltipToNode, getRandomInt, moveTooltip } from "@/utils/functions";
+import { fixTooltipToNode, getRandomInt } from "@/utils/functions";
 
 let { publish, subscribe } = pubsub;
 

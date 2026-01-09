@@ -9,6 +9,7 @@ export default function Settings({ config, setConfig }) {
     showMeans,
     showStds,
     showCIs,
+    showComplete,
     meanPointSize,
     subjectPointSize,
     meanStrokeWidth,
@@ -35,6 +36,14 @@ export default function Settings({ config, setConfig }) {
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Text strong>Show Observations</Text>
         <Switch checked={showObs} onChange={(v) => update("showObs", v)} />
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Text strong>Use Complete Subjects</Text>
+        <Switch
+          checked={showComplete}
+          onChange={(v) => update("showComplete", v)}
+        />
       </div>
 
       <Divider></Divider>

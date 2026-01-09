@@ -6,7 +6,6 @@ import {
   getIndicators,
   getNearestIndicator,
   highlightIndicators,
-  DropIndicator,
 } from "./DropIndicator";
 import styles from "./DropArea.module.css";
 

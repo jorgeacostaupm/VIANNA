@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { createSelector } from "reselect";
+import { createSelector } from "@reduxjs/toolkit";
 import undoable, { includeAction } from "redux-undo";
 
 import { setDataframe, setSelection } from "./dataSlice";

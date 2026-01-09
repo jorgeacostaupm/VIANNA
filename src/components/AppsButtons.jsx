@@ -1,12 +1,10 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Button, Tooltip } from "antd";
+import { useSelector } from "react-redux";
 import {
   BarChartOutlined,
   DotChartOutlined,
   LineChartOutlined,
   PartitionOutlined,
-  BugOutlined,
   BugFilled,
 } from "@ant-design/icons";
 

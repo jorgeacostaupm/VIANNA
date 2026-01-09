@@ -1,4 +1,3 @@
-import { jStat } from "jstat";
 import * as aq from "arquero";
 
 export const ownMean = {

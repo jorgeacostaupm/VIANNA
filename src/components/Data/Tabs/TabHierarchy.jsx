@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Typography, Tooltip } from "antd";
+import React from "react";
+import { useSelector } from "react-redux";
+import { Typography } from "antd";
 import DragDropHierarchy from "../DragDrop/DragDropHierarchy";
 import {
   selectNumericNodes,
@@ -8,7 +8,6 @@ import {
   selectDetermineNodes,
   selectAggregationNodes,
 } from "@/store/selectors/metaSelectors";
-import DragDropDesc from "../DragDrop/DragDropDesc";
 
 const { Title, Text } = Typography;
 

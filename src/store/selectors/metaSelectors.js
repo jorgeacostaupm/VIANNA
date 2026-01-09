@@ -1,6 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { DataType } from "@/utils/Constants";
-import { hierarchy } from "d3";
 
 export const hierarchySelector = (state) => state.metadata.attributes;
 export const selectHierarchy = (state) => state.metadata.attributes;

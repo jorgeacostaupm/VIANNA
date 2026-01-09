@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
-import { Slider, Typography, Button } from "antd";
-import { useSelector, useDispatch } from "react-redux";
-import { SettingOutlined, UndoOutlined, RedoOutlined } from "@ant-design/icons";
+import { Slider, Typography } from "antd";
+import { useDispatch } from "react-redux";
+import { SettingOutlined } from "@ant-design/icons";
 import PopoverButton from "@/utils/PopoverButton";
-import buttonStyles from "@/utils/Buttons.module.css";
 
 const { Text } = Typography;
 

@@ -5,7 +5,6 @@ import { Select } from "antd";
 import { ExperimentOutlined, BarChartOutlined } from "@ant-design/icons";
 
 import { pubsub } from "@/utils/pubsub";
-import BarButton from "@/utils/BarButton";
 import tests from "@/utils/tests";
 import { setSelectedTest } from "@/store/slices/compareSlice";
 import ColoredButton from "@/utils/ColoredButton";

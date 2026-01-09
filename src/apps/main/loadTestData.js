@@ -8,7 +8,6 @@ import { setGroupVar, setIdVar, setTimeVar } from "@/store/slices/cantabSlice";
 import { DATASETS } from "@/utils/Constants";
 
 import { pubsub } from "@/utils/pubsub";
-import { getFileName } from "@/utils/functions";
 const { publish } = pubsub;
 
 const idVar = "pseudon_id";

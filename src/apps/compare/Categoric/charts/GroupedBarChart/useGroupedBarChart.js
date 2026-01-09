@@ -108,7 +108,6 @@ export default function useGroupedBarChart({
 export function renderLegend(legend, groups, color) {
   const circleSize = 10;
   const padding = 6;
-  const verticalPadding = 20;
   const lineHeight = circleSize * 2 + padding;
 
   const legendGroup = legend.append("g").attr("class", "legend-group");

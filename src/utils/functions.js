@@ -3,7 +3,6 @@ import { PCA } from "ml-pca";
 import * as aq from "arquero";
 import { jStat } from "jstat";
 import { UMAP } from "umap-js";
-import * as ss from "simple-statistics";
 import tests from "@/utils/tests";
 
 import { VariableTypes, ORDER_VARIABLE } from "./Constants";
@@ -342,7 +341,7 @@ export function getDistributionData(data, column, groupVar) {
   const errors = [];
 
   grouped.objects({ grouped: "entries" }).forEach(([type, rows]) => {
-    rows.forEach((row, rowIndex) => {
+    rows.forEach((row) => {
       const value = row[column];
 
       if (
@@ -380,7 +379,7 @@ export function getEvolutionData(data, variable, groupVar, timeVar) {
   const errors = [];
   groups.forEach(([group, timeEntries]) => {
     timeEntries.forEach(([time, rows]) => {
-      rows.forEach((row, idx) => {
+      rows.forEach((row) => {
         const v = row[variable];
         if (
           v == null ||

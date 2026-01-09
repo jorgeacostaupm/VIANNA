@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Select, Slider, Typography, message, Space } from "antd";
+import { Select, Slider, Typography, Space } from "antd";
 import { getCategoricalKeys } from "@/utils/functions";
 
 const { Text } = Typography;

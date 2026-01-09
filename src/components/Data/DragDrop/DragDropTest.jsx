@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useDropzone } from "react-dropzone";
 import { Button, Tooltip } from "antd";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";

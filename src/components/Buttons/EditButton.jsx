@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Select, Input, Button, Typography, Space, Form } from "antd";
+import { Select, Input, Typography } from "antd";
 import { EditOutlined, FormOutlined } from "@ant-design/icons";
 import { selectNavioVars } from "@/store/slices/cantabSlice";
-import { editData, setDataframe } from "@/store/slices/dataSlice";
+import { setDataframe } from "@/store/slices/dataSlice";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import PopoverButton from "@/utils/PopoverButton";
-import appStyles from "@/utils/App.module.css";
 import ColoredButton from "@/utils/ColoredButton";
 import { generateColumnBatch } from "@/store/async/dataAsyncReducers";
 

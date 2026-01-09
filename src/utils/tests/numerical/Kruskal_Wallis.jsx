@@ -105,7 +105,7 @@ export const kruskalWallis = {
         // cálculo de r
         const r = z / Math.sqrt(N);
 
-        // **nuevo**: cálculo del IC al 95 %
+        // **nuevo**: cálculo del IC al 95%
         const SE_r = 1 / Math.sqrt(N);
         const zCrit = jStat.normal.inv(1 - alpha / 2, 0, 1);
         const lower = r - zCrit * SE_r;

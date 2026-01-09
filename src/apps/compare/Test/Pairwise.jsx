@@ -7,7 +7,6 @@ import styles from "@/utils/Charts.module.css";
 import {
   moveTooltip,
   computePairwiseData,
-  generateId,
   formatDecimal,
 } from "@/utils/functions";
 import useResizeObserver from "@/utils/useResizeObserver";

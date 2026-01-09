@@ -46,7 +46,8 @@ function runRMAnova(participantData, times) {
 
   if (subjects < 2 || T < 2) {
     return {
-      error: "Se necesitan ≥2 sujetos con medidas completas y ≥2 tiempos.",
+      error:
+        "At least two subjects with complete measurements and at least two time points are required.",
     };
   }
 
@@ -178,6 +179,7 @@ function runRMAnova(participantData, times) {
     etaInteraction,
     excludedSubjects: excluded,
     html,
+    completeSubjects,
   };
 }
 
@@ -213,7 +215,8 @@ function renderRMAnovaHTML({
 
       {excluded > 0 && (
         <div style={{ color: "#a00" }}>
-          {excluded} subject(s) excluded due to incomplete data
+          {excluded} subject(s) excluded due to incomplete data. The visualized
+          data differs with these results.
         </div>
       )}
 
@@ -290,14 +293,21 @@ function StatBlock({ title, df1, df2, F, p, eta, centered }) {
   );
 }
 
-export function getLineChartData(raw, valueVar, groupVar, timeVar, idVar) {
+export function getLineChartData(
+  raw,
+  valueVar,
+  groupVar,
+  timeVar,
+  idVar,
+  showComplete
+) {
   if (!raw || !Array.isArray(raw)) return { meanData: [], participantData: [] };
 
-  if (!valueVar || !groupVar || !timeVar) {
-    throw new Error("Debe indicar valueVar, groupVar y timeVar");
+  if (!valueVar || !groupVar || !timeVar || !idVar) {
+    throw new Error("Must set valueVar, groupVar, timeVar and idVar");
   }
 
-  const table = aq.from(raw);
+  let table = aq.from(raw);
 
   // Agrupar por participante
   const groupedById = table
@@ -305,7 +315,7 @@ export function getLineChartData(raw, valueVar, groupVar, timeVar, idVar) {
     .select(idVar, groupVar, timeVar, valueVar)
     .objects({ grouped: "entries" });
 
-  const participantData = groupedById.map(([id, rows]) => {
+  let participantData = groupedById.map(([id, rows]) => {
     const values = rows
       .map((r) => ({
         timestamp: String(r[timeVar]),
@@ -317,6 +327,28 @@ export function getLineChartData(raw, valueVar, groupVar, timeVar, idVar) {
 
     return { id, group, values };
   });
+
+  const allTimes = [
+    ...new Set(
+      participantData.flatMap((p) => p.values.map((v) => v.timestamp)).sort()
+    ),
+  ];
+
+  let completeIds = null;
+  if (showComplete) {
+    const completeParticipants = participantData.filter((p) =>
+      allTimes.every((t) =>
+        p.values.some(
+          (v) => v.timestamp === t && v.value !== null && !isNaN(v.value)
+        )
+      )
+    );
+    completeIds = new Set(completeParticipants.map((p) => p.id));
+    participantData = completeParticipants;
+
+    let tmp = raw.filter((r) => completeIds.has(r[idVar]));
+    table = aq.from(tmp);
+  }
 
   // Agregar medias, desviaciones y conteo
   const aggregated = table
@@ -352,14 +384,10 @@ export function getLineChartData(raw, valueVar, groupVar, timeVar, idVar) {
     values: values.sort((a, b) => compareTimestamps(a.time, b.time)),
   }));
 
-  const allTimes = [
-    ...new Set(
-      participantData.flatMap((p) => p.values.map((v) => v.timestamp)).sort()
-    ),
-  ];
-
   // Aquí se llama a la función de RM-ANOVA (debes tenerla implementada)
   const rmAnova = runRMAnova(participantData, allTimes);
+
+  console.log(rmAnova.completeSubjects);
 
   return { meanData, participantData, rmAnova };
 }

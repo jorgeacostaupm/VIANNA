@@ -14,6 +14,7 @@ const defaultConfig = {
   showMeans: true,
   showStds: false,
   showCIs: false,
+  showComplete: true,
   meanPointSize: 5,
   subjectPointSize: 3,
   meanStrokeWidth: 3,
@@ -31,7 +32,7 @@ function Chart({ data, config, id }) {
 
 export default function LineChart({ id, variable, remove }) {
   const [config, setConfig] = useState(defaultConfig);
-  const [data] = useEvolutionData(variable, config.isSync);
+  const [data] = useEvolutionData(variable, config.isSync, config.showComplete);
 
   const chart = useMemo(() => {
     if (!data || data.length === 0) {

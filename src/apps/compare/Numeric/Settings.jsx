@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Space, Radio, Slider, InputNumber, Switch } from "antd";
+import { Typography, Radio, Slider, InputNumber, Switch } from "antd";
 
 const { Text } = Typography;
 

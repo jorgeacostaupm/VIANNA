@@ -120,7 +120,7 @@ export default function HierarchyEditorContextMenu({ editor }) {
 
     const nodes = editor?.svg
       .selectAll(".circleG")
-      .filter(function (d) {
+      .filter(function () {
         return d3.select(this).select(".showCircle").classed("selectedNode");
       })
       .data();

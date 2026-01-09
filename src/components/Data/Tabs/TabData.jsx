@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Select, Typography, Divider, Tooltip } from "antd";
+import { Select, Typography, Divider } from "antd";
 import DragDropData from "../DragDrop/DragDropData";
 import { setGroupVar, setTimeVar, setIdVar } from "@/store/slices/cantabSlice";
 import {

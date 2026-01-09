@@ -21,10 +21,6 @@ const ACCEPTED_FORMATS = {
   "text/csv": [".csv"],
   "text/tab-separated-values": [".tsv"],
   "text/plain": [".txt"],
-  "application/vnd.ms-excel": [".xls"],
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-    ".xlsx",
-  ],
   "application/json": [".json"],
 };
 
@@ -58,7 +54,7 @@ export default function DragDropData() {
     const extension = file.name.split(".").pop().toLowerCase();
 
     // Validación extra por extensión
-    const allowedExtensions = ["csv", "tsv", "txt", "xls", "xlsx", "json"];
+    const allowedExtensions = ["csv", "tsv", "txt", "json"];
     if (!allowedExtensions.includes(extension)) {
       console.error("File type not allowed:", extension);
       return;
@@ -76,11 +72,7 @@ export default function DragDropData() {
       }
     };
 
-    if (["xls", "xlsx"].includes(extension)) {
-      reader.readAsBinaryString(file);
-    } else {
-      reader.readAsText(file);
-    }
+    reader.readAsText(file);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

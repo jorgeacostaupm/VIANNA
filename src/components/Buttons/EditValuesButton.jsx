@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Input, Space, Tag, Card, Divider } from "antd";
+import { Input, Space, Tag, Card } from "antd";
 import { EditOutlined, HighlightOutlined } from "@ant-design/icons";
 
 import PopoverButton from "@/utils/PopoverButton";

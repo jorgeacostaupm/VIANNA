@@ -11,7 +11,6 @@ import { moveTooltip } from "@/utils/functions";
 import ChartBar from "@/utils/ChartBar";
 import tests from "@/utils/tests";
 import store from "@/store/store";
-import { generateId } from "@/utils/functions";
 
 export default function PointRange({ id, variable, test, remove }) {
   const containerRef = useRef();

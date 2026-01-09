@@ -2,7 +2,6 @@ import { Field } from "formik";
 import { motion } from "framer-motion";
 import { Tooltip } from "antd";
 
-import { DropIndicator } from "./DropIndicator";
 import styles from "./DropArea.module.css";
 
 const BasicAttribute = ({ idx, node, onDragStart, isHidden = false }) => {

@@ -5,7 +5,7 @@ import {
   CloseOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { ConfigProvider } from "antd";
+
 import DownloadButton from "./DownloadButton";
 import styles from "./ChartBar.module.css";
 import BarButton from "./BarButton";

@@ -1,6 +1,4 @@
 import Papa from "papaparse";
-import * as XLSX from "xlsx";
-import store from "@/store/store";
 
 // File processor for CSV/TSV/TXT files
 const CsvProcessor = {
@@ -13,17 +11,6 @@ const CsvProcessor = {
         onFileParsed(result.data);
       },
     });
-  },
-};
-
-// File processor for XLS/XLSX files
-const ExcelProcessor = {
-  process(fileContent, onFileParsed) {
-    const workbook = XLSX.read(fileContent, { type: "binary" });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const jsonData = XLSX.utils.sheet_to_json(sheet);
-    onFileParsed(jsonData);
   },
 };
 
@@ -48,9 +35,6 @@ export const FileProcessorFactory = {
       case "tsv":
       case "txt":
         return CsvProcessor;
-      case "xls":
-      case "xlsx":
-        return ExcelProcessor;
       case "json":
         return JsonProcessor;
       default:

@@ -1,3 +1,6 @@
+import jstat from "jstat";
+import { VariableTypes } from "@/utils/Constants";
+
 export const friedmanTest = {
   id: "friedman-test",
   label: "Friedman Test",
@@ -12,7 +15,7 @@ export const friedmanTest = {
 
     for (let i = 0; i < n; i++) {
       const row = groups.map((g) => g.values[i]);
-      ranks.push(jStat.rank(row));
+      ranks.push(jstat.rank(row));
     }
 
     const rankSums = Array(k).fill(0);
@@ -28,7 +31,7 @@ export const friedmanTest = {
       3 * n * (k + 1);
 
     const df = k - 1;
-    const pValue = 1 - jStat.chisquare.cdf(chiSquare, df);
+    const pValue = 1 - jstat.chisquare.cdf(chiSquare, df);
 
     return {
       statisticName: "χ²",

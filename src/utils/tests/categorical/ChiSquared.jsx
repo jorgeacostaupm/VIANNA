@@ -106,7 +106,7 @@ export const chiSquareIndependence = {
         const rowSum2 = rowSums[j];
 
         let chi2_pair = 0;
-        categories.forEach((cat, k) => {
+        categories.forEach((cat) => {
           const obs1 = cnt1[cat];
           const obs2 = cnt2[cat];
           const cs = obs1 + obs2;
