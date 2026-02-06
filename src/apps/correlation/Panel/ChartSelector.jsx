@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Select } from "antd";
 import { AreaChartOutlined } from "@ant-design/icons";
 
-import styles from "@/utils/App.module.css";
-import ColoredButton from "@/utils/ColoredButton";
+import styles from "@/styles/App.module.css";
+import ColoredButton from "@/components/ui/ColoredButton";
 import registry from "../registry";
 
 const { Option } = Select;

@@ -4,7 +4,7 @@ import { RetweetOutlined } from "@ant-design/icons";
 
 import { setDataframe } from "@/store/slices/dataSlice";
 import { setQuarantineData } from "@/store/slices/cantabSlice";
-import BarButton from "@/utils/BarButton";
+import BarButton from "@/components/ui/BarButton";
 
 export default function SwitchButton() {
   const dispatch = useDispatch();

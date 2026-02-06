@@ -1,0 +1,248 @@
+.barButton {
+  height: var(--control-height-sm);
+  width: var(--control-height-sm);
+  padding: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.barButton:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.barButton:active {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+  transform: translateY(1px);
+}
+
+.barButton:global(.ant-btn:active),
+.barButton:global(.ant-btn-focused),
+.barButton:global(.ant-btn:focus),
+.barButton:global(.ant-btn:focus-visible) {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+}
+
+.barButton:focus-visible {
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.35);
+}
+
+.barButton:disabled,
+.barButton:global(.ant-btn-disabled) {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-border);
+  box-shadow: none;
+  transform: none;
+}
+
+.barButton:disabled:hover,
+.barButton:global(.ant-btn-disabled):hover {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-border);
+}
+
+.myButton {
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.myButton:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.myButton:active {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+  transform: translateY(1px);
+}
+
+.myButton:global(.ant-btn:active),
+.myButton:global(.ant-btn-focused),
+.myButton:global(.ant-btn:focus),
+.myButton:global(.ant-btn:focus-visible) {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+}
+
+.myButton:focus-visible {
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.35);
+}
+
+.myButton:disabled,
+.myButton:global(.ant-btn-disabled) {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-border);
+  box-shadow: none;
+  transform: none;
+}
+
+.myButton:disabled:hover,
+.myButton:global(.ant-btn-disabled):hover {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-border);
+}
+
+.greyBarButton {
+  height: var(--control-height-sm);
+  width: var(--control-height-sm);
+  padding: 0;
+  border-radius: var(--radius-md);
+  color: var(--color-ink-tertiary);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  box-shadow: none;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.greyBarButton:hover,
+.greyBarButton:active,
+.greyBarButton:global(.ant-btn:active),
+.greyBarButton:global(.ant-btn-focused),
+.greyBarButton:global(.ant-btn:focus),
+.greyBarButton:global(.ant-btn:focus-visible) {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
+  color: var(--color-ink-tertiary);
+  transform: none;
+}
+
+.greyBarButton:disabled,
+.greyBarButton:global(.ant-btn-disabled) {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
+  color: var(--color-ink-tertiary);
+  box-shadow: none;
+  transform: none;
+}
+
+.greyBarButton:disabled:hover,
+.greyBarButton:global(.ant-btn-disabled):hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
+  color: var(--color-ink-tertiary);
+}
+
+.borderedButton {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border: 2px solid var(--color-border-strong);
+  box-shadow: var(--shadow-xs);
+  height: auto;
+  padding: 10px;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.borderedButton:hover {
+  color: var(--color-brand);
+  border-color: var(--color-brand);
+}
+
+.borderedButton:active {
+  transform: translateY(1px);
+}
+
+.panelButton {
+  padding: 0;
+  font-size: 22px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.panelButton:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.panelButton:active {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+  transform: translateY(1px);
+}
+
+.panelButton:global(.ant-btn:active),
+.panelButton:global(.ant-btn-focused),
+.panelButton:global(.ant-btn:focus),
+.panelButton:global(.ant-btn:focus-visible) {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+}
+
+.panelButton:focus-visible {
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.35);
+}
+
+.panelButton:disabled,
+.panelButton:global(.ant-btn-disabled) {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-border);
+  box-shadow: none;
+  transform: none;
+}
+
+.panelButton:disabled:hover,
+.panelButton:global(.ant-btn-disabled):hover {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-border);
+}
+
+.warningButton {
+  border: none;
+  cursor: pointer;
+  background: var(--color-warning);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-4);
+  height: var(--control-height-md);
+}

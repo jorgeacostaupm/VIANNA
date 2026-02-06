@@ -11,7 +11,7 @@ import {
 } from "./DropIndicator";
 import BasicAttribute from "./BasicAttribute";
 import InputAttribute from "./InputAttribute";
-import buttonStyles from "@/utils/Buttons.module.css";
+import buttonStyles from "@/styles/Buttons.module.css";
 import styles from "./DropArea.module.css";
 
 const { Text } = Typography;

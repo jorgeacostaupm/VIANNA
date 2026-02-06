@@ -4,7 +4,7 @@ import { DatabaseOutlined } from "@ant-design/icons";
 
 import TabHierarchy from "../Tabs/TabHierarchy";
 import styles from "../Data.module.css";
-import BarButton from "@/utils/BarButton";
+import BarButton from "@/components/ui/BarButton";
 
 export default function HierarchyManagementButtons() {
   const [isModalOpen, setIsModalOpen] = useState(false);

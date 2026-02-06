@@ -8,14 +8,21 @@ export const welschAnova = {
     "Comparison of k ≥ 2 independent groups, robust to unequal variances, with CIs for means and Cohen’s d",
   isApplicable: (count) => count >= 2,
   variableType: VariableTypes.NUMERICAL,
+  category: "Numéricas — Independientes",
   run: (groups) => {
     const alpha = 0.05;
     const k = groups.length;
     const groupNames = groups.map((g) => g.name);
     const groupSizes = groups.map((g) => g.values.length);
+    if (groupSizes.some((n) => n < 2)) {
+      throw new Error("Welch ANOVA requires at least 2 observations per group.");
+    }
     const N = groupSizes.reduce((sum, n) => sum + n, 0);
     const groupMeans = groups.map((g) => jStat.mean(g.values));
-    const groupVars = groups.map((g) => jStat.variance(g.values));
+    const groupVars = groups.map((g) => jStat.variance(g.values, true));
+    if (groupVars.some((v) => v <= 0 || !Number.isFinite(v))) {
+      throw new Error("Welch ANOVA requires non-zero variance in each group.");
+    }
     const weights = groupSizes.map((n, i) => n / groupVars[i]);
     const W = weights.reduce((sum, w) => sum + w, 0);
     const weightedMean =
@@ -31,6 +38,9 @@ export const welschAnova = {
         sum + Math.pow(1 - weights[i] / W, 2) / (groupSizes[i] - 1),
       0
     );
+    if (corrDenominator <= 0) {
+      throw new Error("Welch ANOVA failed due to invalid variance correction.");
+    }
     const correction = ((2 * (k - 2)) / (k * k - 1)) * corrDenominator;
     const FValue = between / (1 + correction);
     const df2 = (k * k - 1) / (3 * corrDenominator);
@@ -101,7 +111,7 @@ export const welschAnova = {
           (name, i) =>
             `${name} (n=${groupSizes[i]}, x̄=${groupMeans[i].toFixed(
               3
-            )}, σ²=${Math.sqrt(groupVars[i]).toFixed(3)})`
+            )}, sd=${Math.sqrt(groupVars[i]).toFixed(3)})`
         )
         .join("; ")}`;
 
@@ -123,11 +133,11 @@ export const welschAnova = {
         </div>
         <div>ε² = {epsilonSquared.toFixed(3)}</div>
         <div>p = {pValue.toFixed(3)}</div>
-        <div>Tested grodups:</div>
+        <div>Tested groups:</div>
         <ul style={{ paddingLeft: "1.2em", margin: 0 }}>
           {groupNames.map((name, i) => (
             <li key={i}>
-              {name} (n={groupSizes[i]}, x̄={groupMeans[i].toFixed(3)}, σ²=
+              {name} (n={groupSizes[i]}, x̄={groupMeans[i].toFixed(3)}, sd=
               {Math.sqrt(groupVars[i]).toFixed(3)})
             </li>
           ))}

@@ -4,14 +4,14 @@ import { useSelector } from "react-redux";
 
 import { deepCopy, moveTooltip } from "@/utils/functions";
 import { numMargin, renderLegend } from "../Density/useDensity";
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
 
 export default function useBoxplot({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
   const groups = useSelector((s) => s.cantab.present.groups);
   const selectionGroups = useSelector((s) => s.cantab.present.selectionGroups);
 
-  const { pointSize, showPoints } = config;
+  const { pointSize, showPoints, showLegend, showGrid } = config;
 
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
@@ -66,6 +66,14 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
 
     const y = d3.scaleLinear().domain(yDomain).nice().range([chartHeight, 0]);
 
+    if (showGrid) {
+      chart
+        .append("g")
+        .attr("class", "grid y-grid")
+        .call(d3.axisLeft(y).ticks(5).tickSize(-chartWidth).tickFormat(""))
+        .call((g) => g.select(".domain").remove());
+    }
+
     chart
       .append("g")
       .attr("transform", `translate(0,${chartHeight})`)
@@ -79,10 +87,25 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
       const median = d3.quantile(values, 0.5);
       const q3 = d3.quantile(values, 0.75);
       const iqr = q3 - q1;
-      const lower = Math.max(d3.min(values), q1 - 1.5 * iqr);
-      const upper = Math.min(d3.max(values), q3 + 1.5 * iqr);
+      const mildLower = q1 - 1.5 * iqr;
+      const mildUpper = q3 + 1.5 * iqr;
+      const extremeLower = q1 - 3 * iqr;
+      const extremeUpper = q3 + 3 * iqr;
+      const lower = Math.max(d3.min(values), mildLower);
+      const upper = Math.min(d3.max(values), mildUpper);
 
-      return { q1, median, q3, lower, upper };
+      return {
+        q1,
+        median,
+        q3,
+        iqr,
+        lower,
+        upper,
+        mildLower,
+        mildUpper,
+        extremeLower,
+        extremeUpper,
+      };
     }
 
     const groupsG = chart
@@ -100,6 +123,21 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
 
       const stats = computeBoxStats(values);
       const boxWidth = x.bandwidth();
+      const jitterWidth = boxWidth * 0.6;
+      const crossSize = pointSize * 1.2;
+      const points = (grouped.get(group) || []).map((d) => {
+        const value = d.value;
+        const isExtreme =
+          value < stats.extremeLower || value > stats.extremeUpper;
+        const isMild =
+          !isExtreme && (value < stats.mildLower || value > stats.mildUpper);
+        return {
+          ...d,
+          _jitter: (Math.random() - 0.5) * jitterWidth,
+          _isExtreme: isExtreme,
+          _isMild: isMild,
+        };
+      });
 
       // ----- Box -----
       g.append("rect")
@@ -171,11 +209,11 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
 
       // ---- Scatter points with jitter ----
       g.selectAll(".point")
-        .data(grouped.get(group) || [])
+        .data(points.filter((d) => !d._isMild && !d._isExtreme))
         .join("circle")
         .attr("class", "point")
         .classed("hide", !showPoints)
-        .attr("cx", () => boxWidth / 2 + (Math.random() - 0.5) * boxWidth * 0.6)
+        .attr("cx", (d) => boxWidth / 2 + d._jitter)
         .attr("cy", (d) => y(d.value))
         .attr("fill", "grey")
         .attr("opacity", 0.7)
@@ -188,15 +226,101 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
         })
         .on("mousemove", (e) => moveTooltip(e, tooltip, chart))
         .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+      g.selectAll(".outlier-mild")
+        .data(points.filter((d) => d._isMild))
+        .join("circle")
+        .attr("class", "outlier-mild")
+        .classed("hide", !showPoints)
+        .attr("cx", (d) => boxWidth / 2 + d._jitter)
+        .attr("cy", (d) => y(d.value))
+        .attr("fill", "white")
+        .attr("fill-opacity", 0.01)
+        .attr("stroke", "grey")
+        .attr("stroke-width", 1.5)
+        .attr("opacity", 0.9)
+        .attr("pointer-events", "all")
+        .attr("r", pointSize)
+        .on("mouseover", function (e, d) {
+          tooltip.style("visibility", "visible").html(`
+            <strong>${group}</strong><br/>
+            Value: ${d.value.toFixed(2)}
+          `);
+        })
+        .on("mousemove", (e) => moveTooltip(e, tooltip, chart))
+        .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+      const extreme = g
+        .selectAll(".outlier-extreme")
+        .data(points.filter((d) => d._isExtreme))
+        .join(
+          (enter) => {
+            const gEnter = enter.append("g").attr("class", "outlier-extreme");
+            gEnter.append("line").attr("class", "x1");
+            gEnter.append("line").attr("class", "x2");
+            return gEnter;
+          },
+          (update) => update,
+          (exit) => exit.remove()
+        )
+        .classed("hide", !showPoints)
+        .attr(
+          "transform",
+          (d) => `translate(${boxWidth / 2 + d._jitter}, ${y(d.value)})`
+        )
+        .attr("opacity", 0.9)
+        .on("mouseover", function (e, d) {
+          tooltip.style("visibility", "visible").html(`
+            <strong>${group}</strong><br/>
+            Value: ${d.value.toFixed(2)}
+          `);
+        })
+        .on("mousemove", (e) => moveTooltip(e, tooltip, chart))
+        .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+      extreme
+        .select("line.x1")
+        .attr("x1", -crossSize)
+        .attr("y1", -crossSize)
+        .attr("x2", crossSize)
+        .attr("y2", crossSize)
+        .attr("stroke", "grey")
+        .attr("stroke-width", 1.5);
+
+      extreme
+        .select("line.x2")
+        .attr("x1", -crossSize)
+        .attr("y1", crossSize)
+        .attr("x2", crossSize)
+        .attr("y2", -crossSize)
+        .attr("stroke", "grey")
+        .attr("stroke-width", 1.5);
     });
 
-    renderLegend(legend, selectionGroups, color, null, null, null, null);
-  }, [data, dimensions, groups, selectionGroups, showPoints]);
+    if (showLegend !== false) {
+      renderLegend(legend, selectionGroups, color, null, null, null, null);
+    }
+  }, [data, dimensions, groups, selectionGroups, showPoints, showLegend, showGrid]);
 
   useEffect(() => {
     if (!chartRef.current) return;
 
     const chart = d3.select(chartRef.current);
+    const crossSize = pointSize * 1.2;
     chart.selectAll(".point").attr("r", pointSize);
+    chart.selectAll(".outlier-mild").attr("r", pointSize);
+    chart.selectAll(".outlier-extreme").each(function () {
+      const g = d3.select(this);
+      g.select("line.x1")
+        .attr("x1", -crossSize)
+        .attr("y1", -crossSize)
+        .attr("x2", crossSize)
+        .attr("y2", crossSize);
+      g.select("line.x2")
+        .attr("x1", -crossSize)
+        .attr("y1", crossSize)
+        .attr("x2", crossSize)
+        .attr("y2", -crossSize);
+    });
   }, [pointSize]);
 }

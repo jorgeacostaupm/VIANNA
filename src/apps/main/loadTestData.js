@@ -3,7 +3,7 @@ import {
   updateDescriptions,
   updateHierarchy,
 } from "@/store/async/metaAsyncReducers";
-import * as api from "@/utils/cantabAppServices";
+import * as api from "@/services/cantabAppServices";
 import { setGroupVar, setIdVar, setTimeVar } from "@/store/slices/cantabSlice";
 import { DATASETS } from "@/utils/Constants";
 

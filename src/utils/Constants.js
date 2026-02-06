@@ -52,10 +52,10 @@ export const VariableTypes = Object.freeze({
 });
 
 export const NodeColors = Object.freeze({
-  TEXT: "#ff7f0e",
-  NUMERICAL: "#1f77b4",
-  UNKNOWN: "#bdbdbd",
-  SELECTION: "#2ca02c",
+  TEXT: "#f97316",
+  NUMERICAL: "#2563eb",
+  UNKNOWN: "#64748b",
+  SELECTION: "#1e70c2",
 });
 
 export const DataType = Object.freeze({

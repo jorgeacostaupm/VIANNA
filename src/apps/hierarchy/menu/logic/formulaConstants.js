@@ -42,10 +42,6 @@ export const ROW_FUNCTIONS = {
   minutes: { args: 1 },
   seconds: { args: 1 },
   milliseconds: { args: 1 },
-
-  // Funciones con argumentos variables
-  greatest: { args: -1 },
-  least: { args: -1 },
 };
 
 export const COLUMN_FUNCTIONS = {
@@ -140,7 +136,7 @@ export const PROCESSORS = {
             count: stat.count,
           },
         }),
-        {}
+        {},
       );
 
     return { statsMap, columnName, groupColumn };

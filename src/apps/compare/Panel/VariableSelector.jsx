@@ -5,7 +5,7 @@ import { AreaChartOutlined } from "@ant-design/icons";
 
 import { selectVars } from "@/store/slices/cantabSlice";
 import { checkAssumptions, setSelectedVar } from "@/store/slices/compareSlice";
-import ColoredButton from "@/utils/ColoredButton";
+import ColoredButton from "@/components/ui/ColoredButton";
 
 const { Option } = Select;
 

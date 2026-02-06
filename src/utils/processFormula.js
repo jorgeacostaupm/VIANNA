@@ -1,6 +1,176 @@
 import * as aq from "arquero";
 import { PROCESSORS } from "@/apps/hierarchy/menu/logic/formulaConstants";
 
+const string = (value) =>
+  value == null ? "" : aq?.op?.string ? aq.op.string(value) : String(value);
+const lower = (value) => string(value).toLowerCase();
+const upper = (value) => string(value).toUpperCase();
+const trim = (value) => string(value).trim();
+const substring = (value, start, length) => {
+  const text = string(value);
+  const from = Number(start) || 0;
+  if (length == null || Number.isNaN(Number(length))) {
+    return text.substring(from);
+  }
+  return text.substring(from, from + Number(length));
+};
+
+const sqrt = (value) => Math.sqrt(value);
+const abs = (value) => Math.abs(value);
+const cbrt = (value) => Math.cbrt(value);
+const ceil = (value) => Math.ceil(value);
+const clz32 = (value) => Math.clz32(value);
+const exp = (value) => Math.exp(value);
+const expm1 = (value) => Math.expm1(value);
+const floor = (value) => Math.floor(value);
+const fround = (value) => Math.fround(value);
+const log = (value) => Math.log(value);
+const log10 = (value) => Math.log10(value);
+const log1p = (value) => Math.log1p(value);
+const log2 = (value) => Math.log2(value);
+const pow = (base, exponent) => Math.pow(base, exponent);
+const round = (value) => Math.round(value);
+const sign = (value) => Math.sign(value);
+const trunc = (value) => Math.trunc(value);
+
+const toDate = (value) => {
+  if (value == null || value === "") return null;
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date;
+};
+
+const now = () => Date.now();
+const timestamp = (value) => {
+  const date = toDate(value);
+  return date ? date.getTime() : null;
+};
+
+const datetime = (
+  year,
+  month,
+  day,
+  hours = 0,
+  minutes = 0,
+  seconds = 0,
+  milliseconds = 0
+) => {
+  if (year == null) return null;
+  const y = Number(year);
+  const m = Number(month ?? 1) - 1;
+  const d = Number(day ?? 1);
+  const h = Number(hours ?? 0);
+  const min = Number(minutes ?? 0);
+  const s = Number(seconds ?? 0);
+  const ms = Number(milliseconds ?? 0);
+  return new Date(y, m, d, h, min, s, ms).getTime();
+};
+
+const year = (value) => {
+  const date = toDate(value);
+  return date ? date.getFullYear() : null;
+};
+const quarter = (value) => {
+  const date = toDate(value);
+  return date ? Math.floor(date.getMonth() / 3) + 1 : null;
+};
+const month = (value) => {
+  const date = toDate(value);
+  return date ? date.getMonth() + 1 : null;
+};
+const week = (value) => {
+  const date = toDate(value);
+  if (!date) return null;
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+};
+const date = (value) => {
+  const d = toDate(value);
+  return d ? d.getDate() : null;
+};
+const dayofyear = (value) => {
+  const d = toDate(value);
+  if (!d) return null;
+  const start = new Date(d.getFullYear(), 0, 0);
+  const diff = d - start;
+  return Math.floor(diff / 86400000);
+};
+const dayofweek = (value) => {
+  const d = toDate(value);
+  return d ? d.getDay() : null;
+};
+const hours = (value) => {
+  const d = toDate(value);
+  return d ? d.getHours() : null;
+};
+const minutes = (value) => {
+  const d = toDate(value);
+  return d ? d.getMinutes() : null;
+};
+const seconds = (value) => {
+  const d = toDate(value);
+  return d ? d.getSeconds() : null;
+};
+const milliseconds = (value) => {
+  const d = toDate(value);
+  return d ? d.getMilliseconds() : null;
+};
+
+const greatest = (...args) => {
+  const values = args.filter((v) => v != null && v !== "");
+  if (values.length === 0) return null;
+  return Math.max(...values);
+};
+const least = (...args) => {
+  const values = args.filter((v) => v != null && v !== "");
+  if (values.length === 0) return null;
+  return Math.min(...values);
+};
+
+const FORMULA_FUNCTIONS = {
+  string,
+  lower,
+  upper,
+  trim,
+  substring,
+  sqrt,
+  abs,
+  cbrt,
+  ceil,
+  clz32,
+  exp,
+  expm1,
+  floor,
+  fround,
+  log,
+  log10,
+  log1p,
+  log2,
+  pow,
+  round,
+  sign,
+  trunc,
+  now,
+  timestamp,
+  datetime,
+  year,
+  quarter,
+  month,
+  week,
+  date,
+  dayofyear,
+  dayofweek,
+  hours,
+  minutes,
+  seconds,
+  milliseconds,
+  greatest,
+  least,
+};
+
 // ==================== REGISTRO DE PROCESADORES ESPECIALES ====================
 
 /**
@@ -180,6 +350,7 @@ function createCombinedFunction(formula, specialFunctions) {
  * Procesa una fórmula, manejando funciones especiales y de agregación
  */
 export default function processFormula(table, formula) {
+  void FORMULA_FUNCTIONS;
   console.log("Processing formula:", formula);
 
   // Paso 1: Procesar funciones especiales (zscore, zscoreByGroup, etc.)

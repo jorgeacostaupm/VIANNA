@@ -12,7 +12,7 @@ import {
 import { FileProcessorFactory } from "./drag";
 import { updateData } from "@/store/async/dataAsyncReducers";
 import styles from "../Data.module.css";
-import ColoredButton from "@/utils/ColoredButton";
+import ColoredButton from "@/components/ui/ColoredButton";
 
 const { Text } = Typography;
 
@@ -93,7 +93,7 @@ export default function DragDropData() {
             </span>
             {!filename && (
               <span className={styles.subtitle}>
-                Accepted: .csv, .tsv, .txt, .xls, .xlsx, .json
+                Accepted: .csv, .tsv, .txt, .json
               </span>
             )}
           </div>

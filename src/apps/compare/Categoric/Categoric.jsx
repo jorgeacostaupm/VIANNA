@@ -1,14 +1,17 @@
 import React, { useState, useMemo } from "react";
 import { getCategoricDistributionData as getData } from "@/utils/functionsCompare";
 import useDistributionData from "../Numeric/useDistributionData";
-import ViewContainer from "@/utils/ViewContainer";
+import ViewContainer from "@/components/charts/ViewContainer";
 import { GroupedBarChart, StackedBarChart } from "./charts";
-import NoDataPlaceholder from "@/utils/NoDataPlaceholder";
+import NoDataPlaceholder from "@/components/charts/NoDataPlaceholder";
 import Settings from "./Settings";
 
 const defaultConfig = {
   isSync: true,
   chartType: "stacked",
+  showLegend: true,
+  groupOrder: "alpha",
+  categoryOrder: "alpha",
 };
 const info = "Categorical Distribution plots, Grouped or Stacked bar chart";
 
@@ -24,7 +27,7 @@ export default function Categoric({ id, variable, remove }) {
     } else {
       return <GroupedBarChart data={data} config={config} id={id} />;
     }
-  }, [config.chartType, data]);
+  }, [config, data]);
 
   return (
     <ViewContainer

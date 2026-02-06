@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import Settings from "./Settings";
 import useScatter from "./useScatter";
 import useScatterData from "./useScatterData";
-import ViewContainer from "@/utils/ViewContainer";
-import ChartWithLegend from "@/utils/ChartWithLegend";
+import ViewContainer from "@/components/charts/ViewContainer";
+import ChartWithLegend from "@/components/charts/ChartWithLegend";
 
 function Chart({ data, id, config }) {
   const chartRef = useRef(null);
@@ -13,7 +13,14 @@ function Chart({ data, id, config }) {
 
   useScatter({ chartRef, legendRef, data, config });
 
-  return <ChartWithLegend id={id} chartRef={chartRef} legendRef={legendRef} />;
+  return (
+    <ChartWithLegend
+      id={id}
+      chartRef={chartRef}
+      legendRef={legendRef}
+      showLegend={config.showLegend}
+    />
+  );
 }
 
 export default function ScatterMatrix({ id, remove }) {
@@ -22,8 +29,10 @@ export default function ScatterMatrix({ id, remove }) {
   const [config, setConfig] = useState({
     isSync: true,
     pointSize: 4,
+    pointOpacity: 0.75,
     groupVar: groupVar,
     variables: [],
+    showLegend: true,
   });
 
   const [data] = useScatterData(config.isSync, config);

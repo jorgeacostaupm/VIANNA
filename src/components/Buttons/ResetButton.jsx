@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RollbackOutlined } from "@ant-design/icons";
 
 import { setDataframe } from "@/store/slices/dataSlice";
-import BarButton from "@/utils/BarButton";
+import BarButton from "@/components/ui/BarButton";
 import { setFilteredData } from "@/store/slices/cantabSlice";
 import { pubsub } from "@/utils/pubsub";
 

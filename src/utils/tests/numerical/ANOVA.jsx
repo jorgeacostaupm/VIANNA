@@ -8,17 +8,21 @@ export const anova = {
     "Comparación de k ≥ 2 grupos independientes, con CIs para medias y d",
   isApplicable: (count) => count >= 2,
   variableType: VariableTypes.NUMERICAL,
+  category: "Numéricas — Independientes",
   run: (groups) => {
     const alpha = 0.05;
     const k = groups.length;
 
     const groupNames = groups.map((g) => g.name);
     const groupSizes = groups.map((g) => g.values.length);
+    if (groupSizes.some((n) => n < 2)) {
+      throw new Error("ANOVA requires at least 2 observations per group.");
+    }
     const N = groupSizes.reduce((sum, n) => sum + n, 0);
     const allValues = groups.flatMap((g) => g.values);
 
     const groupMeans = groups.map((g) => jStat.mean(g.values));
-    const groupVars = groups.map((g) => jStat.variance(g.values));
+    const groupVars = groups.map((g) => jStat.variance(g.values, true));
 
     const grandMean = jStat.mean(allValues);
     const ssBetween = groups.reduce(
@@ -35,6 +39,9 @@ export const anova = {
 
     const dfBetween = k - 1;
     const dfWithin = N - k;
+    if (dfWithin <= 0) {
+      throw new Error("ANOVA requires at least one degree of freedom.");
+    }
     const msBetween = ssBetween / dfBetween;
     const msWithin = ssWithin / dfWithin;
 
@@ -100,15 +107,15 @@ export const anova = {
 
     const descriptionString =
       `One-way ANOVA of ${k} groups (N=${N})` +
-      `F(${dfBetween},${dfWithin}) = ${FValue.toFixed(
+      ` F(${dfBetween},${dfWithin}) = ${FValue.toFixed(
         2
-      )} <br> p = ${pValue.toFixed(3)} η² = ${etaSquared.toFixed(3)}` +
+      )}, p = ${pValue.toFixed(3)}, η² = ${etaSquared.toFixed(3)}` +
       ` Tested groups: ${groupNames
         .map(
           (name, i) =>
             `${name} (n=${groupSizes[i]}, x̄=${groupMeans[i].toFixed(
               2
-            )}, σ²=${Math.sqrt(groupVars[i]).toFixed(2)})`
+            )}, sd=${Math.sqrt(groupVars[i]).toFixed(2)})`
         )
         .join("; ")}`;
 
@@ -127,7 +134,7 @@ export const anova = {
           <ul style={{ paddingLeft: "1em", margin: 0 }}>
             {groupNames.map((name, i) => (
               <li key={i}>
-                {name} (n={groupSizes[i]}, x̄={groupMeans[i].toFixed(2)}, σ²=
+                {name} (n={groupSizes[i]}, x̄={groupMeans[i].toFixed(2)}, sd=
                 {Math.sqrt(groupVars[i]).toFixed(2)})
               </li>
             ))}

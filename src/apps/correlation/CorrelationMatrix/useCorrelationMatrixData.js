@@ -9,7 +9,7 @@ const { publish } = pubsub;
 export default function useCorrelationMatrixData(
   isSync = true,
   params,
-  setInfo
+  setInfo,
 ) {
   const [data, setData] = useState([]);
   const selection = useSelector((s) => s.dataframe.present.selection);
@@ -20,6 +20,7 @@ export default function useCorrelationMatrixData(
     try {
       const res = getData(selection, params);
 
+      console.log("RES", res);
       if (params.nTop > 0 && res) {
         const info = getInfo(res, params.nTop);
         setInfo(info);
@@ -49,7 +50,7 @@ function getInfo(correlations, nTop) {
     .slice(0, nTop);
   topCorrelations.forEach(
     (corr, i) =>
-      (info += `${i + 1}. ${corr.x}, ${corr.y}: ${corr.value.toFixed(2)}\n`)
+      (info += `${i + 1}. ${corr.x}, ${corr.y}: ${corr.value.toFixed(2)}\n`),
   );
   return info;
 }

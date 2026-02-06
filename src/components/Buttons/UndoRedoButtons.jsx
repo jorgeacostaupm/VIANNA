@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Typography } from "antd";
 import { useDispatch } from "react-redux";
 import { StepBackwardFilled, StepForwardFilled } from "@ant-design/icons";
-import BarButton from "@/utils/BarButton";
+import BarButton from "@/components/ui/BarButton";
 
 const { Text } = Typography;
 

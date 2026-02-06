@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { useEffect, useState } from "react";
 import { moveTooltip } from "@/utils/functions";
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
 import { useSelector } from "react-redux";
 import renderLegend from "@/utils/renderLegend";
 
@@ -19,7 +19,7 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
   const [scatter, setScatter] = useState(null);
 
   useEffect(() => {
-    const { groupVar, pointSize, variables } = config;
+    const { groupVar, pointSize, variables, pointOpacity, showLegend } = config;
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
 
     d3.select(chartRef.current).selectAll("*").remove();
@@ -66,7 +66,9 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
 
     const color = d3.scaleOrdinal().domain(groups).range(colorScheme);
 
-    renderLegend(legend, groups, color, blur, setBlur, hide, setHide);
+    if (showLegend !== false) {
+      renderLegend(legend, groups, color, blur, setBlur, hide, setHide);
+    }
 
     if (variables.length < 2) return;
 
@@ -150,7 +152,7 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
         .attr("fill", function (d) {
           return color(d[groupVar]);
         })
-        .attr("opacity", 0.8)
+        .attr("opacity", pointOpacity ?? 0.8)
         .merge(dots)
         .attr("cx", function (d) {
           return x(+d[var1]);
@@ -306,9 +308,9 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
         .attr("class", "dots")
         .attr("cx", (d) => x(+d[var1]))
         .attr("cy", (d) => y(+d[var2]))
-        .attr("r", 5)
+        .attr("r", pointSize)
         .attr("fill", (d) => color(d[groupVar]))
-        .attr("opacity", 0.8)
+        .attr("opacity", pointOpacity ?? 0.8)
         .on("mouseover", function (e, d) {
           const target = e.target;
           d3.select(target).style("stroke", "black").raise();
@@ -425,7 +427,14 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
 
       return brushInstance;
     }
-  }, [data, config.variables, config.groupVar, dimensions, scatter]);
+  }, [
+    data,
+    config.variables,
+    config.groupVar,
+    config.showLegend,
+    dimensions,
+    scatter,
+  ]);
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -446,6 +455,9 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
     if (!chartRef.current) return;
 
     const chart = d3.select(chartRef.current);
-    chart.selectAll(".dots").attr("r", config.pointSize);
-  }, [config.pointSize]);
+    chart
+      .selectAll(".dots")
+      .attr("r", config.pointSize)
+      .attr("opacity", config.pointOpacity);
+  }, [config.pointSize, config.pointOpacity]);
 }

@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Select, Slider, Typography, Space } from "antd";
+import { Select, Slider, Switch, Typography } from "antd";
 import { getCategoricalKeys } from "@/utils/functions";
+import panelStyles from "@/styles/SettingsPanel.module.css";
 
 const { Text } = Typography;
 
@@ -50,57 +51,84 @@ export default function Settings({ config, setConfig }) {
   };
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "400px" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          width: "100%",
-          gap: "15px",
-        }}
-      >
-        <Text strong>Grouping Variable</Text>
-        <Select
-          value={config.groupVar}
-          onChange={onGroupVarChange}
-          placeholder="Select variable"
-          style={{ flex: 1 }}
-        >
-          {categoricalVars.map((key) => (
-            <Option key={key} value={key}>
-              {key}
-            </Option>
-          ))}
-        </Select>
+    <div className={panelStyles.panel}>
+      <div className={panelStyles.section}>
+        <div className={panelStyles.sectionTitle}>Grouping</div>
+        <div className={panelStyles.rowStack}>
+          <Text className={panelStyles.label}>Grouping variable</Text>
+          <Select
+            value={config.groupVar}
+            onChange={onGroupVarChange}
+            placeholder="Select variable"
+            options={categoricalVars.map((key) => ({
+              value: key,
+              label: key,
+            }))}
+          />
+        </div>
+        <div className={panelStyles.rowStack}>
+          <Text className={panelStyles.label}>Included variables</Text>
+          <Select
+            mode="multiple"
+            value={config.variables}
+            onChange={onVariablesChange}
+            placeholder="Select variables"
+            options={navioColumns.map((key) => ({
+              value: key,
+              label: key,
+            }))}
+            disabled={!config.isSync}
+          />
+        </div>
       </div>
 
-      <Select
-        mode="multiple"
-        value={config.variables}
-        onChange={onVariablesChange}
-        placeholder="Select variables"
-        style={{ width: "100%", maxWidth: "400px" }}
-        disabled={!config.isSync}
-      >
-        {navioColumns.map((key) => (
-          <Option key={key} value={key}>
-            {key}
-          </Option>
-        ))}
-      </Select>
-
-      <div>
-        <Text strong>Points radius:</Text>
-        <Text type="secondary"> {config.pointSize}px</Text>
+      <div className={panelStyles.section}>
+        <div className={panelStyles.sectionTitle}>Points</div>
+        <div className={panelStyles.rowStack}>
+          <Text className={panelStyles.label}>Size</Text>
+          <Text className={panelStyles.value}>{config.pointSize}px</Text>
+          <Slider
+            min={1}
+            max={20}
+            value={config.pointSize}
+            onChange={onPointSizeChange}
+          />
+        </div>
+        <div className={panelStyles.rowStack}>
+          <Text className={panelStyles.label}>Opacity</Text>
+          <Text className={panelStyles.value}>
+            {Math.round(config.pointOpacity * 100)}%
+          </Text>
+          <Slider
+            min={0.2}
+            max={1}
+            step={0.05}
+            value={config.pointOpacity}
+            onChange={(v) =>
+              setConfig((prev) => ({
+                ...prev,
+                pointOpacity: v,
+              }))
+            }
+          />
+        </div>
       </div>
 
-      <Slider
-        min={1}
-        max={20}
-        value={config.pointSize}
-        onChange={onPointSizeChange}
-        style={{ width: "100%" }}
-      />
-    </Space>
+      <div className={panelStyles.section}>
+        <div className={panelStyles.sectionTitle}>Legend</div>
+        <div className={panelStyles.row}>
+          <Text className={panelStyles.label}>Show legend</Text>
+          <Switch
+            checked={config.showLegend}
+            onChange={(v) =>
+              setConfig((prev) => ({
+                ...prev,
+                showLegend: v,
+              }))
+            }
+          />
+        </div>
+      </div>
+    </div>
   );
 }

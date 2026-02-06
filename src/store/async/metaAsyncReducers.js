@@ -17,44 +17,97 @@ import { convertColumnType } from "./dataAsyncReducers";
 
 import { get_parser } from "@/apps/hierarchy/menu/logic/parser";
 import buildAggregation from "@/apps/hierarchy/menu/logic/formulaGenerator";
+import { ALL_FUNCTIONS } from "@/apps/hierarchy/menu/logic/formulaConstants";
 
 let parser = get_parser();
+
+const TEXT_OPERATIONS = new Set([
+  "string",
+  "lower",
+  "upper",
+  "trim",
+  "substring",
+]);
+
+const sanitizeNamePart = (value) => {
+  return String(value)
+    .replace(/\$\(|\)/g, "")
+    .replace(/["']/g, "")
+    .replace(/[^a-zA-Z0-9._-]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 40);
+};
+
+const buildOperationName = (operation, colName, extraArgs) => {
+  const cleanedArgs = extraArgs
+    .map(sanitizeNamePart)
+    .filter((part) => part && part.length > 0);
+  const suffix = cleanedArgs.length > 0 ? `-${cleanedArgs.join("_")}` : "";
+  return `${operation}-${colName}${suffix}`;
+};
+
+const getOperationDtype = (operation) =>
+  TEXT_OPERATIONS.has(operation) ? "text" : "number";
 
 function getAggregation(operation, params, node) {
   const colName = node.data.name;
   const id = node.data.id;
-  let formula = "";
-  let name = "";
+  const opConfig = ALL_FUNCTIONS[operation];
 
-  switch (operation) {
-    case "zscore":
-      formula = `${operation}($(${colName}))`;
-      name = `Z-${colName}`;
-      break;
-
-    case "zscoreByGroup":
-      if (!params.group || params.group.length === 0) {
-        throw new Error("Group parameter is required for zscoreByGroup");
-      }
-      formula = `${operation}($(${colName}), $(${params.group}))`;
-      name = `Z-${colName}-${params.group}`;
-      break;
-
-    case "zscoreByValues":
-      if (!params[id]?.mean || !params[id]?.stdev) {
-        throw new Error(
-          `Mean and stdev are required for node ${colName} (${id})`
-        );
-      }
-      const { mean, stdev } = params[id];
-      formula = `${operation}($(${colName}), ${mean}, ${stdev})`;
-      name = `Z-${colName} µ:${mean} σ:${stdev}`;
-      break;
-
-    default:
-      throw new Error(`Unsupported operation: ${operation}`);
+  if (!opConfig) {
+    throw new Error(`Unsupported operation: ${operation}`);
   }
 
+  const opArgs = opConfig.args;
+  const extraArgs = (params?.args || [])
+    .map((arg) => String(arg).trim())
+    .filter((arg) => arg.length > 0);
+
+  const args = [];
+  if (opArgs === 0) {
+    args.push("0");
+  } else {
+    args.push(`$(${colName})`);
+  }
+
+  let name = "";
+
+  if (operation === "zscore") {
+    name = `Z-${colName}`;
+  } else if (operation === "zscoreByGroup") {
+    const group = Array.isArray(params?.group)
+      ? params.group[0]
+      : params?.group;
+    if (!group) {
+      throw new Error("Group parameter is required for zscoreByGroup");
+    }
+    args.push(`$(${group})`);
+    name = `Z-${colName}-${group}`;
+  } else if (operation === "zscoreByValues") {
+    const values = params?.values || params;
+    const valueParams = values?.[id];
+    if (!valueParams || valueParams.mean == null || valueParams.stdev == null) {
+      throw new Error(
+        `Mean and stdev are required for node ${colName} (${id})`
+      );
+    }
+    args.push(valueParams.mean, valueParams.stdev);
+    name = `Z-${colName} µ:${valueParams.mean} σ:${valueParams.stdev}`;
+  } else {
+    if (opArgs > 1 && extraArgs.length < opArgs - 1) {
+      throw new Error(`Operation ${operation} requires more arguments.`);
+    }
+
+    if (opArgs === -1) {
+      args.push(...extraArgs);
+    } else if (opArgs > 1) {
+      args.push(...extraArgs.slice(0, opArgs - 1));
+    }
+
+    name = buildOperationName(operation, colName, extraArgs);
+  }
+
+  const formula = `${operation}(${args.join(", ")})`;
   const parsed = parser.parse(formula);
   const tmp = buildAggregation(parsed);
 
@@ -68,6 +121,7 @@ function getAggregation(operation, params, node) {
     ...tmp,
     info,
     name,
+    dtype: getOperationDtype(operation),
   };
 }
 
@@ -94,7 +148,7 @@ export const applyOperation = createAsyncThunk(
             type: "aggregation",
             parentID: n.data.id,
             info: agg.info,
-            dtype: "number",
+            dtype: agg.dtype || "number",
           })
         ).unwrap();
 
@@ -357,11 +411,11 @@ export const updateDescriptions = createAsyncThunk(
       const table = aq.fromCSV(descriptions);
 
       const descMap = table.objects().reduce((acc, row) => {
-        const key = row.measure_name?.trim();
+        const key = row.name?.trim();
         if (!key) return acc;
 
         acc[key] = {
-          description: row.measure_description?.trim() ?? "",
+          description: row.description?.trim() ?? "",
           decimalPlaces:
             row["Decimal Places"] != null
               ? Number(row["Decimal Places"])

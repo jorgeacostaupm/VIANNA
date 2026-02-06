@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 
 import Bar from "./Bar";
 import Navio from "@/components/Navio";
-import NoDataPlaceholder from "@/utils/NoDataPlaceholder";
-import styles from "@/utils/Charts.module.css";
+import NoDataPlaceholder from "@/components/charts/NoDataPlaceholder";
+import styles from "@/styles/Charts.module.css";
 import { setSelection } from "@/store/slices/dataSlice";
 import { updateConfig } from "@/store/slices/dataSlice";
 

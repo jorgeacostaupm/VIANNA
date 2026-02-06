@@ -4,12 +4,12 @@ import GridLayout, { WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import HierarchyEditor from "./HierarchyEditor";
-import styles from "@/utils/App.module.css";
+import HierarchyEditor from "./editor/HierarchyEditor";
+import styles from "@/styles/App.module.css";
 import { Apps, APP_NAME } from "@/utils/Constants";
 import { setInit } from "@/store/slices/metaSlice";
-import useRootStyles from "@/utils/useRootStyles";
-import useNotification from "@/utils/useNotification";
+import useRootStyles from "@/hooks/useRootStyles";
+import useNotification from "@/hooks/useNotification";
 const ResponsiveGridLayout = WidthProvider(GridLayout);
 
 export default function HierarchyApp() {

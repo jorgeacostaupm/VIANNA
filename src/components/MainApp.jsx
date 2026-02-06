@@ -5,12 +5,12 @@ import GridLayout, { WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import useNotification from "@/utils/useNotification";
-import AppBar from "@/utils/AppBar";
+import useNotification from "@/hooks/useNotification";
+import AppBar from "@/components/ui/AppBar";
 import AppsButtons from "./AppsButtons";
 import OverviewApp from "./old/Overview/OverviewApp";
 import { pubsub } from "@/utils/pubsub";
-import styles from "@/utils/App.module.css";
+import styles from "@/styles/App.module.css";
 import { setInit } from "@/store/slices/cantabSlice";
 import { APP_NAME, APP_DESC } from "@/utils/Constants";
 
@@ -72,9 +72,9 @@ const dataFile = largeData;
 // TEST DATA LOADING
 import { updateData } from "@/store/slices/dataSlice";
 import { updateHierarchy } from "@/store/async/metaAsyncReducers";
-import * as api from "@/utils/cantabAppServices";
+import * as api from "@/services/cantabAppServices";
 import { setGroupVar, setIdVar, setTimeVar } from "../store/slices/cantabSlice";
-import useRootStyles from "@/utils/useRootStyles";
+import useRootStyles from "@/hooks/useRootStyles";
 
 async function loadTestData(dispatch) {
   try {

@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Select, Button, Input } from "antd";
 import { RollbackOutlined, EditOutlined } from "@ant-design/icons";
 
-import buttonStyles from "@/utils/Buttons.module.css";
+import buttonStyles from "@/styles/Buttons.module.css";
 import { generateFileName } from "@/utils/functions";
 import { ORDER_VARIABLE } from "@/utils/Constants";
-import BarButton from "@/utils/BarButton";
+import BarButton from "@/components/ui/BarButton";
 import { setQuarantineData, selectNavioVars } from "@/store/slices/cantabSlice";
 import { setDataframe } from "@/store/slices/dataSlice";
 

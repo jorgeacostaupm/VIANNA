@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { useLayoutEffect } from "react";
 import { deepCopy, moveTooltip } from "@/utils/functions";
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
 import {
   catMargins,
   renderLegend,
@@ -20,6 +20,7 @@ export default function useStackedBarChart({
 
     const { width, height } = dimensions;
     const { chartData, categories, categoriesWithValues, groupVar } = data;
+    const { showLegend, groupOrder, categoryOrder } = config || {};
 
     d3.select(chartRef.current).selectAll("*").remove();
     d3.select(legendRef.current).selectAll("*").remove();
@@ -40,16 +41,42 @@ export default function useStackedBarChart({
       .append("g")
       .attr("transform", `translate(${catMargins.left},${catMargins.top})`);
 
-    const groups = chartData.map((d) => d[groupVar]).sort();
+    const groupTotals = new Map(
+      chartData.map((d) => [
+        d[groupVar],
+        categories.reduce((sum, c) => sum + (d[c] || 0), 0),
+      ])
+    );
+    const groups = chartData.map((d) => d[groupVar]);
+    groups.sort((a, b) => {
+      if (groupOrder === "count") {
+        return (groupTotals.get(b) || 0) - (groupTotals.get(a) || 0);
+      }
+      return String(a).localeCompare(String(b));
+    });
 
     const x = d3.scaleBand().domain(groups).range([0, chartWidth]).padding(0.2);
 
-    let tmp = deepCopy(categories).sort();
-    const stackGenerator = d3.stack().keys(tmp);
+    const categoryTotals = new Map(
+      categories.map((c) => [
+        c,
+        chartData.reduce((sum, d) => sum + (d[c] || 0), 0),
+      ])
+    );
+    const visibleCategories =
+      categoriesWithValues?.length > 0 ? categoriesWithValues : categories;
+    const orderedCategories = deepCopy(visibleCategories).sort((a, b) => {
+      if (categoryOrder === "count") {
+        return (categoryTotals.get(b) || 0) - (categoryTotals.get(a) || 0);
+      }
+      return String(a).localeCompare(String(b));
+    });
+
+    const stackGenerator = d3.stack().keys(orderedCategories);
     const series = stackGenerator(chartData);
 
     const maxSum = d3.max(chartData, (d) =>
-      categories.reduce((sum, c) => sum + d[c], 0)
+      orderedCategories.reduce((sum, c) => sum + d[c], 0)
     );
 
     const y = d3
@@ -58,7 +85,10 @@ export default function useStackedBarChart({
       .nice()
       .range([chartHeight, 0]);
 
-    const color = d3.scaleOrdinal().domain(categories).range(colorScheme);
+    const color = d3
+      .scaleOrdinal()
+      .domain(orderedCategories)
+      .range(colorScheme);
 
     chart
       .append("g")
@@ -109,6 +139,8 @@ export default function useStackedBarChart({
         d3.select(e.currentTarget).attr("opacity", 1);
       });
 
-    renderLegend(legend, categoriesWithValues, color);
+    if (showLegend !== false) {
+      renderLegend(legend, orderedCategories, color);
+    }
   }, [data, config, dimensions]);
 }

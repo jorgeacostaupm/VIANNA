@@ -1,62 +1,86 @@
 import * as d3 from "d3";
 import { useEffect } from "react";
+import {
+  interpolateBrBG,
+  interpolatePiYG,
+  interpolatePRGn,
+  interpolatePuOr,
+  interpolateRdBu,
+  interpolateRdYlBu,
+  interpolateRdYlGn,
+  interpolateSpectral,
+} from "d3-scale-chromatic";
 import { moveTooltip } from "@/utils/functions";
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
+import { CORRELATION_METHOD_MAP } from "./constants";
 
-const highCorrColor = "#FF3D3D";
-const middleCorrColor = "#fff";
-const lowCorrColor = "#3D6BFF";
+const INTERPOLATORS = {
+  rdBu: interpolateRdBu,
+  rdYlBu: interpolateRdYlBu,
+  rdYlGn: interpolateRdYlGn,
+  brBG: interpolateBrBG,
+  piYG: interpolatePiYG,
+  prGn: interpolatePRGn,
+  puOr: interpolatePuOr,
+  spectral: interpolateSpectral,
+};
 
-export default function useCorrelationMatrix({ chartRef, data, config }) {
+export default function useCorrelationMatrix({ chartRef, data, config, params }) {
   const dimensions = useResizeObserver(chartRef);
 
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current) return;
 
+    const { range, showLegend, showLabels, colorScale } = config;
+    const methodInfo =
+      CORRELATION_METHOD_MAP[params?.method] || CORRELATION_METHOD_MAP.pearson;
     const allVars = data.map((d) => d.x);
     const varsSet = new Set(allVars);
     const variables = Array.from(varsSet);
 
-    const tempContainer = document.createElement("div");
-    tempContainer.style.position = "absolute";
-    tempContainer.style.visibility = "hidden";
-    tempContainer.style.fontSize = "16px";
-    tempContainer.style.fontFamily = "sans-serif";
-    document.body.appendChild(tempContainer);
+    let margin = { top: 60, right: 100, bottom: 40, left: 100 };
 
-    const tempSvg = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "svg"
-    );
-    tempContainer.appendChild(tempSvg);
+    if (showLabels !== false) {
+      const tempContainer = document.createElement("div");
+      tempContainer.style.position = "absolute";
+      tempContainer.style.visibility = "hidden";
+      tempContainer.style.fontSize = "16px";
+      tempContainer.style.fontFamily = "sans-serif";
+      document.body.appendChild(tempContainer);
 
-    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    text.textContent = variables.reduce((a, b) =>
-      a.length > b.length ? a : b
-    );
-    text.setAttribute("transform", "rotate(-45)");
-    tempSvg.appendChild(text);
+      const tempSvg = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+      );
+      tempContainer.appendChild(tempSvg);
 
-    const bbox = text.getBBox();
+      const text = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+      );
+      text.textContent = variables.reduce((a, b) =>
+        a.length > b.length ? a : b
+      );
+      text.setAttribute("transform", "rotate(-45)");
+      tempSvg.appendChild(text);
 
-    const upwardExtension = bbox.y < 0 ? Math.abs(bbox.y) : 0;
+      const bbox = text.getBBox();
+      const upwardExtension = bbox.y < 0 ? Math.abs(bbox.y) : 0;
+      const totalTopSpace = upwardExtension + 10;
 
-    const totalTopSpace = upwardExtension + 10;
+      document.body.removeChild(tempContainer);
 
-    document.body.removeChild(tempContainer);
+      margin = {
+        top: Math.max(100, totalTopSpace + 30) + 20,
+        right: 100,
+        bottom: 40,
+        left: 140,
+      };
 
-    const margin = {
-      top: Math.max(100, totalTopSpace + 30) + 20,
-      right: 100,
-      bottom: 40,
-      left: 140,
-    };
-
-    if (bbox.x < 0) {
-      margin.left = Math.max(margin.left, Math.abs(bbox.x) + 50);
+      if (bbox.x < 0) {
+        margin.left = Math.max(margin.left, Math.abs(bbox.x) + 50);
+      }
     }
-
-    const { range } = config;
 
     d3.select(chartRef.current).selectAll("*").remove();
 
@@ -84,10 +108,11 @@ export default function useCorrelationMatrix({ chartRef, data, config }) {
       .paddingInner(0.1)
       .range([0, chartSize]);
 
+    const interpolator = INTERPOLATORS[colorScale] || interpolateRdBu;
     const color = d3
-      .scaleLinear()
+      .scaleDiverging()
       .domain([-1, 0, 1])
-      .range([highCorrColor, middleCorrColor, lowCorrColor]);
+      .interpolator(interpolator);
 
     if (variables.length < 2) return;
 
@@ -100,8 +125,12 @@ export default function useCorrelationMatrix({ chartRef, data, config }) {
       }
     }
 
-    renderLabels();
-    renderLegend();
+    if (showLabels !== false) {
+      renderLabels();
+    }
+    if (showLegend !== false) {
+      renderLegend();
+    }
 
     function renderCorrelationCell(x, y) {
       const value = data.find(
@@ -125,7 +154,8 @@ export default function useCorrelationMatrix({ chartRef, data, config }) {
           const target = e.target;
           d3.select(target).style("stroke", "black").raise();
           tooltip.style("opacity", 1);
-          let html = `<strong> ${x} & ${y}</strong> <br> ρ: ${value.toFixed(
+          const methodLabel = methodInfo?.label || "Pearson (r)";
+          let html = `<strong> ${x} & ${y}</strong> <br> ${methodLabel}: ${value.toFixed(
             2
           )}`;
           tooltip.style("opacity", 1).html(html);
@@ -141,13 +171,16 @@ export default function useCorrelationMatrix({ chartRef, data, config }) {
     }
 
     function renderLegend() {
-      const defs = chart.append("defs");
+      const rawId = chartRef.current?.id || "correlation-matrix";
+      const safeId = String(rawId).replace(/[^a-zA-Z0-9_-]/g, "-");
+      const gradientId = `${safeId}-color-gradient`;
+      const defs = svg.append("defs");
 
       const scale = d3.scaleLinear().domain([-1, 1]).range([chartSize, 0]);
 
       const gradient = defs
         .append("linearGradient")
-        .attr("id", "color-gradient")
+        .attr("id", gradientId)
         .attr("x1", "0%")
         .attr("y1", "100%")
         .attr("x2", "0%")
@@ -156,9 +189,9 @@ export default function useCorrelationMatrix({ chartRef, data, config }) {
       gradient
         .selectAll("stop")
         .data([
-          { offset: "0%", color: highCorrColor },
-          { offset: "50%", color: middleCorrColor },
-          { offset: "100%", color: lowCorrColor },
+          { offset: "0%", color: interpolator(0) },
+          { offset: "50%", color: interpolator(0.5) },
+          { offset: "100%", color: interpolator(1) },
         ])
         .enter()
         .append("stop")
@@ -171,7 +204,7 @@ export default function useCorrelationMatrix({ chartRef, data, config }) {
         .attr("transform", `translate(${70}, ${margin.top})`)
         .attr("width", legendWidth)
         .attr("height", chartSize)
-        .style("fill", "url(#color-gradient)");
+        .attr("fill", `url(#${gradientId})`);
 
       const axis = d3.axisLeft(scale).ticks(5);
 
@@ -219,5 +252,5 @@ export default function useCorrelationMatrix({ chartRef, data, config }) {
             ")"
         );
     }
-  }, [data, config, dimensions, config.range]);
+  }, [data, config, dimensions, params?.method]);
 }

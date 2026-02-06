@@ -1,6 +1,6 @@
 import React from "react";
 
-import AppBar from "@/utils/AppBar";
+import AppBar from "@/components/ui/AppBar";
 import ChartSelector from "./ChartSelector";
 import { CORR_DESC } from "@/utils/Constants";
 

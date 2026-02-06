@@ -9,7 +9,7 @@ import EditButton from "@/components/Buttons/EditButton";
 import EditValuesButton from "@/components/Buttons/EditValuesButton";
 import ExportButton from "@/components/Buttons/ExportButton";
 
-import styles from "@/utils/ChartBar.module.css";
+import styles from "@/styles/ChartBar.module.css";
 
 export default function Bar({ title, config, updateConfig }) {
   return (

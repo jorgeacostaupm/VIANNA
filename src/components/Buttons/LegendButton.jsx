@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { Col, Row, Typography } from "antd";
 import { BgColorsOutlined } from "@ant-design/icons";
 
-import PopoverButton from "@/utils/PopoverButton";
+import PopoverButton from "@/components/ui/PopoverButton";
 
 const colorScales = {
   "Numbers (from lowest to highest)": d3.scaleSequential(d3.interpolateBlues),

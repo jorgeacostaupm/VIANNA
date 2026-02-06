@@ -1,0 +1,55 @@
+.fullScreenLayout {
+  min-height: 100vh;
+  width: 100vw;
+  background: transparent;
+  overflow: hidden;
+}
+
+.appBar {
+  background: linear-gradient(90deg, #0b1220 0%, #111827 100%);
+  padding: 0 var(--space-4);
+  height: var(--nav-height);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.appBarPopoverContent {
+  max-width: 700px;
+  white-space: normal;
+  word-break: break-word;
+  text-align: justify;
+}
+
+.appBarControls {
+  max-width: 70vw;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0 var(--space-3);
+}
+
+.appBarLogo {
+  display: block;
+  height: 70px;
+  width: auto;
+}
+
+.panelBox {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  white-space: nowrap;
+  box-shadow: var(--shadow-xs);
+}
+
+.popoverMenu {
+  max-width: 420px;
+  padding: var(--space-3);
+}

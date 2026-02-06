@@ -1,5 +1,3 @@
-import store from "@/store/store";
-import { Provider } from "react-redux";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import MainApp from "@/apps/main";
@@ -11,18 +9,16 @@ import HierarchyApp from "@/apps/hierarchy/HierarchyApp";
 
 export default function AppRoutes() {
   return (
-    <Provider store={store}>
-      <HashRouter>
-        <Routes>
-          <Route path="/" element={<MainApp />} />
-          <Route path="cantab" element={<QuarantineApp />} />
-          <Route path="compare" element={<CompareApp />} />
-          <Route path="evolution" element={<EvolutionApp />} />
-          <Route path="correlation" element={<CorrelationApp />} />
-          <Route path="metadata" element={<HierarchyApp />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </HashRouter>
-    </Provider>
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<MainApp />} />
+        <Route path="cantab" element={<QuarantineApp />} />
+        <Route path="compare" element={<CompareApp />} />
+        <Route path="evolution" element={<EvolutionApp />} />
+        <Route path="correlation" element={<CorrelationApp />} />
+        <Route path="metadata" element={<HierarchyApp />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </HashRouter>
   );
 }

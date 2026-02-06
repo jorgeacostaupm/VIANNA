@@ -6,7 +6,7 @@ import { setQuarantineData } from "@/store/slices/cantabSlice";
 import { setDataframe } from "@/store/slices/dataSlice";
 
 import { ORDER_VARIABLE } from "@/utils/Constants";
-import BarButton from "@/utils/BarButton";
+import BarButton from "@/components/ui/BarButton";
 
 export default function QuarantineButton() {
   const dispatch = useDispatch();

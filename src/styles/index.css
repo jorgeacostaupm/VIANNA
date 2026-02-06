@@ -1,16 +1,418 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+:root {
+  --font-family-base: "Manrope", "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
+  --font-family-display: "Space Grotesk", "Manrope", "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 28px;
+  --font-size-4xl: 32px;
+
+  --line-height-tight: 1.2;
+  --line-height-base: 1.5;
+  --line-height-relaxed: 1.65;
+
+  --color-brand: #1e70c2;
+  --color-brand-hover: #195fa8;
+  --color-brand-active: #144f8c;
+  --color-brand-soft: rgba(30, 112, 194, 0.12);
+
+  --color-ink: #0f172a;
+  --color-ink-secondary: #334155;
+  --color-ink-tertiary: #64748b;
+
+  --color-bg: #f5f7fb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-sm: 0 4px 10px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 12px 26px rgba(15, 23, 42, 0.12);
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  --control-height-sm: 32px;
+  --control-height-md: 40px;
+  --control-height-lg: 48px;
+
+  --focus-ring: 0 0 0 3px rgba(30, 112, 194, 0.25);
+  --transition-fast: 140ms ease;
+  --transition-base: 220ms ease;
+
+  --nav-height: 64px;
+
+  /* Legacy aliases used across the app */
+  --primary-color: var(--color-ink);
+  --secondary-color: var(--color-brand);
+  --warning-color: var(--color-warning);
+  --axis-color: var(--color-ink-secondary);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
 body {
   margin: 0;
   min-width: 100vw;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-ink);
+  background: radial-gradient(
+      1200px 900px at 12% -10%,
+      rgba(30, 112, 194, 0.08),
+      transparent 60%
+    ),
+    var(--color-bg);
   overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  background: transparent;
 }
 
 svg text,
 svg tspan {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: var(--font-family-base);
+}
+
+svg .grid line {
+  stroke: #e2e8f0;
+  stroke-dasharray: 3 3;
+}
+
+svg .grid path {
+  stroke: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4,
+.ant-typography h5,
+.ant-typography h6,
+.ant-modal-title,
+.ant-card-head-title {
+  font-family: var(--font-family-display);
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+  line-height: var(--line-height-tight);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-tight);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-tight);
+}
+
+h4 {
+  font-size: var(--font-size-xl);
+}
+
+p,
+.ant-typography {
+  color: var(--color-ink);
+}
+
+a {
+  color: var(--color-brand);
+}
+
+:where(.ant-layout) {
+  background: transparent;
+}
+
+:where(.ant-layout-content) {
+  padding: var(--space-4);
+}
+
+:where(.ant-layout-sider) {
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+}
+
+:where(.ant-card) {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+:where(.ant-card:hover) {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+:where(.ant-card-head) {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+:where(.ant-card-head-title) {
+  font-weight: 600;
+}
+
+:where(.ant-btn) {
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  height: var(--control-height-md);
+  padding: 0 var(--space-4);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+:where(.ant-btn-sm) {
+  height: var(--control-height-sm);
+  padding: 0 var(--space-3);
+}
+
+:where(.ant-btn-lg) {
+  height: var(--control-height-lg);
+  padding: 0 var(--space-5);
+}
+
+:where(.ant-btn-default),
+:where(.ant-btn-primary) {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #fff;
+  box-shadow: var(--shadow-xs);
+}
+
+:where(.ant-btn-default:not(:disabled):hover),
+:where(.ant-btn-primary:not(:disabled):hover) {
+  background: var(--color-brand-hover);
+  border-color: var(--color-brand-hover);
+}
+
+:where(.ant-btn-default:not(:disabled):active),
+:where(.ant-btn-primary:not(:disabled):active) {
+  background: var(--color-brand-active);
+  border-color: var(--color-brand-active);
+  transform: translateY(0);
+}
+
+:where(.ant-btn-text) {
+  color: var(--color-ink-secondary);
+}
+
+:where(.ant-btn[disabled], .ant-btn-disabled) {
+  background: #e2e8f0;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  box-shadow: none;
+}
+
+:where(.ant-btn):focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+:where(.ant-input),
+:where(.ant-input-affix-wrapper),
+:where(.ant-input-number),
+:where(.ant-select-selector),
+:where(.ant-picker) {
+  border-radius: var(--radius-md);
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+:where(.ant-input:hover),
+:where(.ant-input-affix-wrapper:hover),
+:where(.ant-input-number:hover),
+:where(.ant-select-selector:hover),
+:where(.ant-picker:hover) {
+  border-color: var(--color-border-strong);
+}
+
+:where(.ant-input:focus),
+:where(.ant-input-affix-wrapper:focus-within),
+:where(.ant-input-number:focus-within),
+:where(.ant-select:focus-within .ant-select-selector),
+:where(.ant-picker:focus-within) {
+  border-color: var(--color-brand);
+  box-shadow: var(--focus-ring);
+}
+
+:where(.ant-input[disabled]),
+:where(.ant-input-affix-wrapper-disabled),
+:where(.ant-input-number-disabled),
+:where(.ant-select-disabled .ant-select-selector),
+:where(.ant-picker-disabled) {
+  background: var(--color-surface-muted);
+  color: var(--color-ink-tertiary);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+:where(.ant-select-dropdown) {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+
+:where(.ant-select-item-option-active) {
+  background: var(--color-brand-soft);
+}
+
+:where(.ant-select-item-option-selected) {
+  background: rgba(30, 112, 194, 0.16);
+}
+
+:where(.ant-list-item) {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+:where(.ant-list-item:hover) {
+  background: var(--color-brand-soft);
+}
+
+:where(.ant-table) {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+:where(.ant-table-container) {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+:where(.ant-table-thead > tr > th) {
+  background: var(--color-surface-muted);
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+:where(.ant-table-tbody > tr:hover > td) {
+  background: var(--color-brand-soft);
+}
+
+:where(.ant-modal-content) {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  background: var(--color-surface);
+}
+
+:where(.ant-modal-header) {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+:where(.ant-tag) {
+  border-radius: 999px;
+  padding: 0 10px;
+  font-weight: 600;
+  border-color: var(--color-border);
+}
+
+:where(.ant-badge-count) {
+  border-radius: 999px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+:where(.ant-alert),
+:where(.ant-notification-notice),
+:where(.ant-message-notice-content) {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+:where(.ant-tooltip-inner),
+:where(.ant-popover-inner) {
+  border-radius: var(--radius-md);
+}
+
+:where(.ant-tabs-nav) {
+  margin: 0 0 var(--space-3);
+}
+
+:where(.ant-tabs-tab) {
+  font-weight: 600;
+}
+
+.react-grid-item > .react-resizable-handle {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  background-image: none;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-ink-tertiary);
+  border-top: 0;
+  border-left: 0;
+  border-bottom-right-radius: 10px;
+  box-sizing: border-box;
+  opacity: 0.75;
 }

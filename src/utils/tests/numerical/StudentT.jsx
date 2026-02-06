@@ -8,21 +8,28 @@ export const tTest = {
     "Comparison of two independent groups, with CIs for means, mean difference, and Cohen's d",
   isApplicable: (count) => count === 2,
   variableType: VariableTypes.NUMERICAL,
+  category: "Numéricas — Independientes",
   run: (groups) => {
     const alpha = 0.05;
     const [group1, group2] = groups;
     const n1 = group1.values.length;
     const n2 = group2.values.length;
+    if (n1 < 2 || n2 < 2) {
+      throw new Error("Student t-test requires at least 2 observations per group.");
+    }
 
     const mean1 = jStat.mean(group1.values);
     const mean2 = jStat.mean(group2.values);
-    const var1 = jStat.variance(group1.values);
-    const var2 = jStat.variance(group2.values);
+    const var1 = jStat.variance(group1.values, true);
+    const var2 = jStat.variance(group2.values, true);
 
     const diff = mean1 - mean2;
 
     const df = n1 + n2 - 2;
     const pooledVar = ((n1 - 1) * var1 + (n2 - 1) * var2) / df;
+    if (!Number.isFinite(pooledVar) || pooledVar <= 0) {
+      throw new Error("Student t-test requires non-zero pooled variance.");
+    }
     const pooledSD = Math.sqrt(pooledVar);
     const seDiff = Math.sqrt(pooledVar * (1 / n1 + 1 / n2));
     const tStatistic = diff / seDiff;
@@ -40,10 +47,12 @@ export const tTest = {
 
     const se1 = Math.sqrt(var1 / n1);
     const se2 = Math.sqrt(var2 / n2);
-    const ci1Lower = mean1 - tCrit * se1;
-    const ci1Upper = mean1 + tCrit * se1;
-    const ci2Lower = mean2 - tCrit * se2;
-    const ci2Upper = mean2 + tCrit * se2;
+    const tCrit1 = jStat.studentt.inv(1 - alpha / 2, n1 - 1);
+    const tCrit2 = jStat.studentt.inv(1 - alpha / 2, n2 - 1);
+    const ci1Lower = mean1 - tCrit1 * se1;
+    const ci1Upper = mean1 + tCrit1 * se1;
+    const ci2Lower = mean2 - tCrit2 * se2;
+    const ci2Upper = mean2 + tCrit2 * se2;
 
     const summaries = [
       {

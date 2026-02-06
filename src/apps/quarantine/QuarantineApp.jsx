@@ -7,8 +7,8 @@ import "react-resizable/css/styles.css";
 import { setInitQuarantine } from "@/store/slices/cantabSlice";
 import Quarantine from "./Quarantine";
 
-import useNotification from "@/utils/useNotification";
-import useRootStyles from "@/utils/useRootStyles";
+import useNotification from "@/hooks/useNotification";
+import useRootStyles from "@/hooks/useRootStyles";
 import { APP_NAME, Apps } from "@/utils/Constants";
 
 const ResponsiveGridLayout = WidthProvider(GridLayout);

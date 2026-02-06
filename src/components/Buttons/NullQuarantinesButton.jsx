@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { WarningTwoTone } from "@ant-design/icons";
-import BarButton from "@/utils/BarButton";
+import BarButton from "@/components/ui/BarButton";
 import { nullsToQuarantine } from "@/store/async/cantabAsyncReducers";
 
 export default function NullQuarantineButton() {

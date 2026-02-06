@@ -3,7 +3,7 @@ import jstat from "jstat";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
 import { pubsub } from "@/utils/pubsub";
 import { deepCopy } from "@/utils/functions";
 const { publish } = pubsub;
@@ -21,7 +21,8 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
 
     const { width, height } = dimensions;
-    const { nPoints, useCustomRange, range, margin } = config;
+    const { nPoints, useCustomRange, range, margin, showLegend, showGrid } =
+      config;
     const [xMin, xMax] = getNumericDomain(data, {
       margin,
       useCustomRange,
@@ -49,6 +50,14 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
     const x = d3.scaleLinear().domain([xMin, xMax]).range([0, chartWidth]);
     const y = d3.scaleLinear().range([chartHeight, 0]).domain([0, yMax]);
 
+    if (showGrid) {
+      chart
+        .append("g")
+        .attr("class", "grid y-grid")
+        .call(d3.axisLeft(y).ticks(5).tickSize(-chartWidth).tickFormat(""))
+        .call((g) => g.select(".domain").remove());
+    }
+
     chart
       .append("g")
       .attr("transform", `translate(0,${chartHeight})`)
@@ -73,7 +82,7 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
           .y(function (d) {
             return y(d[1]);
           })
-          .curve(d3.curveBasis)(d.value)
+          .curve(d3.curveBasis)(d.value),
       )
       .on("mouseover", function (e, d) {
         chart.selectAll(".density").classed("tmp-blur", true);
@@ -89,17 +98,19 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
           .classed("tmp-noblur", false);
       });
 
-    renderLegend(
-      legend,
-      selectionGroups,
-      color,
-      blur,
-      setBlur,
-      hide,
-      setHide,
-      showStats,
-      hideStats
-    );
+    if (showLegend !== false) {
+      renderLegend(
+        legend,
+        selectionGroups,
+        color,
+        blur,
+        setBlur,
+        hide,
+        setHide,
+        showStats,
+        hideStats,
+      );
+    }
 
     function hideStats() {
       chart.selectAll(".stat-line").remove();
@@ -174,14 +185,14 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
   }, [hide, blur]);
 }
 
-function getNumericDomain(
+export function getNumericDomain(
   data,
   {
     margin = 0.05,
     range = [0, 1],
     useCustomRange = false,
     accessor = (d) => +d.value,
-  } = {}
+  } = {},
 ) {
   if (!data || data.length === 0) {
     return [range[0], range[1]];
@@ -196,7 +207,7 @@ function getNumericDomain(
       }
       return acc;
     },
-    { min: Infinity, max: -Infinity }
+    { min: Infinity, max: -Infinity },
   );
 
   if (!Number.isFinite(min) || !Number.isFinite(max)) {
@@ -211,7 +222,7 @@ function getNumericDomain(
     : [min - plotMargin, max + plotMargin];
 }
 
-function computeEstimator(numPoints, min, max) {
+export function computeEstimator(numPoints, min, max) {
   return function gaussianDensity(data, group) {
     data.sort((a, b) => a - b);
     const std = jstat.stdev(data);
@@ -243,7 +254,7 @@ function computeEstimator(numPoints, min, max) {
     });
 
     const maxDensity = Math.max(...tmp.map(([x, d]) => d));
-    const density = tmp.map(([x, d]) => [x, d / maxDensity]);
+    const density = tmp;
     return density;
   };
 }
@@ -252,7 +263,7 @@ function gaussianKernel(x) {
   return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
 }
 
-function getDensities(data, selectionGroups, pointEstimator) {
+export function getDensities(data, selectionGroups, pointEstimator) {
   const densities = selectionGroups.map((group) => {
     const values = data
       .filter(function (d) {
@@ -268,12 +279,12 @@ function getDensities(data, selectionGroups, pointEstimator) {
   return densities;
 }
 
-function getYMax(densities) {
+export function getYMax(densities) {
   return Math.max(
     ...densities
       .map((d) => d.value)
       .flat()
-      .map((d) => d[1])
+      .map((d) => d[1]),
   );
 }
 
@@ -286,7 +297,7 @@ export function renderLegend(
   hide,
   setHide,
   showStats,
-  hideStats
+  hideStats,
 ) {
   const circleSize = 10;
   const padding = 6;
@@ -324,7 +335,7 @@ export function renderLegend(
         setBlur((prev) =>
           prev.includes(group)
             ? prev.filter((g) => g !== group)
-            : [...prev, group]
+            : [...prev, group],
         );
         item.classed("blur", !isBlur);
       });
@@ -348,7 +359,7 @@ export function renderLegend(
         setHide((prev) =>
           prev.includes(group)
             ? prev.filter((g) => g !== group)
-            : [...prev, group]
+            : [...prev, group],
         );
 
         if (!isHide && hideStats) hideStats(group);
@@ -380,12 +391,6 @@ export function renderLegend(
     d3.select(parent).style("align-items", "center");
   } else {
     d3.select(parent).style("align-items", null);
-  }
-
-  if (width > bbox.x + bbox.width) {
-    d3.select(parent).style("justify-content", "center");
-  } else {
-    d3.select(parent).style("justify-content", null);
   }
 
   legend

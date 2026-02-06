@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import { moveTooltip } from "@/utils/functions";
 import { numMargin, renderLegend } from "../Density/useDensity";
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
 
 export default function useHistogram({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
@@ -17,7 +17,7 @@ export default function useHistogram({ chartRef, legendRef, data, config }) {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
 
     const { width, height } = dimensions;
-    const { nPoints } = config;
+    const { nPoints, showLegend, showGrid } = config;
     const [xMin, xMax] = getNumericDomain(data);
     const pointEstimator = computeEstimator(nPoints, xMin, xMax);
     const densities = getDensities(data, selectionGroups, pointEstimator);
@@ -52,6 +52,14 @@ export default function useHistogram({ chartRef, legendRef, data, config }) {
 
     const bandwidth = (x(xMax) - x(xMin)) / nPoints;
     const binWidth = (xMax - xMin) / nPoints;
+
+    if (showGrid) {
+      chart
+        .append("g")
+        .attr("class", "grid y-grid")
+        .call(d3.axisLeft(y).ticks(5).tickSize(-chartWidth).tickFormat(""))
+        .call((g) => g.select(".domain").remove());
+    }
 
     chart
       .append("g")
@@ -92,7 +100,9 @@ export default function useHistogram({ chartRef, legendRef, data, config }) {
           .on("mouseout", () => tooltip.style("visibility", "hidden"));
       });
 
-    renderLegend(legend, selectionGroups, color, blur, setBlur, hide, setHide);
+    if (showLegend !== false) {
+      renderLegend(legend, selectionGroups, color, blur, setBlur, hide, setHide);
+    }
   }, [data, config, dimensions, groups, selectionGroups]);
 
   useEffect(() => {

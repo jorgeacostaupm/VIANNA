@@ -8,9 +8,16 @@ export const friedmanTest = {
     "Non-parametric test for comparing more than two paired samples.",
   isApplicable: (count) => count >= 3,
   variableType: VariableTypes.NUMERICAL,
+  category: "Numéricas — Pareadas/Repetidas",
   run: (groups) => {
     const k = groups.length;
     const n = groups[0].values.length;
+    if (groups.some((g) => g.values.length !== n)) {
+      throw new Error("Friedman test requires equal-length groups.");
+    }
+    if (n < 2) {
+      throw new Error("Friedman test requires at least 2 observations.");
+    }
     const ranks = [];
 
     for (let i = 0; i < n; i++) {

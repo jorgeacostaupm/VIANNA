@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import renderLegend from "@/utils/renderLegend";
 import { moveTooltip } from "@/utils/functions";
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
 import { numMargin } from "@/apps/compare/Numeric/charts/Density/useDensity";
 
 export default function useLineChart({ chartRef, legendRef, data, config }) {
@@ -31,6 +31,8 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
     showStds,
     showObs,
     showCIs,
+    showLegend,
+    showGrid,
     meanPointSize,
     meanStrokeWidth,
     subjectPointSize,
@@ -73,6 +75,20 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
       .domain([yMin, yMax])
       .range([chartHeight, 0])
       .nice();
+
+    if (showGrid) {
+      chart
+        .append("g")
+        .attr("class", "grid y-grid")
+        .call(
+          d3
+            .axisLeft(y)
+            .ticks(5)
+            .tickSize(-chartWidth)
+            .tickFormat("")
+        )
+        .call((g) => g.select(".domain").remove());
+    }
 
     chart
       .append("g")
@@ -311,7 +327,9 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
     if (showMeans) renderMeans();
 
     // legend
-    renderLegend(legend, selectionGroups, color, null, null, hide, setHide);
+    if (showLegend !== false) {
+      renderLegend(legend, selectionGroups, color, null, null, hide, setHide);
+    }
 
     chartStateRef.current = {
       svg,
@@ -337,6 +355,8 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
     showObs,
     showMeans,
     showStds,
+    showLegend,
+    showGrid,
   ]);
 
   useEffect(() => {

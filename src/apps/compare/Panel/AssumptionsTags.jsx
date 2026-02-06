@@ -11,7 +11,7 @@ import { selectVars } from "@/store/slices/cantabSlice";
 import { checkAssumptions, setSelectedVar } from "@/store/slices/compareSlice";
 
 import { getColorByDtype, getNameByDtype } from "@/utils/Constants";
-import AutoCloseTooltip from "@/utils/AutoCloseTooltip";
+import AutoCloseTooltip from "@/components/ui/AutoCloseTooltip";
 
 const grayStyle = {
   backgroundColor: "#f0f0f0",
@@ -19,11 +19,15 @@ const grayStyle = {
 };
 
 const tagStyle = {
-  display: "flex",
+  display: "inline-flex",
   justifyContent: "center",
   alignItems: "center",
   minWidth: "100px", // ajusta según necesites
   textAlign: "center",
+  padding: "6px 10px",
+  lineHeight: 1,
+  gap: "6px",
+  overflow: "visible",
 };
 
 const StatusTag = ({ condition, successText, failText, label }) =>

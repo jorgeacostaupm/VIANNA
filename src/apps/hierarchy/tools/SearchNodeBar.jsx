@@ -113,12 +113,14 @@ const SearchNodeBar = () => {
         onChange={(e) => handleSearch(e.target.value)}
         onFocus={handleFocus}
         onKeyDown={handleEnter}
-        prefix={<SearchOutlined style={{ color: "var(--primary-color)" }} />}
+        prefix={
+          <SearchOutlined style={{ color: "var(--color-ink-tertiary)" }} />
+        }
         style={{
-          height: "3rem",
-          fontSize: "1rem",
-          borderRadius: "8px",
-          boxShadow: showResults ? "0 0 4px var(--primary-color)" : "none",
+          height: "var(--control-height-lg)",
+          fontSize: "var(--font-size-base)",
+          borderRadius: "var(--radius-md)",
+          boxShadow: showResults ? "var(--focus-ring)" : "none",
         }}
       />
 
@@ -131,10 +133,10 @@ const SearchNodeBar = () => {
             width: "100%",
             height: dropdownHeight,
             overflowY: "auto",
-            border: "1px solid #d9d9d9",
-            borderRadius: "8px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-            backgroundColor: "#fff",
+            border: "1px solid var(--color-border)",
+            borderRadius: "var(--radius-md)",
+            boxShadow: "var(--shadow-sm)",
+            backgroundColor: "var(--color-surface)",
             zIndex: 1000,
           }}
         >
@@ -148,17 +150,18 @@ const SearchNodeBar = () => {
                 style={{
                   cursor: "pointer",
                   padding: "0.4rem 0.6rem",
-                  borderRadius: "4px",
+                  borderRadius: "var(--radius-sm)",
                 }}
                 onMouseOver={(e) =>
-                  (e.currentTarget.style.backgroundColor = "#e6f7ff")
+                  (e.currentTarget.style.backgroundColor =
+                    "var(--color-brand-soft)")
                 }
                 onMouseOut={(e) =>
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
                 <SearchOutlined
-                  style={{ color: "var(--primary-color)", marginRight: 8 }}
+                  style={{ color: "var(--color-brand)", marginRight: 8 }}
                 />
                 {node.name}
               </List.Item>

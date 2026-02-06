@@ -14,7 +14,7 @@ import { setInit as setInitMetadata } from "@/store/slices/metaSlice";
 import { setInit as setInitEvolution } from "@/store/slices/evolutionSlice";
 import { setInit as setInitCorrelation } from "@/store/slices/correlationSlice";
 
-import LinkButton from "@/utils/ButtonLink";
+import LinkButton from "@/components/ui/ButtonLink";
 import DataManagementButton from "@/components/Data/Buttons/DataManagementButton";
 
 export default function AppsButtons() {
@@ -30,46 +30,46 @@ export default function AppsButtons() {
   return (
     <div style={{ display: "flex", gap: "10px" }}>
       <DataManagementButton></DataManagementButton>
-      {!initHierarchy && (
-        <LinkButton
-          to="metadata"
-          setInit={setInitMetadata}
-          icon={<PartitionOutlined />}
-        />
-      )}
+      <LinkButton
+        to="metadata"
+        setInit={setInitMetadata}
+        icon={<PartitionOutlined />}
+        disabled={initHierarchy}
+        disabledTitle="Hierarchy Management is already open"
+      />
       {dt && (
         <>
-          {!initCompare && (
-            <LinkButton
-              to="compare"
-              setInit={setInitCompare}
-              icon={<BarChartOutlined />}
-            />
-          )}
+          <LinkButton
+            to="compare"
+            setInit={setInitCompare}
+            icon={<BarChartOutlined />}
+            disabled={initCompare}
+            disabledTitle="Compare is already open"
+          />
 
-          {!initEvolution && (
-            <LinkButton
-              to="evolution"
-              setInit={setInitEvolution}
-              icon={<LineChartOutlined />}
-            />
-          )}
+          <LinkButton
+            to="evolution"
+            setInit={setInitEvolution}
+            icon={<LineChartOutlined />}
+            disabled={initEvolution}
+            disabledTitle="Evolution is already open"
+          />
 
-          {!initCorrelation && (
-            <LinkButton
-              to="correlation"
-              setInit={setInitCorrelation}
-              icon={<DotChartOutlined />}
-            />
-          )}
+          <LinkButton
+            to="correlation"
+            setInit={setInitCorrelation}
+            icon={<DotChartOutlined />}
+            disabled={initCorrelation}
+            disabledTitle="Correlation is already open"
+          />
 
-          {!initQuarantine && (
-            <LinkButton
-              to="cantab"
-              setInit={setInitQuarantine}
-              icon={<BugFilled />}
-            />
-          )}
+          <LinkButton
+            to="cantab"
+            setInit={setInitQuarantine}
+            icon={<BugFilled />}
+            disabled={initQuarantine}
+            disabledTitle="Quarantine is already open"
+          />
         </>
       )}
     </div>

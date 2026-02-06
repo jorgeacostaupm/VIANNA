@@ -73,16 +73,28 @@ export function computePairwiseData(selection, groupVar, variable, test) {
   const table = aq.from(selection);
   const grouped = table.groupby(groupVar).objects({ grouped: "entries" });
 
+  const testObj = tests.find((t) => t.label === test);
+  if (!testObj) {
+    throw new Error(`Test not found: ${test}`);
+  }
+  const isNumeric = testObj.variableType === VariableTypes.NUMERICAL;
+
   const errors = [];
   grouped.forEach(([group, rows]) => {
     rows.forEach((row) => {
       const value = row[variable];
-      if (
-        value == null ||
-        typeof value !== "number" ||
-        Number.isNaN(value) ||
-        !Number.isFinite(value)
-      ) {
+      if (isNumeric) {
+        if (
+          value == null ||
+          typeof value !== "number" ||
+          Number.isNaN(value) ||
+          !Number.isFinite(value)
+        ) {
+          errors.push(
+            `Invalid value in column "${variable}" group "${group}" value: "${value}"`
+          );
+        }
+      } else if (value == null || Number.isNaN(value)) {
         errors.push(
           `Invalid value in column "${variable}" group "${group}" value: "${value}"`
         );
@@ -94,17 +106,17 @@ export function computePairwiseData(selection, groupVar, variable, test) {
     throw new Error(`Invalid values found:\n${errors.join("\n")}`);
   }
 
-  const testObj = tests.find((t) => t.label === test);
-  if (!testObj) {
-    throw new Error(`Test not found: ${test}`);
-  }
-
   const groups = grouped.map(([name, rows]) => ({
     name,
     values: rows.map((r) => r[variable]),
   }));
 
-  return testObj.run(groups);
+  const result = testObj.run(groups);
+  return {
+    ...result,
+    shortDescription: testObj.shortDescription || testObj.description || "",
+    referenceUrl: testObj.referenceUrl || "",
+  };
 }
 
 export function computeRankingData({
@@ -133,11 +145,17 @@ export function computeRankingData({
     grouped.forEach(([group, rows]) => {
       rows.forEach((row) => {
         const value = row[variable];
-        if (
-          value == null ||
-          typeof value !== "number" ||
-          !Number.isFinite(value)
-        ) {
+        if (testObj.variableType === VariableTypes.NUMERICAL) {
+          if (
+            value == null ||
+            typeof value !== "number" ||
+            !Number.isFinite(value)
+          ) {
+            errors.push(
+              `Invalid value in column "${variable}" group "${group}" → ${value}`
+            );
+          }
+        } else if (value == null || Number.isNaN(value)) {
           errors.push(
             `Invalid value in column "${variable}" group "${group}" → ${value}`
           );

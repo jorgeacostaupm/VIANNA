@@ -5,10 +5,10 @@ import GridLayout, { WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import AppBar from "@/utils/AppBar";
-import styles from "@/utils/App.module.css";
-import useRootStyles from "@/utils/useRootStyles";
-import useNotification from "@/utils/useNotification";
+import AppBar from "@/components/ui/AppBar";
+import styles from "@/styles/App.module.css";
+import useRootStyles from "@/hooks/useRootStyles";
+import useNotification from "@/hooks/useNotification";
 import { APP_NAME, APP_DESC } from "@/utils/Constants";
 
 import { setInit } from "@/store/slices/cantabSlice";

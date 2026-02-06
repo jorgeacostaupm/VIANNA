@@ -3,10 +3,17 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { deepCopy, moveTooltip } from "@/utils/functions";
-import { numMargin, renderLegend } from "../Density/useDensity";
-import useResizeObserver from "@/utils/useResizeObserver";
+import {
+  numMargin,
+  renderLegend,
+  computeEstimator,
+  getDensities,
+  getYMax,
+  getNumericDomain,
+} from "../Density/useDensity";
+import useResizeObserver from "@/hooks/useResizeObserver";
 
-export default function useViolinplot({ chartRef, legendRef, data }) {
+export default function useViolinplot({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
   const groups = useSelector((s) => s.cantab.present.groups);
   const selectionGroups = useSelector((s) => s.cantab.present.selectionGroups);
@@ -15,6 +22,8 @@ export default function useViolinplot({ chartRef, legendRef, data }) {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
 
     const { width, height } = dimensions;
+    const { nPoints, useCustomRange, range, margin, showLegend, showGrid } =
+      config;
 
     d3.select(chartRef.current).selectAll("*").remove();
     d3.select(legendRef.current).selectAll("*").remove();
@@ -41,16 +50,29 @@ export default function useViolinplot({ chartRef, legendRef, data }) {
     let tmp = deepCopy(selectionGroups).sort();
     const x = d3.scaleBand().domain(tmp).range([0, chartWidth]).padding(0.4);
 
-    const minVal = d3.min(data, (d) => d.value);
-    const maxVal = d3.max(data, (d) => d.value);
+    const [xMin, xMax] = getNumericDomain(data, {
+      margin,
+      useCustomRange,
+      range,
+    });
 
-    const padding = (maxVal - minVal) * 0.2;
+    const pointEstimator = computeEstimator(nPoints, xMin, xMax);
+    const densities = getDensities(data, selectionGroups, pointEstimator);
+    const maxWidth = getYMax(densities);
 
     const y = d3
       .scaleLinear()
-      .domain([minVal - padding, maxVal + padding]) // ⬅ extra space
+      .domain([xMin, xMax])
       .nice()
       .range([chartHeight, 0]);
+
+    if (showGrid) {
+      chart
+        .append("g")
+        .attr("class", "grid y-grid")
+        .call(d3.axisLeft(y).ticks(5).tickSize(-chartWidth).tickFormat(""))
+        .call((g) => g.select(".domain").remove());
+    }
 
     chart
       .append("g")
@@ -59,45 +81,36 @@ export default function useViolinplot({ chartRef, legendRef, data }) {
 
     chart.append("g").call(d3.axisLeft(y));
 
-    // Group data
-    const grouped = d3.group(data, (d) => d.type);
+    const violinWidth = d3
+      .scaleLinear()
+      .range([0, x.bandwidth()])
+      .domain([0, maxWidth]);
 
-    // KDE setup
-    const kde = kernelDensityEstimator(
-      kernelEpanechnikov(7),
-      y.ticks(50) // smoother violin
-    );
+    const area = d3
+      .area()
+      .x0((d) => -violinWidth(d[1]) / 2)
+      .x1((d) => violinWidth(d[1]) / 2)
+      .y((d) => y(d[0]))
+      .curve(d3.curveCatmullRom);
 
     // Group <g> for each violin
     const groupsG = chart
       .selectAll(".violinplot")
-      .data(groups)
+      .data(densities)
       .join("g")
       .attr("class", "violinplot")
-      .attr("transform", (d) => `translate(${x(d)},0)`);
+      .attr("transform", (d) => `translate(${x(d.group)},0)`);
 
-    groupsG.each(function (group) {
+    groupsG.each(function (d) {
       const g = d3.select(this);
-      const values = (grouped.get(group) || []).map((d) => d.value);
+      const density = d.value;
+      const group = d.group;
+
+      const values = data
+        .filter((pt) => pt.type === group)
+        .map((pt) => +pt.value);
 
       if (values.length === 0) return;
-
-      // Compute density
-      const density = kde(values);
-
-      // Horizontal scale for density width
-      const xNum = d3
-        .scaleLinear()
-        .range([0, x.bandwidth()])
-        .domain([0, d3.max(density, (d) => d[1])]);
-
-      // Shape (area)
-      const area = d3
-        .area()
-        .x0((d) => -xNum(d[1]) / 2)
-        .x1((d) => xNum(d[1]) / 2)
-        .y((d) => y(d[0]))
-        .curve(d3.curveCatmullRom);
 
       // Draw violin
       g.append("path")
@@ -112,30 +125,17 @@ export default function useViolinplot({ chartRef, legendRef, data }) {
               <strong>${group}</strong><br/>
               n = ${values.length}<br/>
               min: ${d3.min(values).toFixed(2)}<br/>
-              max: ${d3.max(values).toFixed(2)}<br/>
-              mean: ${d3.mean(values).toFixed(2)}
-            `
+              mean: ${d3.mean(values).toFixed(2)}<br/>
+              max: ${d3.max(values).toFixed(2)}
+            `,
           );
         })
         .on("mousemove", (e) => moveTooltip(e, tooltip, chart))
         .on("mouseout", () => tooltip.style("visibility", "hidden"));
     });
 
-    renderLegend(legend, selectionGroups, color);
-  }, [data, dimensions, groups, selectionGroups]);
-}
-
-// --------------- KDE Functions ------------------
-
-function kernelDensityEstimator(kernel, X) {
-  return function (sample) {
-    return X.map((x) => [x, d3.mean(sample, (v) => kernel(x - v))]);
-  };
-}
-
-function kernelEpanechnikov(k) {
-  return function (v) {
-    v = v / k;
-    return Math.abs(v) <= 1 ? (0.75 * (1 - v * v)) / k : 0;
-  };
+    if (showLegend !== false) {
+      renderLegend(legend, selectionGroups, color);
+    }
+  }, [data, dimensions, groups, selectionGroups, config]);
 }

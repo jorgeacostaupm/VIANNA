@@ -1,15 +1,32 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Typography } from "antd";
+import { Typography, Divider } from "antd";
 
 import DragDropDesc from "../DragDrop/DragDropDesc";
 import { selectDescribedNodes } from "@/store/selectors/metaSelectors";
 
 const { Title, Text } = Typography;
+const formatPreview = (arr, max = 12) => {
+  if (!arr || arr.length === 0) return "—";
+  const preview = arr.slice(0, max);
+  const remaining = arr.length - preview.length;
+  return remaining > 0
+    ? `${preview.join(", ")} (+${remaining} more)`
+    : preview.join(", ");
+};
 
 const Info = () => {
   const filename = useSelector((state) => state.metadata.descriptionsFilename);
   const attributes = useSelector(selectDescribedNodes);
+  const allAttributes = useSelector((state) => state.metadata.attributes) || [];
+  const describedSet = new Set(attributes);
+  const missing = Array.from(
+    new Set(
+      allAttributes
+        .filter((attr) => attr.type !== "root")
+        .map((attr) => attr.name),
+    ),
+  ).filter((name) => !describedSet.has(name));
 
   return (
     <div
@@ -26,7 +43,7 @@ const Info = () => {
       }}
     >
       <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
-        Actual Descriptions
+        Metadata
       </Title>
 
       <div>
@@ -43,11 +60,46 @@ const Info = () => {
         <Text>{attributes.length}</Text>
       </div>
 
+      <Divider style={{ margin: "1rem 0" }} />
+
+      <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
+        Summary
+      </Title>
+
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
-          Variables with description:
+          Measurements with description:
         </Text>{" "}
-        <Text>{attributes.sort().join(", ")}</Text>
+        <Text>{formatPreview([...attributes].sort())}</Text>
+      </div>
+
+      <div>
+        <Text strong style={{ color: "var(--primary-color)" }}>
+          Missing descriptions:
+        </Text>{" "}
+        <Text>{formatPreview(missing.sort())}</Text>
+      </div>
+
+      <Divider style={{ margin: "1rem 0" }} />
+
+      <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
+        Expected File
+      </Title>
+      <div>
+        <Text type="secondary">
+          Upload a CSV with headers `name` and `description`.
+        </Text>
+      </div>
+      <div>
+        <Text type="secondary">
+          `name` must match the measurement names in your data.
+        </Text>
+      </div>
+      <div>
+        <Text type="secondary">
+          One row per measurement is recommended; if a measurement appears
+          multiple times, the last one takes priority.
+        </Text>
       </div>
     </div>
   );
@@ -73,6 +125,9 @@ const UploadDesc = () => {
       >
         Upload Descriptions
       </Title>
+      <Text type="secondary">
+        Each row maps a measurement name to its description.
+      </Text>
       <DragDropDesc />
     </div>
   );
@@ -84,9 +139,9 @@ export default function TabDescriptions() {
       style={{
         display: "flex",
         flexDirection: "row",
-        height: "500px",
         width: "100%",
         gap: "1rem",
+        overflow: "auto",
       }}
     >
       <Info />

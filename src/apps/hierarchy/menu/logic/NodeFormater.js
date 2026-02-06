@@ -17,6 +17,9 @@ class FormulaError extends Error {
 }
 
 const validateArguments = (functionName, actualArgs, expectedArgs) => {
+  if (expectedArgs === 0) {
+    return;
+  }
   if (expectedArgs >= 0 && actualArgs.length !== expectedArgs) {
     throw new FormulaError(
       `Function "${functionName}" expects ${expectedArgs} argument(s), got ${actualArgs.length}`

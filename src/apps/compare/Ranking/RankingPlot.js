@@ -203,7 +203,24 @@ export default class RankingPlot {
         vis.descTooltip.style("opacity", 0);
       });
 
-    vis.yAxisG.call(d3.axisLeft(vis.y_scale).ticks(4));
+    const yAxis = d3.axisLeft(vis.y_scale).ticks(4);
+    if (vis.config.showGrid) {
+      yAxis.tickSize(-vis.width);
+    }
+    vis.yAxisG.call(yAxis);
+    if (vis.config.showGrid) {
+      vis.yAxisG
+        .selectAll(".tick line")
+        .attr("stroke", "#e2e8f0")
+        .attr("stroke-dasharray", "2 2");
+      vis.yAxisG.select(".domain").attr("stroke", "#94a3b8");
+    } else {
+      vis.yAxisG
+        .selectAll(".tick line")
+        .attr("stroke", null)
+        .attr("stroke-dasharray", null);
+      vis.yAxisG.select(".domain").attr("stroke", null);
+    }
   }
 }
 

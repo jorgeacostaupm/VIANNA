@@ -9,6 +9,7 @@ export const kruskalWallis = {
     "Comparison of k ≥ 2 independent groups, non-parametric, with medians, IQR and epsilon H squared",
   isApplicable: (count) => count >= 2,
   variableType: VariableTypes.NUMERICAL,
+  category: "Numéricas — Independientes",
   run: (groups) => {
     const alpha = 0.05;
     const B = 1000; // número de réplicas bootstrap para CI de mediana
@@ -54,9 +55,12 @@ export const kruskalWallis = {
       .map((v, i) => ({ value: v, idx: i }))
       .sort((a, b) => a.value - b.value);
     const ranks = Array(N);
+    let tieSum = 0;
     for (let i = 0; i < N; ) {
       let j = i + 1;
       while (j < N && ranked[j].value === ranked[i].value) j++;
+      const t = j - i;
+      if (t > 1) tieSum += t * t * t - t;
       const avgRank = (i + 1 + j) / 2;
       for (let t = i; t < j; t++) ranks[ranked[t].idx] = avgRank;
       i = j;
@@ -69,13 +73,18 @@ export const kruskalWallis = {
       Ri.push(sumRi);
     }
 
-    const H =
+    const tieCorrection = 1 - tieSum / (N * N * N - N);
+    if (tieCorrection <= 0) {
+      throw new Error("Kruskal–Wallis requires variability across groups.");
+    }
+    const HRaw =
       (12 / (N * (N + 1))) *
         Ri.reduce((sum, r, i) => sum + (r * r) / groupSizes[i], 0) -
       3 * (N + 1);
+    const H = HRaw / tieCorrection;
     const df = k - 1;
     const pValue = 1 - jStat.chisquare.cdf(H, df);
-    const epsilonHSquared = (H - df) / (N - k);
+    const epsilonHSquared = Math.max(0, (H - df) / (N - k));
 
     const summaries = groups.map((g, i) => ({
       name: g.name,
@@ -97,7 +106,9 @@ export const kruskalWallis = {
         const z =
           (RiBar_i - RiBar_j) /
           Math.sqrt(
-            ((N * (N + 1)) / 12) * (1 / groupSizes[i] + 1 / groupSizes[j])
+            ((N * (N + 1)) / 12) *
+              (1 / groupSizes[i] + 1 / groupSizes[j]) *
+              tieCorrection
           );
         const pRaw = 2 * (1 - jStat.normal.cdf(Math.abs(z), 0, 1));
         const pAdj = Math.min(pRaw * comparisons, 1);

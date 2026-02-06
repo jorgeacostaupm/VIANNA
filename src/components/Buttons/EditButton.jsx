@@ -5,8 +5,8 @@ import { EditOutlined, FormOutlined } from "@ant-design/icons";
 import { selectNavioVars } from "@/store/slices/cantabSlice";
 import { setDataframe } from "@/store/slices/dataSlice";
 import { ORDER_VARIABLE } from "@/utils/Constants";
-import PopoverButton from "@/utils/PopoverButton";
-import ColoredButton from "@/utils/ColoredButton";
+import PopoverButton from "@/components/ui/PopoverButton";
+import BarButton from "@/components/ui/BarButton";
 import { generateColumnBatch } from "@/store/async/dataAsyncReducers";
 
 const { Text } = Typography;
@@ -27,7 +27,7 @@ function EditColumn() {
     const updatedData = data.map((item) =>
       ids?.includes(item[ORDER_VARIABLE])
         ? { ...item, [column]: inputValue }
-        : item
+        : item,
     );
 
     dispatch(setDataframe(updatedData));
@@ -35,14 +35,14 @@ function EditColumn() {
     const matchedAggregations = attributes.filter(
       (attr) =>
         attr.type === "aggregation" &&
-        attr.info?.usedAttributes?.some((d) => d.name === column)
+        attr.info?.usedAttributes?.some((d) => d.name === column),
     );
 
     if (matchedAggregations.length > 0) {
       dispatch(
         generateColumnBatch({
           cols: matchedAggregations,
-        })
+        }),
       );
     }
   };
@@ -71,12 +71,12 @@ function EditColumn() {
           placeholder="New values"
           style={{ flex: 1 }}
         />
-        <ColoredButton
+        <BarButton
           title={`Change selection ${column} values to ${inputValue}`}
           onClick={onEditSelection}
           icon={<EditOutlined />}
-          placement={"bottom"}
-        ></ColoredButton>
+          placement="bottom"
+        />
       </div>
     </>
   );
@@ -87,7 +87,7 @@ export default function EditButton() {
     <PopoverButton
       content={<EditColumn />}
       icon={<FormOutlined />}
-      title="Edit a column"
+      title="Edit column values for selection"
     />
   );
 }

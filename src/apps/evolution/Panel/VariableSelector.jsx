@@ -5,7 +5,7 @@ import { LineChartOutlined } from "@ant-design/icons";
 
 import { setSelectedVar } from "@/store/slices/evolutionSlice";
 import { selectNumericVars } from "@/store/slices/cantabSlice";
-import ColoredButton from "@/utils/ColoredButton";
+import ColoredButton from "@/components/ui/ColoredButton";
 
 const { Option } = Select;
 

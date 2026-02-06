@@ -23,21 +23,32 @@ function compareTimestamps(a, b) {
   return String(a).localeCompare(String(b), undefined, { numeric: true });
 }
 
-function runRMAnova(participantData, times) {
+export function getCompleteSubjects(participantData, times) {
+  const timeKeys = (times || []).map((t) => String(t));
+  const completeSubjects = (participantData || []).filter((p) =>
+    timeKeys.every((t) => {
+      const entry = p.values.find((v) => String(v.timestamp) === t);
+      const value = entry?.value;
+      return value !== null && value !== undefined && !Number.isNaN(+value);
+    })
+  );
+
+  return {
+    completeSubjects,
+    excluded: (participantData?.length || 0) - completeSubjects.length,
+  };
+}
+
+export function runRMAnova(participantData, times) {
   const alpha = 0.05;
 
   // ----------------------------------------
   // 1. Filtrar sujetos con datos completos
   // ----------------------------------------
-  const completeSubjects = participantData.filter((p) =>
-    times.every((t) =>
-      p.values.some(
-        (v) => v.timestamp === t && v.value !== null && !isNaN(v.value)
-      )
-    )
+  const { completeSubjects, excluded } = getCompleteSubjects(
+    participantData,
+    times
   );
-
-  const excluded = participantData.length - completeSubjects.length;
 
   const subjects = completeSubjects.length;
   const groups = [...new Set(completeSubjects.map((p) => p.group))];
@@ -177,6 +188,14 @@ function runRMAnova(participantData, times) {
     etaTime,
     etaGroup,
     etaInteraction,
+    dfTime,
+    dfGroup,
+    dfInteraction,
+    dfError,
+    groups,
+    times,
+    cellMeans,
+    subjects,
     excludedSubjects: excluded,
     html,
     completeSubjects,
@@ -299,9 +318,13 @@ export function getLineChartData(
   groupVar,
   timeVar,
   idVar,
-  showComplete
+  showComplete,
+  tests = [],
+  timeRange = null
 ) {
-  if (!raw || !Array.isArray(raw)) return { meanData: [], participantData: [] };
+  if (!raw || !Array.isArray(raw)) {
+    return { meanData: [], participantData: [], tests: [], rmAnova: null };
+  }
 
   if (!valueVar || !groupVar || !timeVar || !idVar) {
     throw new Error("Must set valueVar, groupVar, timeVar and idVar");
@@ -329,10 +352,8 @@ export function getLineChartData(
   });
 
   const allTimes = [
-    ...new Set(
-      participantData.flatMap((p) => p.values.map((v) => v.timestamp)).sort()
-    ),
-  ];
+    ...new Set(participantData.flatMap((p) => p.values.map((v) => v.timestamp))),
+  ].sort(compareTimestamps);
 
   let completeIds = null;
   if (showComplete) {
@@ -384,10 +405,58 @@ export function getLineChartData(
     values: values.sort((a, b) => compareTimestamps(a.time, b.time)),
   }));
 
-  // Aquí se llama a la función de RM-ANOVA (debes tenerla implementada)
-  const rmAnova = runRMAnova(participantData, allTimes);
+  const testResults = Array.isArray(tests)
+    ? tests.map((test) => {
+        const {
+          id,
+          label,
+          description,
+          referenceUrl,
+          scope,
+          variant,
+          minTimepoints,
+          minSubjects,
+        } = test;
+        const meta = {
+          id,
+          label,
+          description,
+          referenceUrl,
+          scope,
+          variant,
+          minTimepoints,
+          minSubjects,
+        };
 
-  console.log(rmAnova.completeSubjects);
+        try {
+          const result = test.run({
+            participantData,
+            times: allTimes,
+            groupVar,
+            timeVar,
+            idVar,
+            variable: valueVar,
+            timeRange,
+          });
+          const error = result?.error;
+          return { ...meta, result, error };
+        } catch (error) {
+          return {
+            ...meta,
+            error: error?.message || "Error running test.",
+          };
+        }
+      })
+    : [];
 
-  return { meanData, participantData, rmAnova };
+  const rmAnova =
+    testResults.find((test) => test.id === "rm-anova")?.result || null;
+
+  return {
+    meanData,
+    participantData,
+    tests: testResults,
+    rmAnova,
+    times: allTimes,
+  };
 }

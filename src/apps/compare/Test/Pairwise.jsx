@@ -2,14 +2,14 @@ import React, { useRef, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import * as d3 from "d3";
 
-import ChartBar from "@/utils/ChartBar";
-import styles from "@/utils/Charts.module.css";
+import ChartBar from "@/components/charts/ChartBar";
+import styles from "@/styles/Charts.module.css";
 import {
   moveTooltip,
   computePairwiseData,
   formatDecimal,
 } from "@/utils/functions";
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
 import { pubsub } from "@/utils/pubsub";
 import { Settings } from "./PointRange";
 
@@ -28,6 +28,9 @@ export default function Pairwise({ id, variable, test, remove }) {
     capSize: 3,
     markerShape: "circle",
     markerSize: 5,
+    showZeroLine: true,
+    showGrid: true,
+    sortBy: "effect",
   });
 
   const [data, setData] = useState(null);
@@ -37,6 +40,16 @@ export default function Pairwise({ id, variable, test, remove }) {
 
     try {
       const tmp = computePairwiseData(selection, groupVar, variable, test);
+      if (!tmp?.pairwiseEffects || tmp.pairwiseEffects.length === 0) {
+        publish("notification", {
+          message: "No pairwise results",
+          description: "This test does not provide pairwise effects.",
+          placement: "bottomRight",
+          type: "info",
+        });
+        setData(null);
+        return;
+      }
       setData(tmp);
     } catch (error) {
       publish("notification", {
@@ -52,18 +65,44 @@ export default function Pairwise({ id, variable, test, remove }) {
     if (data && dims) {
       return renderPairwisePlot(ref.current, data, config, dims, id);
     }
+    if (dims) {
+      d3.select(ref.current).selectAll("*").remove();
+    }
   }, [data, dims, config]);
+
+  const infoContent =
+    data?.descriptionJSX || data?.shortDescription || data?.referenceUrl ? (
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        {data?.shortDescription && <div>{data.shortDescription}</div>}
+        {data?.referenceUrl && (
+          <a
+            href={data.referenceUrl}
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: "inherit", textDecoration: "underline" }}
+          >
+            Reference
+          </a>
+        )}
+        {data?.descriptionJSX && <div>{data.descriptionJSX}</div>}
+      </div>
+    ) : null;
+
+  const pairwiseLabel = data?.pairwiseTitle || "Effect sizes";
+  const title = [test, pairwiseLabel, variable].filter(Boolean).join(" - ");
 
   return (
     <div className={styles.viewContainer}>
       <ChartBar
-        title={`Effect Sizes - ${variable}`}
-        info={data?.descriptionJSX}
+        title={title}
+        info={infoContent}
         svgIDs={[id]}
         remove={remove}
         config={config}
         setConfig={setConfig}
-        settings={<Settings config={config} setConfig={setConfig} />}
+        settings={
+          <Settings config={config} setConfig={setConfig} variant="pairwise" />
+        }
       ></ChartBar>
 
       <div ref={ref} className={styles.chartContainer}></div>
@@ -72,28 +111,43 @@ export default function Pairwise({ id, variable, test, remove }) {
 }
 
 function renderPairwisePlot(container, result, config, dimensions, id) {
-  const { showCaps, capSize, markerShape, markerSize } = config;
-  let data = result.pairwiseEffects;
-  data.map((d) => {
+  const {
+    showCaps,
+    capSize,
+    markerShape,
+    markerSize,
+    showZeroLine,
+    showGrid,
+    sortBy,
+  } = config;
+  let data = result.pairwiseEffects.map((d) => {
     if (d.value < 0) {
-      d.value = -d.value;
-      d.groups = d.groups.reverse();
-      d.ci95 = { lower: -d.ci95.upper, upper: -d.ci95.lower };
-      return d;
-    } else {
-      return d;
+      return {
+        ...d,
+        value: -d.value,
+        groups: [...d.groups].reverse(),
+        ci95: { lower: -d.ci95.upper, upper: -d.ci95.lower },
+      };
     }
+    return d;
   });
 
-  data.sort((a, b) => b.value - a.value);
+  data.sort((a, b) => {
+    if (sortBy === "label") {
+      return String(a.groups.join(" vs ")).localeCompare(
+        String(b.groups.join(" vs "))
+      );
+    }
+    return b.value - a.value;
+  });
 
   const labels = data.map((d) => d.groups.join(" vs "));
 
-  const margin = { top: 10, right: 40, bottom: 40, left: 175 };
+  const margin = { top: 10, right: 40, bottom: 40, left: 140 };
   const totalWidth = dimensions.width;
   const totalHeight = dimensions.height;
   const chartWidth = totalWidth - margin.left - margin.right;
-  const chartHeight = data.length * 45;
+  const chartHeight = totalHeight - margin.top - margin.bottom;
 
   d3.select(container).selectAll("*").remove();
 
@@ -106,9 +160,10 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
     .select(container)
     .append("svg")
     .attr("id", id)
-    .attr("class", styles.pwSvg)
-    .attr("width", totalWidth)
-    .attr("height", chartHeight + margin.top + margin.bottom);
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .style("display", "block")
+    .attr("class", styles.chartSvg);
 
   if (totalHeight > chartHeight + margin.top + margin.bottom) {
     svg.style("position", "absolute").style("bottom", 0).style("left", 0);
@@ -121,7 +176,7 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
 
   const rawLower = Math.min(
     d3.min(data, (d) => d.ci95.lower),
-    0
+    0,
   );
   const rawUpper = d3.max(data, (d) => d.ci95.upper);
   const x = d3
@@ -157,7 +212,7 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
     .attr("transform", `translate(0,${chartHeight})`)
     .call(d3.axisBottom(x).ticks(5));
 
-  if (x.domain()[0] < 0 && x.domain()[1] > 0) {
+  if (showZeroLine && x.domain()[0] < 0 && x.domain()[1] > 0) {
     chart
       .append("line")
       .attr("stroke", "black")
@@ -168,26 +223,27 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
       .attr("y2", chartHeight);
   }
 
-  const minVal = x.domain()[0];
-  const maxVal = x.domain()[1];
+  if (showGrid) {
+    const minVal = x.domain()[0];
+    const maxVal = x.domain()[1];
+    const startGrid = Math.floor(minVal * 10) / 10;
+    const endGrid = Math.ceil(maxVal * 10) / 10;
 
-  const startGrid = Math.floor(minVal * 10) / 10;
-  const endGrid = Math.ceil(maxVal * 10) / 10;
+    for (let gridValue = startGrid; gridValue <= endGrid; gridValue += 0.1) {
+      if (gridValue === 0) continue;
 
-  for (let gridValue = startGrid; gridValue <= endGrid; gridValue += 0.1) {
-    if (gridValue === 0) continue;
-
-    if (gridValue >= minVal && gridValue <= maxVal) {
-      chart
-        .append("line")
-        .attr("stroke", "#e0e0e0")
-        .attr("stroke-width", 1)
-        .attr("stroke-dasharray", "2 2")
-        .attr("x1", x(gridValue))
-        .attr("x2", x(gridValue))
-        .attr("y1", 0)
-        .attr("y2", chartHeight)
-        .attr("class", "grid-line");
+      if (gridValue >= minVal && gridValue <= maxVal) {
+        chart
+          .append("line")
+          .attr("stroke", "#e2e8f0")
+          .attr("stroke-width", 1)
+          .attr("stroke-dasharray", "2 2")
+          .attr("x1", x(gridValue))
+          .attr("x2", x(gridValue))
+          .attr("y1", 0)
+          .attr("y2", chartHeight)
+          .attr("class", "grid-line");
+      }
     }
   }
 
@@ -207,7 +263,7 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
           `<strong>${d.groups.join(" vs ")}</strong><br/>
            ${d.measure}: ${d.value.toFixed(2)}<br/>
            CI: [${d.ci95.lower.toFixed(2)}, ${d.ci95.upper.toFixed(2)}]<br/>
-           p-value: ${formatDecimal(d.pValue)}`
+           p-value: ${formatDecimal(d.pValue)}`,
         )
         .style("visibility", "visible");
     })
@@ -274,7 +330,7 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
           `<strong>${d.groups.join(" vs ")}</strong><br/>
            ${d.measure}: ${d.value.toFixed(2)}<br/>
            CI: [${d.ci95.lower.toFixed(2)}, ${d.ci95.upper.toFixed(2)}]<br/>
-           p-value: ${formatDecimal(d.pValue)}`
+           p-value: ${formatDecimal(d.pValue)}`,
         )
         .style("visibility", "visible");
     })

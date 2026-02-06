@@ -8,7 +8,7 @@ import { get_parser } from "../logic/parser";
 import buildAggregation from "../logic/formulaGenerator";
 
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import PopoverButton from "@/utils/PopoverButton";
+import PopoverButton from "@/components/ui/PopoverButton";
 import { CUST_HELP } from "@/utils/Constants";
 import styles from "./DropArea.module.css";
 import { AttributePaste } from "./CustomAggregate";

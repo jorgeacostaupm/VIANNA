@@ -1,7 +1,7 @@
 import React from "react";
 
-import AppBar from "@/utils/AppBar";
-import styles from "@/utils/App.module.css";
+import AppBar from "@/components/ui/AppBar";
+import styles from "@/styles/App.module.css";
 import VariableSelector from "./VariableSelector";
 import AssumptionsTags from "./AssumptionsTags";
 import TestSelector from "./TestSelector";

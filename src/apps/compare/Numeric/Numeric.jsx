@@ -2,8 +2,8 @@ import React, { useState, useMemo } from "react";
 
 import { getDistributionData as getData } from "@/utils/functionsCompare";
 import useDistributionData from "./useDistributionData";
-import ViewContainer from "@/utils/ViewContainer";
-import NoDataPlaceholder from "@/utils/NoDataPlaceholder";
+import ViewContainer from "@/components/charts/ViewContainer";
+import NoDataPlaceholder from "@/components/charts/NoDataPlaceholder";
 import { Density, Histogram } from "./charts";
 import Settings from "./Settings";
 import Boxplot from "./charts/Boxplot/Boxplot";
@@ -12,6 +12,8 @@ import Vilonplot from "./charts/Violinplot/Violinplot";
 const defaultConfig = {
   chartType: "box",
   isSync: true,
+  showLegend: true,
+  showGrid: false,
   useCustomRange: false,
   range: [null, null],
   nPoints: 30,

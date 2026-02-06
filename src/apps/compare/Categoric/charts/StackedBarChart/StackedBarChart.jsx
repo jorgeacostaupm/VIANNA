@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 import useStackedBarChart from "./useStackedBarChart";
-import ChartWithLegend from "@/utils/ChartWithLegend";
+import ChartWithLegend from "@/components/charts/ChartWithLegend";
 
 export default function StackedBarChart({ data, config, id }) {
   const chartRef = useRef(null);
@@ -9,5 +9,12 @@ export default function StackedBarChart({ data, config, id }) {
 
   useStackedBarChart({ chartRef, legendRef, data, config });
 
-  return <ChartWithLegend id={id} chartRef={chartRef} legendRef={legendRef} />;
+  return (
+    <ChartWithLegend
+      id={id}
+      chartRef={chartRef}
+      legendRef={legendRef}
+      showLegend={config.showLegend}
+    />
+  );
 }

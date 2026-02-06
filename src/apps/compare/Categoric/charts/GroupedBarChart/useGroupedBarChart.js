@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { useEffect } from "react";
 import { moveTooltip } from "@/utils/functions";
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
 
 export const catMargins = { top: 20, right: 30, bottom: 40, left: 40 };
 
@@ -18,6 +18,7 @@ export default function useGroupedBarChart({
 
     const { width, height } = dimensions;
     const { chartData, categories, categoriesWithValues, groupVar } = data;
+    const { showLegend, groupOrder, categoryOrder } = config || {};
 
     d3.select(chartRef.current).selectAll("*").remove();
     d3.select(legendRef.current).selectAll("*").remove();
@@ -38,7 +39,19 @@ export default function useGroupedBarChart({
       .append("g")
       .attr("transform", `translate(${catMargins.left},${catMargins.top})`);
 
-    const groups = chartData.map((d) => d[groupVar]).sort();
+    const groupTotals = new Map(
+      chartData.map((d) => [
+        d[groupVar],
+        categories.reduce((sum, c) => sum + (d[c] || 0), 0),
+      ])
+    );
+    const groups = chartData.map((d) => d[groupVar]);
+    groups.sort((a, b) => {
+      if (groupOrder === "count") {
+        return (groupTotals.get(b) || 0) - (groupTotals.get(a) || 0);
+      }
+      return String(a).localeCompare(String(b));
+    });
 
     const x0 = d3
       .scaleBand()
@@ -46,15 +59,32 @@ export default function useGroupedBarChart({
       .range([0, chartWidth])
       .padding(0.2);
 
-    const color = d3.scaleOrdinal().domain(categories).range(colorScheme);
+    const categoryTotals = new Map(
+      categories.map((c) => [
+        c,
+        chartData.reduce((sum, d) => sum + (d[c] || 0), 0),
+      ])
+    );
+    const visibleCategories =
+      categoriesWithValues?.length > 0 ? categoriesWithValues : categories;
+    const orderedCategories = [...visibleCategories].sort((a, b) => {
+      if (categoryOrder === "count") {
+        return (categoryTotals.get(b) || 0) - (categoryTotals.get(a) || 0);
+      }
+      return String(a).localeCompare(String(b));
+    });
+
+    const color = d3.scaleOrdinal().domain(orderedCategories).range(colorScheme);
 
     const x1 = d3
       .scaleBand()
-      .domain(categories.sort())
+      .domain(orderedCategories)
       .range([0, x0.bandwidth()])
       .padding(0.05);
 
-    const maxCount = d3.max(chartData, (d) => d3.max(categories, (c) => d[c]));
+    const maxCount = d3.max(chartData, (d) =>
+      d3.max(orderedCategories, (c) => d[c])
+    );
     const y = d3
       .scaleLinear()
       .domain([0, maxCount])
@@ -79,7 +109,7 @@ export default function useGroupedBarChart({
 
     groupG
       .selectAll("rect")
-      .data((d) => categories.map((key) => ({ key, value: d[key] })))
+      .data((d) => orderedCategories.map((key) => ({ key, value: d[key] })))
       .enter()
       .append("rect")
       .attr("x", (d) => x1(d.key))
@@ -101,7 +131,9 @@ export default function useGroupedBarChart({
         d3.select(event.currentTarget).attr("opacity", 1);
       });
 
-    renderLegend(legend, categoriesWithValues, color);
+    if (showLegend !== false) {
+      renderLegend(legend, orderedCategories, color);
+    }
   }, [data, config, dimensions]);
 }
 

@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 
 import styles from "../Data.module.css";
-import ColoredButton from "@/utils/ColoredButton";
+import ColoredButton from "@/components/ui/ColoredButton";
 import { updateDescriptions } from "@/store/async/metaAsyncReducers";
 
 const ACCEPTED_FORMATS = {

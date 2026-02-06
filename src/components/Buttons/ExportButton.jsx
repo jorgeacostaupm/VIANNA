@@ -1,27 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Space } from "antd";
+import { Button, Radio } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { selectNavioVars } from "@/store/slices/cantabSlice";
 import { generateFileName } from "@/utils/functions";
-import buttonStyles from "@/utils/Buttons.module.css";
-import appStyles from "@/utils/App.module.css";
-import PopoverButton from "@/utils/PopoverButton";
+import buttonStyles from "@/styles/Buttons.module.css";
+import PopoverButton from "@/components/ui/PopoverButton";
+import styles from "./ExportButton.module.css";
 
 function ExportOptions() {
-  const allData = useSelector((state) => state.dataframe.present.dataframe);
-  const selectionData = useSelector(
-    (state) => state.dataframe.present.selection
+  const fullData = useSelector((state) => state.dataframe.present.dataframe);
+  const selectionRows = useSelector(
+    (state) => state.dataframe.present.selection,
   );
-  const variables = useSelector(selectNavioVars);
+  const visibleVariables = useSelector(selectNavioVars);
+  const [includeAllVars, setIncludeAllVars] = useState(false);
 
-  const convertToCSV = (array, useAllVars = false) => {
-    if (!array || array.length === 0) return "";
+  const buildCsv = (rows, includeAllVars = false) => {
+    if (!rows || rows.length === 0) return "";
 
-    const keys = useAllVars ? Object.keys(array[0]) : variables;
+    const keys = includeAllVars ? Object.keys(rows[0]) : visibleVariables;
     const csvRows = [keys.join(",")];
 
-    array.forEach((obj) => {
+    rows.forEach((obj) => {
       const values = keys.map((key) => obj[key]);
       csvRows.push(values.join(","));
     });
@@ -29,8 +30,8 @@ function ExportOptions() {
     return csvRows.join("\n");
   };
 
-  const saveData2CSV = (data, name, useAllVars = false) => {
-    const csvData = convertToCSV(data, useAllVars);
+  const downloadCsv = (rows, name, includeAllVars = false) => {
+    const csvData = buildCsv(rows, includeAllVars);
     const blob = new Blob([csvData], { type: "text/csv" });
     const href = URL.createObjectURL(blob);
     const downloadLink = document.createElement("a");
@@ -40,64 +41,54 @@ function ExportOptions() {
   };
 
   return (
-    <Space direction="vertical" size="middle" className={appStyles.popoverMenu}>
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          justifyContent: "center",
-          flexDirection: "row",
-        }}
-      >
+    <div className={styles.container}>
+      <div className={styles.row}>
         <Button
-          className={buttonStyles.coloredButton}
-          onClick={() => saveData2CSV(selectionData, "selection_data")}
+          className={`${buttonStyles.myButton} ${styles.exportButton}`}
+          onClick={() =>
+            downloadCsv(
+              selectionRows,
+              includeAllVars ? "selection_all_vars" : "selection_visible_vars",
+              includeAllVars,
+            )
+          }
         >
           Selection
         </Button>
         <Button
-          style={{}}
-          className={buttonStyles.coloredButton}
+          className={`${buttonStyles.myButton} ${styles.exportButton}`}
           onClick={() =>
-            saveData2CSV(selectionData, "selection_data_all_vars", true)
+            downloadCsv(
+              fullData,
+              includeAllVars ? "all_all_vars" : "all_visible_vars",
+              includeAllVars,
+            )
           }
         >
-          Selection + All Variables
+          All data
         </Button>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          justifyContent: "center",
-          flexDirection: "row",
-        }}
-      >
-        <Button
-          className={buttonStyles.coloredButton}
-          onClick={() => saveData2CSV(allData, "all_data")}
+      <div className={styles.row}>
+        <Radio.Group
+          value={includeAllVars ? "all" : "visible"}
+          onChange={(event) => setIncludeAllVars(event.target.value === "all")}
+          className={styles.toggle}
         >
-          Complete
-        </Button>
-
-        <Button
-          className={buttonStyles.coloredButton}
-          onClick={() => saveData2CSV(allData, "all_data_all_vars", true)}
-        >
-          Complete + All Variables
-        </Button>
+          <Radio.Button value="visible">Visible variables</Radio.Button>
+          <Radio.Button value="all">All variables</Radio.Button>
+        </Radio.Group>
       </div>
-    </Space>
+    </div>
   );
 }
 
 export default function ExportButton() {
   return (
     <PopoverButton
-      content={<ExportOptions></ExportOptions>}
-      icon={<DownloadOutlined></DownloadOutlined>}
-      title={"Export data options"}
-    ></PopoverButton>
+      content={<ExportOptions />}
+      icon={<DownloadOutlined />}
+      title={"Export data"}
+    />
   );
 }

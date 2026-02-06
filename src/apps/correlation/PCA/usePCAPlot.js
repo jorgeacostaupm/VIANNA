@@ -1,17 +1,17 @@
 import * as d3 from "d3";
 import { useEffect, useState } from "react";
 import { moveTooltip } from "@/utils/functions";
-import renderQTooltip from "@/utils/QuarantineTooltip";
+import renderQTooltip from "@/components/charts/QuarantineTooltip";
 import renderLegend from "@/utils/renderLegend";
 import store from "@/store/store";
-import useResizeObserver from "@/utils/useResizeObserver";
+import useResizeObserver from "@/hooks/useResizeObserver";
 
 const margin = { top: 20, right: 10, bottom: 30, left: 50 };
 
 export default function usePCAPlot({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
   const [hide, setHide] = useState([]);
-  const { groupVar, pointSize } = config;
+  const { groupVar, pointSize, pointOpacity, showLegend } = config;
 
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current) return;
@@ -88,7 +88,7 @@ export default function usePCAPlot({ chartRef, legendRef, data, config }) {
       .attr("cy", (d) => yScale(d.pc2))
       .attr("r", pointSize)
       .attr("fill", (d) => color(d[groupVar]))
-      .attr("opacity", 0.7)
+      .attr("opacity", pointOpacity ?? 0.7)
       .on("mouseover", (e, d) => {
         const target = e.target;
         d3.select(target).style("stroke", "black").raise();
@@ -114,7 +114,9 @@ export default function usePCAPlot({ chartRef, legendRef, data, config }) {
         moveTooltip(e, contextMenuTooltip, chart, 100);
       });
 
-    renderLegend(legend, groups, color, null, null, hide, setHide);
+    if (showLegend !== false) {
+      renderLegend(legend, groups, color, null, null, hide, setHide);
+    }
   }, [data, config, dimensions]);
 
   useEffect(() => {

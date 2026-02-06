@@ -1,0 +1,198 @@
+.viewContainer {
+  --view-bar-height: 52px;
+  --view-popover-max-height: calc(100% - var(--view-bar-height) - 10px);
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.viewContainer :global(.ant-popover) {
+  right: 5px !important;
+  left: auto !important;
+  top: calc(var(--view-bar-height) + 5px) !important;
+  bottom: auto !important;
+}
+
+.correlationContainer {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.editorContainer {
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.verticalLegendContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Distribution Charts */
+
+.chartLegendContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.distributionChart {
+  width: 80%;
+  height: 100%;
+}
+
+.distributionChartFull {
+  width: 100%;
+  height: 100%;
+}
+
+.legend {
+  width: 20%;
+  height: 100%;
+  display: flex;
+  overflow: auto;
+}
+
+.legendHidden {
+  display: none;
+}
+
+.chartContainer {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.legendSvg {
+  display: block;
+  overflow: visible;
+}
+
+.chartSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pwSvg {
+  overflow: visible;
+  display: block;
+}
+
+/* Hierarchy */
+
+.hierarchyTooltip {
+  position: absolute;
+  background-color: var(--color-surface);
+  display: flex;
+  gap: var(--space-2);
+  flex-direction: row;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  box-shadow: var(--shadow-sm);
+}
+
+.hierarchyMenu {
+  position: absolute;
+  min-width: 240px;
+  background: linear-gradient(
+    180deg,
+    var(--color-surface),
+    var(--color-surface-muted)
+  );
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.hierarchyMenuHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.hierarchyMenuTitle {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.hierarchyMenuMeta {
+  display: flex;
+  gap: var(--space-2);
+  font-size: 12px;
+  color: var(--color-ink-secondary);
+}
+
+.hierarchyMenuSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.hierarchyMenuSectionTitle {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+  color: var(--color-ink-tertiary);
+}
+
+.hierarchyMenuActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.hierarchyMenuAction {
+  width: 100%;
+  justify-content: flex-start;
+  gap: var(--space-2);
+}
+
+.nodeInfo {
+  position: absolute;
+  top: 40px;
+  right: 5px;
+  color: var(--color-ink);
+  max-height: 90%;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.nodeInfoBody {
+  color: var(--color-ink);
+  overflow-y: auto;
+  padding: var(--space-4);
+  gap: var(--space-4);
+  display: flex;
+  flex-direction: column;
+}

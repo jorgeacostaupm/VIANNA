@@ -5,7 +5,7 @@ import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 
 import { FileProcessorFactory } from "./drag";
 
-import buttonStyles from "@/utils/Buttons.module.css";
+import buttonStyles from "@/styles/Buttons.module.css";
 import styles from "../Data.module.css";
 import tests from "@/utils/tests";
 

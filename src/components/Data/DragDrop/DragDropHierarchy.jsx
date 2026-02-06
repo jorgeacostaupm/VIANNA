@@ -6,7 +6,7 @@ import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { FileProcessorFactory } from "./drag";
 import styles from "../Data.module.css";
 import { updateHierarchy } from "@/store/async/metaAsyncReducers";
-import ColoredButton from "@/utils/ColoredButton";
+import ColoredButton from "@/components/ui/ColoredButton";
 
 const ACCEPTED_FORMATS = {
   "application/json": [".json"],

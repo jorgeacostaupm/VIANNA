@@ -8,11 +8,15 @@ export const chiSquareIndependence = {
     "Test of independence between a grouping variable and a categorical variable",
   isApplicable: (count) => count >= 2,
   variableType: VariableTypes.CATEGORICAL,
+  category: "Categóricas — Independencia",
   run: (groups) => {
     const groupNames = groups.map((g) => g.name);
     const categories = [...new Set(groups.flatMap((g) => g.values))];
     const r = groups.length;
     const c = categories.length;
+    if (c < 2) {
+      throw new Error("Chi-square test requires at least 2 categories.");
+    }
 
     // 1) Construir la tabla de conteos global
     const counts = groups.map((g) => {
@@ -46,7 +50,8 @@ export const chiSquareIndependence = {
     }
     const df = (r - 1) * (c - 1);
     const pValue = 1 - jStat.chisquare.cdf(chi2, df);
-    const cramerV = Math.sqrt(chi2 / (N * Math.min(r - 1, c - 1)));
+    const denom = N * Math.min(r - 1, c - 1);
+    const cramerV = denom > 0 ? Math.sqrt(chi2 / denom) : 0;
 
     const summaries = groups.map((g, i) => ({
       name: g.name,

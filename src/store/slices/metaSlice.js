@@ -72,9 +72,7 @@ export const metaSlice = createSlice({
       const descriptions = action.payload;
       state.attributes = state.attributes.map((attr) => {
         const name = attr.name;
-        let desc = descriptions.find(
-          (item) => item.measure_name === name
-        )?.measure_description;
+        let desc = descriptions.find((item) => item.name === name)?.description;
         attr.desc = desc ? desc : "";
         return attr;
       });

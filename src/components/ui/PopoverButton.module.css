@@ -1,0 +1,85 @@
+.popoverOverlay :global(.ant-popover-inner) {
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  white-space: pre-line;
+  padding: 0;
+}
+
+.popoverOverlay :global(.ant-popover-arrow) {
+  display: none;
+}
+
+.panel {
+  padding: var(--space-3);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+.panelHeader {
+  font-family: var(--font-family-display);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: var(--space-2);
+}
+
+.panelBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.tooltipTrigger {
+  display: inline-block;
+}
+
+.menuButton {
+  height: 32px;
+  width: 32px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.menuButton:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.menuButton:active {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+  transform: translateY(1px);
+}
+
+.menuButton:global(.ant-btn:active),
+.menuButton:global(.ant-btn-focused),
+.menuButton:global(.ant-btn:focus),
+.menuButton:global(.ant-btn:focus-visible) {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+}
+
+.menuButton:focus-visible {
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.35);
+}
+
+.menuButtonActive {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+}

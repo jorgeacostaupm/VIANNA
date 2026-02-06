@@ -1,4 +1,4 @@
-Task,Variant,measure_name,measure_description,Decimal Places
+Task,Variant,name,description,Decimal Places
 DMS,DMS Recommended Standard,DMSCC,"DMS Mean Choices to Correct: The mean number of choices that the subject made on each trial, including the correct choice. Calculated across all trials where the subject eventually made the correct choice (simultaneous and all delays).",2
 DMS,DMS Recommended Standard,DMSL0SD,"DMS Correct Latency Standard Deviation (SD) (0 second delay): The standard deviation of response latencies for trials containing a zero second delay between the presentation of target and response stimuli, where subjects selected the correct box on their first attempt. Calculated across all assessed trials containing a zero second delay.",4
 DMS,DMS Recommended Standard,DMSL12SD,"DMS Correct Latency Standard Deviation (SD) (12 second delay): The standard deviation of response latencies for trials containing a twelve second delay between the presentation of target and response stimuli, where subjects selected the correct box on their first attempt. Calculated across all assessed trials containing a twelve second delay.",4

@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Select, Slider, Space, Typography } from "antd";
+import { Select, Slider, Switch, Typography } from "antd";
 
 import { getCategoricalKeys } from "@/utils/functions";
+import panelStyles from "@/styles/SettingsPanel.module.css";
 
-const { Option } = Select;
 const { Text } = Typography;
 
 export default function Settings({ config, setConfig, params, setParams }) {
@@ -24,11 +24,11 @@ export default function Settings({ config, setConfig, params, setParams }) {
   useEffect(() => {
     if (
       categoricalVars.length > 0 &&
-      !categoricalVars.includes(params.groupVar)
+      !categoricalVars.includes(config.groupVar)
     ) {
       update("groupVar", categoricalVars[0]);
     }
-  }, [categoricalVars, params.groupVar, setConfig]);
+  }, [categoricalVars, config.groupVar]);
 
   const onVariablesChange = (values) => {
     setParams((prev) => ({
@@ -38,56 +38,74 @@ export default function Settings({ config, setConfig, params, setParams }) {
   };
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "400px" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          width: "100%",
-          gap: "15px",
-        }}
-      >
-        <Text strong>Grouping variable</Text>
-        <Select
-          value={config.groupVar}
-          onChange={(v) => update("groupVar", v)}
-          placeholder="Select variable"
-          style={{ flex: 1 }}
-        >
-          {categoricalVars.map((key) => (
-            <Option key={key} value={key}>
-              {key}
-            </Option>
-          ))}
-        </Select>
+    <div className={panelStyles.panel}>
+      <div className={panelStyles.section}>
+        <div className={panelStyles.sectionTitle}>Grouping</div>
+        <div className={panelStyles.rowStack}>
+          <Text className={panelStyles.label}>Grouping variable</Text>
+          <Select
+            value={config.groupVar}
+            onChange={(v) => update("groupVar", v)}
+            placeholder="Select variable"
+            options={categoricalVars.map((key) => ({
+              value: key,
+              label: key,
+            }))}
+          />
+        </div>
+        <div className={panelStyles.rowStack}>
+          <Text className={panelStyles.label}>Included variables</Text>
+          <Select
+            mode="multiple"
+            value={params.variables}
+            onChange={onVariablesChange}
+            placeholder="Select variables"
+            options={navioColumns.map((key) => ({
+              value: key,
+              label: key,
+            }))}
+            disabled={!config.isSync}
+          />
+        </div>
       </div>
 
-      <Text strong>Included Variables</Text>
-      <Select
-        mode="multiple"
-        value={params.variables}
-        onChange={onVariablesChange}
-        placeholder="Select variables"
-        style={{ width: "100%", maxWidth: "400px" }}
-        disabled={!config.isSync}
-      >
-        {navioColumns.map((key) => (
-          <Option key={key} value={key}>
-            {key}
-          </Option>
-        ))}
-      </Select>
-      <div>
-        <Text strong>Points radius:</Text>
-        <Text type="secondary"> {config.pointSize}px</Text>
+      <div className={panelStyles.section}>
+        <div className={panelStyles.sectionTitle}>Points</div>
+        <div className={panelStyles.rowStack}>
+          <Text className={panelStyles.label}>Size</Text>
+          <Text className={panelStyles.value}>{config.pointSize}px</Text>
+          <Slider
+            min={1}
+            max={20}
+            value={config.pointSize}
+            onChange={(v) => update("pointSize", v)}
+          />
+        </div>
+        <div className={panelStyles.rowStack}>
+          <Text className={panelStyles.label}>Opacity</Text>
+          <Text className={panelStyles.value}>
+            {Math.round(config.pointOpacity * 100)}%
+          </Text>
+          <Slider
+            min={0.2}
+            max={1}
+            step={0.05}
+            value={config.pointOpacity}
+            onChange={(v) => update("pointOpacity", v)}
+          />
+        </div>
       </div>
-      <Slider
-        min={1}
-        max={20}
-        defaultValue={config.pointSize}
-        onChangeComplete={(v) => update("pointSize", v)}
-        style={{ width: "100%" }}
-      />
-    </Space>
+
+      <div className={panelStyles.section}>
+        <div className={panelStyles.sectionTitle}>Legend</div>
+        <div className={panelStyles.row}>
+          <Text className={panelStyles.label}>Show legend</Text>
+          <Switch
+            checked={config.showLegend}
+            onChange={(v) => update("showLegend", v)}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

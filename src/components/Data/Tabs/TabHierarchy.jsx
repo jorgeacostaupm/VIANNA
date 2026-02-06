@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Typography } from "antd";
+import { Typography, Divider } from "antd";
 import DragDropHierarchy from "../DragDrop/DragDropHierarchy";
 import {
   selectNumericNodes,
@@ -18,7 +18,7 @@ const Info = () => {
   const textNodes = useSelector((state) => selectTextNodes(state));
   const determineNodes = useSelector((state) => selectDetermineNodes(state));
   const aggregationNodes = useSelector((state) =>
-    selectAggregationNodes(state)
+    selectAggregationNodes(state),
   );
 
   return (
@@ -31,10 +31,11 @@ const Info = () => {
         padding: "20px",
         boxSizing: "border-box",
         borderRadius: "4px",
+        overflow: "auto",
       }}
     >
       <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
-        Actual Hierarchy
+        Metadata
       </Title>
 
       <div>
@@ -54,25 +55,56 @@ const Info = () => {
         </Text>
       </div>
 
+      <Divider style={{ margin: "1rem 0" }} />
+
+      <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
+        Summary
+      </Title>
+
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
-          Nº Numeric Nodes:
+          Nº Numeric Measurements:
         </Text>{" "}
         <Text>{numericNodes?.length || 0}</Text>
       </div>
 
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
-          Nº Textual Nodes:
+          Nº Text Measurements:
         </Text>{" "}
         <Text>{textNodes?.length || 0}</Text>
       </div>
 
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
-          Nº Unknown Nodes:
+          Nº Unknown Measurements:
         </Text>{" "}
         <Text>{determineNodes?.length || 0}</Text>
+      </div>
+
+      <Divider style={{ margin: "1rem 0" }} />
+
+      <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
+        Expected File
+      </Title>
+      <div>
+        <Text type="secondary">
+          Upload a JSON array of hierarchy measurements. Each measurement should
+          include the fields `id`, `name`, `type`, `dtype`, `related`, and
+          `isShown`.
+        </Text>
+      </div>
+      <div>
+        <Text type="secondary">
+          `related` is a list of child measurement IDs. The root measurement
+          must have `id: 0` and `type: "root"`.
+        </Text>
+      </div>
+      <div>
+        <Text type="secondary">
+          Aggregation measurements may include `info.exec` (formula) and should
+          match existing data measurements by `name`.
+        </Text>
       </div>
     </div>
   );
@@ -90,6 +122,7 @@ const UploadPanel = () => {
         borderLeft: "1px solid #eee",
         padding: "20px",
         boxSizing: "border-box",
+        overflow: "auto",
       }}
     >
       <Title
@@ -98,6 +131,9 @@ const UploadPanel = () => {
       >
         Upload Hierarchy
       </Title>
+      <Text type="secondary">
+        This replaces the current hierarchy and updates the visible measurements.
+      </Text>
       <DragDropHierarchy />
     </div>
   );
@@ -109,9 +145,9 @@ export default function TabHierarchy() {
       style={{
         display: "flex",
         flexDirection: "row",
-        height: "500px",
         width: "100%",
         gap: "1rem",
+        overflow: "auto",
       }}
     >
       <Info />

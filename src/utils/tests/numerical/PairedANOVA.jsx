@@ -8,10 +8,17 @@ export const repeatedMeasuresANOVA = {
     "Comparison of k ≥ 2 related conditions (within-subjects), assuming normality and sphericity.",
   isApplicable: (count) => count >= 2,
   variableType: VariableTypes.NUMERICAL,
+  category: "Numéricas — Pareadas/Repetidas",
   run: (groups) => {
     const alpha = 0.05;
     const k = groups.length;
     const n = groups[0].values.length;
+    if (groups.some((g) => g.values.length !== n)) {
+      throw new Error("Repeated measures ANOVA requires equal-length groups.");
+    }
+    if (n < 2) {
+      throw new Error("Repeated measures ANOVA requires at least 2 observations.");
+    }
 
     const subjectMeans = Array(n).fill(0);
     const conditionMeans = groups.map((g) => jStat.mean(g.values));
@@ -78,6 +85,7 @@ export const repeatedMeasuresANOVA = {
       etaSquared,
       df: { df1: dfConditions, df2: dfError },
       summaries,
+      summariesTitle: "Means & 95% CI",
       descriptionString,
       metric: { name: "eta squared", symbol: "η²", value: etaSquared },
     };

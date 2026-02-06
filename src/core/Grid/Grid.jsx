@@ -1,8 +1,8 @@
 import GridLayout, { WidthProvider } from "react-grid-layout";
-import styles from "@/utils/App.module.css";
+import styles from "@/styles/App.module.css";
 import { Layout } from "antd";
-import useNotification from "@/utils/useNotification";
-import useRootStyles from "@/utils/useRootStyles";
+import useNotification from "@/hooks/useNotification";
+import useRootStyles from "@/hooks/useRootStyles";
 import useGridViews from "./useGridViews";
 import { createViewRenderer } from "./ViewRegistry";
 import { APP_NAME } from "@/utils/Constants";

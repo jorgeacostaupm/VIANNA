@@ -1,0 +1,91 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.rowStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.value {
+  color: var(--color-ink-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.control {
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.helper {
+  font-size: var(--font-size-xs);
+  color: var(--color-ink-tertiary);
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.optionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.optionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.optionTitle {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.optionDesc {
+  font-size: var(--font-size-xs);
+  color: var(--color-ink-tertiary);
+}

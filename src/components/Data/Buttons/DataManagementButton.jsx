@@ -5,7 +5,7 @@ import { DatabaseOutlined } from "@ant-design/icons";
 import TabData from "../Tabs/TabData";
 import TabHierarchy from "../Tabs/TabHierarchy";
 import styles from "../Data.module.css";
-import PanelButton from "@/utils/PanelButton";
+import PanelButton from "@/components/ui/PanelButton";
 import TabDescriptions from "../Tabs/TabDescriptions";
 
 const items = [
@@ -52,7 +52,8 @@ export default function DataManagementButton() {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-        width={1000}
+        width={1200}
+        style={{ top: 24 }}
         footer={null}
       >
         <Tabs

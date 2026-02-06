@@ -1,14 +1,17 @@
 import React, { useState, useMemo, useRef } from "react";
 
 import Settings from "./Settings";
-import ChartWithLegend from "@/utils/ChartWithLegend";
+import ChartWithLegend from "@/components/charts/ChartWithLegend";
 import usePCAPlot from "./usePCAPlot";
 import usePCAData from "./usePCAData";
-import ViewContainer from "@/utils/ViewContainer";
+import ViewContainer from "@/components/charts/ViewContainer";
 
 const defaultConfig = {
   isSync: true,
   pointSize: 2,
+  pointOpacity: 0.75,
+  showLegend: true,
+  groupVar: null,
 };
 
 const defaultParams = {
@@ -23,7 +26,14 @@ function Chart({ data, id, config }) {
 
   usePCAPlot({ chartRef, legendRef, data, config });
 
-  return <ChartWithLegend id={id} chartRef={chartRef} legendRef={legendRef} />;
+  return (
+    <ChartWithLegend
+      id={id}
+      chartRef={chartRef}
+      legendRef={legendRef}
+      showLegend={config.showLegend}
+    />
+  );
 }
 
 export default function PCA({ id, remove }) {

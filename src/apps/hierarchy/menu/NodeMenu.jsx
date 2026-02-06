@@ -7,15 +7,15 @@ import { SaveOutlined } from "@ant-design/icons";
 
 import { updateAttribute } from "@/store/async/metaAsyncReducers";
 
-import { NodeBar } from "@/utils/ChartBar";
-import styles from "@/utils//Charts.module.css";
-import buttonStyles from "@/utils//Buttons.module.css";
+import { NodeBar } from "@/components/charts/ChartBar";
+import styles from "@/styles/Charts.module.css";
+import buttonStyles from "@/styles/Buttons.module.css";
 
 import { NodeSchema } from "./NodeValidation";
 import NodeInfo from "./NodeInfo";
 import NodeAggregationConfig from "./NodeAggregationConfig";
 import CustomMeasure from "./aggregations/CustomMeasure";
-import AutoCloseTooltip from "@/utils/AutoCloseTooltip";
+import AutoCloseTooltip from "@/components/ui/AutoCloseTooltip";
 
 const { Text } = Typography;
 const { publish, subscribe, unsubscribe } = pubsub;

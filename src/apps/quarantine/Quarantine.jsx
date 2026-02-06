@@ -1,11 +1,11 @@
 import React from "react";
 import { useSelector, shallowEqual } from "react-redux";
 
-import styles from "@/utils/Charts.module.css";
+import styles from "@/styles/Charts.module.css";
 import { setQuarantineSelection } from "@/store/slices/cantabSlice";
 import Navio from "@/components/Navio";
 import Bar from "./Bar";
-import NoDataPlaceholder from "@/utils/NoDataPlaceholder";
+import NoDataPlaceholder from "@/components/charts/NoDataPlaceholder";
 import { updateConfig } from "@/store/slices/cantabSlice";
 
 export default function Quarantine() {
