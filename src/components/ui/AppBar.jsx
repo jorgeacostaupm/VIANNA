@@ -3,8 +3,9 @@ import { Row, Space, Popover, Col } from "antd";
 import styles from "@/styles/App.module.css";
 
 export default function AppBar({ description = null, children }) {
+  const logoSrc = `${import.meta.env.BASE_URL}app_name.svg`;
   const logo = (
-    <img src="/app_name.svg" alt="VANA" className={styles.appBarLogo} />
+    <img src={logoSrc} alt="VANA" className={styles.appBarLogo} />
   );
 
   return (
