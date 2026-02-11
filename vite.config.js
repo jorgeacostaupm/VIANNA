@@ -4,7 +4,7 @@ import { fileURLToPath, URL } from "node:url";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/VANA/",
+  base: process.env.VITE_BASE_PATH || "/VANA/",
   plugins: [react()],
   resolve: {
     alias: {
