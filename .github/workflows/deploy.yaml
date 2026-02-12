@@ -21,8 +21,9 @@ jobs:
       - name: Build project
         run: |
           npm install
+          VITE_BASE_PATH=/apache/~jacosta/prototypes/VANA/
           npm run build
 
-      - name: Deploy via SCP
+      - name: Deploy via rsync
         run: |
-          scp -o StrictHostKeyChecking=no -r ./dist/* jacosta@olmo.datsi.fi.upm.es:/home/jacosta/public_html/prototypes/VIANNA/
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./dist/ jacosta@olmo.datsi.fi.upm.es:/home/jacosta/public_html/prototypes/VANA/
