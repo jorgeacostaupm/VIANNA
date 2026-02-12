@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useSelector } from "react-redux";
 import { getCategoricDistributionData as getData } from "@/utils/functionsCompare";
 import useDistributionData from "../Numeric/useDistributionData";
 import ViewContainer from "@/components/charts/ViewContainer";
@@ -18,8 +19,11 @@ const defaultConfig = {
 const info = "Categorical Distribution plots, Grouped or Stacked bar chart";
 
 export default function Categoric({ id, variable, remove }) {
+  const groupVar = useSelector((s) => s.compare.groupVar);
   const [config, setConfig] = useState(defaultConfig);
-  const [data] = useDistributionData(getData, variable, config.isSync);
+  const [data] = useDistributionData(getData, variable, config.isSync, {
+    groupVar,
+  });
 
   const chart = useMemo(() => {
     if (!data || data.length === 0) {

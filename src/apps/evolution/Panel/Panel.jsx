@@ -1,18 +1,29 @@
 import React from "react";
 
-import AppBar from "@/components/ui/AppBar";
+import AnalysisSidebar from "@/components/ui/AnalysisSidebar";
 import styles from "@/styles/App.module.css";
 import VariableSelector from "./VariableSelector";
+import ContextSelector from "./ContextSelector";
 import { EVO_DESC } from "@/utils/Constants";
 
 export default function Panel(props) {
   const { generateEvolution } = props;
 
   return (
-    <AppBar description={EVO_DESC}>
-      <div className={styles.panelBox}>
-        <VariableSelector generateEvolution={generateEvolution} />
+    <AnalysisSidebar description={EVO_DESC}>
+      <div className={`${styles.panelBox} ${styles.panelBoxContext}`}>
+        <div className={styles.panelBoxTitle}>Analysis Context</div>
+        <div className={styles.panelBoxBody}>
+          <ContextSelector />
+        </div>
       </div>
-    </AppBar>
+
+      <div className={styles.panelBox}>
+        <div className={styles.panelBoxTitle}>Evolution Variable</div>
+        <div className={styles.panelBoxBody}>
+          <VariableSelector generateEvolution={generateEvolution} />
+        </div>
+      </div>
+    </AnalysisSidebar>
   );
 }

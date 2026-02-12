@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
 
 import Settings from "./Settings";
@@ -24,7 +24,7 @@ function Chart({ data, id, config }) {
 }
 
 export default function ScatterMatrix({ id, remove }) {
-  const groupVar = useSelector((s) => s.cantab.present.groupVar);
+  const groupVar = useSelector((s) => s.correlation.groupVar);
 
   const [config, setConfig] = useState({
     isSync: true,
@@ -34,6 +34,12 @@ export default function ScatterMatrix({ id, remove }) {
     variables: [],
     showLegend: true,
   });
+
+  useEffect(() => {
+    setConfig((prev) =>
+      prev.groupVar === groupVar ? prev : { ...prev, groupVar }
+    );
+  }, [groupVar]);
 
   const [data] = useScatterData(config.isSync, config);
 

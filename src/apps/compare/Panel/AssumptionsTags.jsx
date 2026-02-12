@@ -12,6 +12,7 @@ import { checkAssumptions, setSelectedVar } from "@/store/slices/compareSlice";
 
 import { getColorByDtype, getNameByDtype } from "@/utils/Constants";
 import AutoCloseTooltip from "@/components/ui/AutoCloseTooltip";
+import styles from "@/styles/App.module.css";
 
 const grayStyle = {
   backgroundColor: "#f0f0f0",
@@ -22,7 +23,7 @@ const tagStyle = {
   display: "inline-flex",
   justifyContent: "center",
   alignItems: "center",
-  minWidth: "100px", // ajusta según necesites
+  minWidth: "88px",
   textAlign: "center",
   padding: "6px 10px",
   lineHeight: 1,
@@ -64,7 +65,7 @@ export default function AssumptionsTags() {
   const assumptions = useSelector((s) => s.compare.assumptions);
   const selectedVar = useSelector((s) => s.compare.selectedVar);
   const varTypes = useSelector((s) => s.cantab.present.varTypes);
-  const groupVar = useSelector((s) => s.cantab.present.groupVar);
+  const groupVar = useSelector((s) => s.compare.groupVar);
 
   const allNormal = assumptions.normality?.every((d) => d.normal);
   const type = varTypes[selectedVar] || null;
@@ -82,7 +83,7 @@ export default function AssumptionsTags() {
   }, [variables, selectedVar, dispatch]);
 
   return (
-    <>
+    <div className={styles.assumptionsTagsGroup}>
       <StatusTag
         condition={assumptions.normality && type !== null ? allNormal : null}
         successText="All distributions meet normality"
@@ -98,6 +99,6 @@ export default function AssumptionsTags() {
       />
 
       <TypeTag type={type} />
-    </>
+    </div>
   );
 }

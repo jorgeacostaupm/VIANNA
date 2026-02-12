@@ -1,7 +1,6 @@
 import * as d3 from "d3";
 import jstat from "jstat";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 
 import useResizeObserver from "@/hooks/useResizeObserver";
 import { pubsub } from "@/utils/pubsub";
@@ -14,10 +13,18 @@ export const numMargin = { top: 50, right: 50, bottom: 50, left: 90 };
 
 export default function useDensity({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
-  const groups = useSelector((s) => s.cantab.present.groups);
-  const selectionGroups = useSelector((s) => s.cantab.present.selectionGroups);
+  const groups = Array.from(new Set((data || []).map((d) => d.type))).filter(
+    (value) => value != null,
+  );
+  const selectionGroups = groups;
+  const groupsKey = groups.join("|");
   const [hide, setHide] = useState([]);
   const [blur, setBlur] = useState(selectionGroups);
+
+  useEffect(() => {
+    setHide([]);
+    setBlur(selectionGroups);
+  }, [groupsKey]);
 
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
@@ -196,7 +203,7 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
         }
       });
     }
-  }, [data, config, dimensions, groups, selectionGroups]);
+  }, [data, config, dimensions, groupsKey]);
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -261,7 +268,7 @@ export function computeEstimator(numPoints, min, max) {
       };
       publish("notification", configuration);
 
-      return Array.from({ length: numPoints }, (_, i) => [uniformValue, 1]);
+      return Array.from({ length: numPoints }, () => [uniformValue, 1]);
     }
 
     const n = data.length;
@@ -277,9 +284,7 @@ export function computeEstimator(numPoints, min, max) {
       return [x, kernelEstimate / (data.length * bandwidth)];
     });
 
-    const maxDensity = Math.max(...tmp.map(([x, d]) => d));
-    const density = tmp;
-    return density;
+    return tmp;
   };
 }
 
@@ -409,7 +414,7 @@ export function renderLegend(
   const bbox = legendGroup.node().getBBox();
 
   const parent = legend.node().parentNode;
-  const { width, height } = parent.getBoundingClientRect();
+  const { height } = parent.getBoundingClientRect();
 
   if (height > bbox.y + bbox.height) {
     d3.select(parent).style("align-items", "center");

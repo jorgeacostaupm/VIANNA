@@ -48,6 +48,8 @@ export default function CompareApp() {
       registry={registry}
       componentName={Apps.COMPARE}
       panel={panel}
+      panelPlacement="left"
+      flow="horizontal"
     />
   );
 }

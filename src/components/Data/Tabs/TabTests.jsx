@@ -24,7 +24,38 @@ const DataInfoPanel = () => {
       </Title>
 
       {tests.map((t) => (
-        <Text> {t.label}</Text>
+        <div
+          key={t.id}
+          style={{
+            border: "1px solid #e6e6e6",
+            borderRadius: "8px",
+            padding: "10px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "6px",
+          }}
+        >
+          <Text strong>{t.label}</Text>
+          <Text type="secondary">{t.shortDescription}</Text>
+          <Text>
+            <b>Applies to:</b> {t.applicability || "-"}
+          </Text>
+          <div>
+            <Text>
+              <b>Reported measures:</b>
+            </Text>
+            <ul style={{ margin: "4px 0 0", paddingLeft: "1.1em" }}>
+              {(t.reportedMeasures || []).map((measure) => (
+                <li key={measure}>
+                  <Text>{measure}</Text>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <Text>
+            <b>Post hoc:</b> {t.postHoc || "-"}
+          </Text>
+        </div>
       ))}
     </div>
   );

@@ -98,8 +98,9 @@ export default function useGroupedBarChart({
     xAxisG.select(".domain").remove();
     xAxisG.selectAll(".tick line").remove();
 
+    let yGridG = null;
     if (showGrid) {
-      chart
+      yGridG = chart
         .append("g")
         .attr("class", "grid y-grid")
         .call(d3.axisLeft(y).ticks(null, "d").tickSize(-chartWidth).tickFormat(""))
@@ -157,6 +158,12 @@ export default function useGroupedBarChart({
         setCategoryHighlight(null);
         tooltip.style("visibility", "hidden");
       });
+
+    if (yGridG) {
+      yGridG.raise();
+      xAxisG.raise();
+      yAxisG.raise();
+    }
 
     if (showLegend !== false) {
       renderLegend(legend, orderedCategories, color, {

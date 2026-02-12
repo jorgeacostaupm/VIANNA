@@ -1,8 +1,8 @@
 import * as d3 from "d3";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { moveTooltip } from "@/utils/functions";
 import renderLegend from "@/utils/renderLegend";
-import store from "@/store/store";
 import useResizeObserver from "@/hooks/useResizeObserver";
 import { CHART_HIGHLIGHT } from "@/utils/chartTheme";
 
@@ -10,11 +10,17 @@ const margin = { top: 30, right: 20, bottom: 40, left: 60 };
 
 export default function usePCAPlot({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
+  const idVar = useSelector((s) => s.cantab.present.idVar);
   const [hide, setHide] = useState([]);
   const { groupVar, pointSize, pointOpacity, showLegend } = config;
 
   useEffect(() => {
-    if (!dimensions || !data || !chartRef.current) return;
+    if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
+    if (!groupVar) {
+      d3.select(chartRef.current).selectAll("*").remove();
+      d3.select(legendRef.current).selectAll("*").remove();
+      return;
+    }
     if (data.length === 0) return;
 
     d3.select(chartRef.current).selectAll("*").remove();
@@ -60,9 +66,6 @@ export default function usePCAPlot({ chartRef, legendRef, data, config }) {
 
     const color = d3.scaleOrdinal().domain(groups).range(colorScheme);
 
-    const timeVar = store.getState().cantab.present.timeVar;
-    const idVar = store.getState().cantab.present.idVar;
-
     chart
       .append("g")
       .attr("transform", `translate(0,${chartSize})`)
@@ -87,7 +90,6 @@ export default function usePCAPlot({ chartRef, legendRef, data, config }) {
         let html = `<strong>${d[groupVar]}</strong> <br>`;
         html += `Var 1: ${d.pc1.toFixed(2)}<br> Var 2: ${d.pc2.toFixed(2)} `;
         html += d[idVar] ? `<br>${idVar}: ${d[idVar]}` : "";
-        html += d[timeVar] ? `<br>${timeVar}: ${d[timeVar]}` : "";
 
         tooltip.style("opacity", 1).html(html);
       })
@@ -108,4 +110,8 @@ export default function usePCAPlot({ chartRef, legendRef, data, config }) {
 
     chart.selectAll(".dot").classed("hide", (d) => hide.includes(d[groupVar]));
   }, [hide]);
+
+  useEffect(() => {
+    setHide([]);
+  }, [groupVar]);
 }

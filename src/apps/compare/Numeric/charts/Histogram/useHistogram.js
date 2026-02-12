@@ -1,6 +1,5 @@
 import * as d3 from "d3";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 
 import { moveTooltip } from "@/utils/functions";
 import { numMargin, renderLegend } from "../Density/useDensity";
@@ -10,10 +9,18 @@ import { attachTickLabelGridHover } from "@/utils/gridInteractions";
 
 export default function useHistogram({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
-  const groups = useSelector((s) => s.cantab.present.groups);
-  const selectionGroups = useSelector((s) => s.cantab.present.selectionGroups);
+  const groups = Array.from(new Set((data || []).map((d) => d.type))).filter(
+    (value) => value != null,
+  );
+  const selectionGroups = groups;
+  const groupsKey = groups.join("|");
   const [hide, setHide] = useState([]);
   const [blur, setBlur] = useState(selectionGroups);
+
+  useEffect(() => {
+    setHide([]);
+    setBlur(selectionGroups);
+  }, [groupsKey]);
 
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
@@ -109,7 +116,7 @@ export default function useHistogram({ chartRef, legendRef, data, config }) {
               nº items: ${item[1]}
               `);
           })
-          .on("mousemove", function (e, d) {
+          .on("mousemove", function (e) {
             moveTooltip(e, tooltip, chart);
           })
           .on("mouseout", () => tooltip.style("visibility", "hidden"));
@@ -123,7 +130,7 @@ export default function useHistogram({ chartRef, legendRef, data, config }) {
       yGridG.raise();
       yAxisG.raise();
     }
-  }, [data, config, dimensions, groups, selectionGroups]);
+  }, [data, config, dimensions, groupsKey]);
 
   useEffect(() => {
     if (!chartRef.current) return;

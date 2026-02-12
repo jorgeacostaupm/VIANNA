@@ -16,9 +16,8 @@ const useRootStyles = (
 
     const hash = window.location.hash || "";
     const route = hash.startsWith("#/") ? hash.slice(2).split("/")[0] : "";
-    if (route) {
-      window.name = `vianna-app-${route}`;
-    }
+    const appRoute = route || "overview";
+    window.name = `vianna-app-${appRoute}`;
 
     if (title) {
       document.title = title;

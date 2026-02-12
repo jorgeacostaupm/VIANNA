@@ -1,4 +1,9 @@
 .fullScreenLayout {
+  --analysis-sidebar-top: 50px;
+  --analysis-sidebar-left: var(--space-4);
+  --analysis-sidebar-gap: var(--space-4);
+  --analysis-sidebar-width: 360px;
+  --analysis-sidebar-mobile-height: clamp(220px, 40vh, 320px);
   min-height: 100vh;
   width: 100vw;
   background: transparent;
@@ -21,7 +26,7 @@
 }
 
 .appBarControls {
-  max-width: 70vw;
+  max-width: 88vw;
   height: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -36,19 +41,431 @@
   width: fit-content;
 }
 
-.panelBox {
-  background-color: var(--color-surface);
+.mainSidebarContainer {
+  position: fixed;
+  top: 50px;
+  left: var(--space-4);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mainSidebar {
+  background: linear-gradient(180deg, #0b1220 0%, #111827 100%);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-4) var(--space-3);
+  height: calc(70vh - 32px);
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+  transition:
+    width var(--transition-base),
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    padding var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.mainSidebarOpen {
+  width: 84px;
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.mainSidebarClosed {
+  width: 0;
+  opacity: 0;
+  transform: translateX(-24px);
+  padding-left: 0;
+  padding-right: 0;
+  border-color: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.mainSidebarLogo {
+  margin-top: 0;
+}
+
+.mainSidebarControls {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-7) 0;
+}
+
+.mainSidebarControls > :global(div) {
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.mainSidebarHideButton {
+  width: 24px;
+  height: 32px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
-  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  color: var(--color-ink-secondary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  margin-top: auto;
+  margin-bottom: var(--space-1);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.mainSidebarHideButton:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.mainSidebarHideButton:active {
+  transform: translateY(1px);
+}
+
+.mainSidebarHideButton:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.mainSidebarShowButton {
+  width: 32px;
+  height: 72px;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: linear-gradient(180deg, #0b1220 0%, #111827 100%);
+  color: #94a3b8;
+  box-shadow:
+    inset 1px 0 0 rgba(148, 163, 184, 0.45),
+    var(--shadow-sm);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.mainSidebarShowButton:hover {
+  background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+  border-color: rgba(148, 163, 184, 0.5);
+  color: #cbd5e1;
+}
+
+.mainSidebarShowButton:active {
+  transform: translateX(1px);
+}
+
+.mainSidebarShowButton:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 1px 0 0 rgba(148, 163, 184, 0.45),
+    0 0 0 3px rgba(148, 163, 184, 0.28);
+}
+
+.mainAppContent {
+  min-height: 100vh;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  transition:
+    margin-left var(--transition-base),
+    width var(--transition-base);
+}
+
+.mainAppContentWithSidebar {
+  margin-left: 112px;
+  width: calc(100% - 112px);
+}
+
+.mainAppContentWithoutSidebar {
+  margin-left: 48px;
+  width: calc(100% - 48px);
+}
+
+.mainLoadDemoData {
+  display: flex;
+  justify-content: center;
+  padding: 8px 16px 12px;
+  margin-bottom: 16px;
+}
+
+.gridWrapper {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.gridWrapperWithSidebar {
+  min-height: 100vh;
+  margin-left: calc(
+    var(--analysis-sidebar-left) + var(--analysis-sidebar-width) +
+      var(--analysis-sidebar-gap)
+  );
+  width: calc(
+    100% -
+      (
+        var(--analysis-sidebar-left) + var(--analysis-sidebar-width) +
+          var(--analysis-sidebar-gap)
+      )
+  );
+  padding: var(--space-3) var(--space-3) var(--space-3) 0;
+}
+
+.gridPanelItem {
+  height: 100%;
+}
+
+.gridPanelContent {
+  height: 100%;
+}
+
+.gridPanelItem .analysisSidebar {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+  z-index: auto;
+  width: 100%;
+  max-height: none;
+  height: 100%;
+}
+
+.analysisSidebar {
+  position: fixed;
+  top: var(--analysis-sidebar-top);
+  left: var(--analysis-sidebar-left);
+  z-index: 36;
+  width: var(--analysis-sidebar-width);
+  max-height: calc(100vh - 32px);
+  background: linear-gradient(180deg, #0b1220 0%, #111827 100%);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(4px);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  overflow: hidden;
+}
+
+.analysisSidebarHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.analysisSidebarLogo {
+  display: block;
+  width: 56px;
+}
+
+.analysisSidebarQuickLinks {
   display: flex;
   gap: var(--space-2);
-  align-items: center;
-  white-space: nowrap;
+}
+
+.analysisSidebarQuickLinks :global(.ant-btn) {
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0;
+  font-size: 16px;
+}
+
+.analysisSidebarContent {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.panelBox {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(248, 250, 252, 0.94) 100%
+  );
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: stretch;
+  white-space: normal;
   box-shadow: var(--shadow-xs);
+}
+
+.panelBoxContext {
+  border-color: rgba(30, 112, 194, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(30, 112, 194, 0.08),
+    var(--shadow-xs);
+}
+
+.panelBoxTitle {
+  font-family: var(--font-family-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+  line-height: 1;
+}
+
+.panelBoxBody {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.panelBoxBody :global(.ant-btn) {
+  width: 100%;
+  justify-content: center;
+}
+
+.selectorField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+}
+
+.selectorLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+  line-height: 1;
+  padding-left: 2px;
+}
+
+.selectorControl {
+  min-width: 0;
+  width: 100%;
+}
+
+.selectorControlWide {
+  min-width: 0;
+  width: 100%;
+}
+
+.selectorControl :global(.ant-select-selector) {
+  height: 40px !important;
+  padding: 0 12px !important;
+  border-radius: var(--radius-md) !important;
+  border-color: var(--color-border-strong) !important;
+  background: #fff !important;
+  box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.02);
+}
+
+.selectorControl :global(.ant-select-selection-item),
+.selectorControl :global(.ant-select-selection-placeholder) {
+  line-height: 38px !important;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.selectorControl :global(.ant-select-arrow) {
+  color: var(--color-ink-tertiary);
+}
+
+.assumptionsTagsGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.assumptionsTagsGroup :global(.ant-tag) {
+  margin-inline-end: 0;
 }
 
 .popoverMenu {
   max-width: 420px;
   padding: var(--space-3);
+}
+
+@media (max-width: 1280px) {
+  .fullScreenLayout {
+    --analysis-sidebar-width: 336px;
+  }
+
+  .gridWrapperWithSidebar {
+    padding: var(--space-3) var(--space-3) var(--space-3) 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .fullScreenLayout {
+    --analysis-sidebar-left: var(--space-3);
+    --analysis-sidebar-gap: var(--space-3);
+    --analysis-sidebar-width: 300px;
+  }
+
+  .gridWrapperWithSidebar {
+    padding: var(--space-2);
+  }
+}
+
+@media (max-width: 768px) {
+  .fullScreenLayout {
+    --analysis-sidebar-top: calc(var(--nav-height) + var(--space-2));
+    --analysis-sidebar-left: var(--space-3);
+    --analysis-sidebar-gap: var(--space-3);
+  }
+
+  .analysisSidebar {
+    right: var(--analysis-sidebar-left);
+    width: auto;
+    max-height: var(--analysis-sidebar-mobile-height);
+  }
+
+  .gridWrapperWithSidebar {
+    margin-left: 0;
+    width: 100%;
+    padding: calc(
+        var(--analysis-sidebar-top) + var(--analysis-sidebar-mobile-height) +
+          var(--space-3)
+      )
+      var(--space-2) var(--space-2);
+  }
+}
+
+@media (max-width: 900px) {
+  .mainSidebarContainer {
+    top: 50%;
+    left: var(--space-3);
+  }
+
+  .mainAppContent {
+    width: 100%;
+    margin-left: 0;
+    padding-top: 72px;
+  }
 }

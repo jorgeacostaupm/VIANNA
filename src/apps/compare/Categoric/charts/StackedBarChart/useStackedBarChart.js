@@ -123,6 +123,7 @@ export default function useStackedBarChart({
     xAxisG.select(".domain").remove();
     xAxisG.selectAll(".tick line").remove();
 
+    let yGridG = null;
     if (showGrid) {
       const yGridAxis = d3.axisLeft(y).tickSize(-chartWidth).tickFormat("");
       if (isProportionMode) {
@@ -131,7 +132,7 @@ export default function useStackedBarChart({
         yGridAxis.ticks(null, "d");
       }
 
-      chart
+      yGridG = chart
         .append("g")
         .attr("class", "grid y-grid")
         .call(yGridAxis)
@@ -211,6 +212,12 @@ export default function useStackedBarChart({
         setCategoryHighlight(null);
         tooltip.style("visibility", "hidden");
       });
+
+    if (yGridG) {
+      yGridG.raise();
+      xAxisG.raise();
+      yAxisG.raise();
+    }
 
     if (showLegend !== false) {
       renderLegend(legend, orderedCategories, color, {

@@ -37,6 +37,7 @@ export const DATASETS = {
 };
 
 export const Apps = Object.freeze({
+  OVERVIEW: "Overview",
   HIERARCHY: "Hierarchy Editor",
   COMPARE: "Comparison",
   CORRELATION: "Correlation",

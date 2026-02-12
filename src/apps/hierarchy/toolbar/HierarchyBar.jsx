@@ -45,7 +45,13 @@ export default function HierarchyBar({
       <Bar title={hierarchyTitle} drag={false}>
         {/* <UndoRedoButtons></UndoRedoButtons>
         <div className={styles.separator} /> */}
-        <HierarchyManagementButtons></HierarchyManagementButtons>
+
+        <BarButton
+          title="Activate brush selection (b)"
+          onClick={() => onActivateBrushSelection?.()}
+          icon={<DragOutlined />}
+          disabled={!hasHierarchy}
+        />
 
         <LegendButton />
 
@@ -72,13 +78,6 @@ export default function HierarchyBar({
           onClick={() => onLinkStyleChange?.(nextLinkStyle)}
           icon={<SwapOutlined />}
         /> */}
-
-        <BarButton
-          title="Activate brush selection (b)"
-          onClick={() => onActivateBrushSelection?.()}
-          icon={<DragOutlined />}
-          disabled={!hasHierarchy}
-        />
 
         <PopoverButton
           title="Hierarchy settings"

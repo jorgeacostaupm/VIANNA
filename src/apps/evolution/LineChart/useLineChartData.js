@@ -14,8 +14,8 @@ export default function useLineChartData(
 ) {
   const [data, setData] = useState([]);
   const selection = useSelector((s) => s.dataframe.present.selection);
-  const groupVar = useSelector((s) => s.cantab.present.groupVar);
-  const timeVar = useSelector((s) => s.cantab.present.timeVar);
+  const groupVar = useSelector((s) => s.evolution.groupVar);
+  const timeVar = useSelector((s) => s.evolution.timeVar);
   const idVar = useSelector((s) => s.cantab.present.idVar);
   const variables = useSelector(selectNumericVars);
 
@@ -27,6 +27,10 @@ export default function useLineChartData(
 
   useEffect(() => {
     if (!isSync || !variables.includes(variable)) return;
+    if (!groupVar || !timeVar || !idVar) {
+      setData([]);
+      return;
+    }
 
     const result = getLineChartData(
       selection,

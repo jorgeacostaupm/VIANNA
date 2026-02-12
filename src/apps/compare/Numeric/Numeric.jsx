@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useSelector } from "react-redux";
 
 import { getDistributionData as getData } from "@/utils/functionsCompare";
 import useDistributionData from "./useDistributionData";
@@ -30,8 +31,11 @@ const defaultConfig = {
 const info = "";
 
 export default function Numeric({ id, variable, remove }) {
+  const groupVar = useSelector((s) => s.compare.groupVar);
   const [config, setConfig] = useState(defaultConfig);
-  const [data] = useDistributionData(getData, variable, config.isSync);
+  const [data] = useDistributionData(getData, variable, config.isSync, {
+    groupVar,
+  });
 
   const chart = useMemo(() => {
     if (!data || data.length === 0) {

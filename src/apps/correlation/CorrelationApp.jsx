@@ -1,4 +1,4 @@
-import { setInit } from "@/store/slices/evolutionSlice";
+import { setInit } from "@/store/slices/correlationSlice";
 import { Apps } from "@/utils/Constants";
 import registry from "./registry";
 import Grid from "@/core/Grid";
@@ -13,6 +13,8 @@ export default function CorrelationApp() {
       registry={registry}
       componentName={Apps.CORRELATION}
       panel={panel}
+      panelPlacement="left"
+      flow="horizontal"
     />
   );
 }

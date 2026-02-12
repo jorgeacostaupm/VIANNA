@@ -1,40 +1,14 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { Select, Slider, Switch, Typography } from "antd";
-import { getCategoricalKeys } from "@/utils/functions";
 import panelStyles from "@/styles/SettingsPanel.module.css";
 
 const { Text } = Typography;
 
 export default function Settings({ config, setConfig }) {
-  const data = useSelector((state) => state.dataframe.present.selection || []);
   const navioColumns = useSelector(
     (state) => state.dataframe.present.navioColumns || []
   );
-
-  const categoricalVars = useMemo(() => {
-    if (!Array.isArray(data) || data.length === 0) return [];
-    return getCategoricalKeys(data);
-  }, [data]);
-
-  useEffect(() => {
-    if (
-      categoricalVars.length > 0 &&
-      !categoricalVars.includes(config.groupVar)
-    ) {
-      setConfig((prev) => ({
-        ...prev,
-        groupVar: null,
-      }));
-    }
-  }, [categoricalVars]);
-
-  const onGroupVarChange = (value) => {
-    setConfig((prev) => ({
-      ...prev,
-      groupVar: value,
-    }));
-  };
 
   const onVariablesChange = (values) => {
     setConfig((prev) => ({
@@ -53,19 +27,7 @@ export default function Settings({ config, setConfig }) {
   return (
     <div className={panelStyles.panel}>
       <div className={panelStyles.section}>
-        <div className={panelStyles.sectionTitle}>Grouping</div>
-        <div className={panelStyles.rowStack}>
-          <Text className={panelStyles.label}>Grouping variable</Text>
-          <Select
-            value={config.groupVar}
-            onChange={onGroupVarChange}
-            placeholder="Select variable"
-            options={categoricalVars.map((key) => ({
-              value: key,
-              label: key,
-            }))}
-          />
-        </div>
+        <div className={panelStyles.sectionTitle}>Variables</div>
         <div className={panelStyles.rowStack}>
           <Text className={panelStyles.label}>Included variables</Text>
           <Select

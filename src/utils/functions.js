@@ -115,6 +115,9 @@ export function computePairwiseData(selection, groupVar, variable, test) {
   return {
     ...result,
     shortDescription: testObj.shortDescription || testObj.description || "",
+    applicability: testObj.applicability || "",
+    reportedMeasures: testObj.reportedMeasures || [],
+    postHoc: testObj.postHoc || "Not specified.",
     referenceUrl: testObj.referenceUrl || "",
   };
 }
@@ -140,9 +143,10 @@ export function computeRankingData({
   const grouped = table.groupby(groupVar).objects({ grouped: "entries" });
 
   const groupCount = grouped.length;
+  const metricName = testObj.metric?.measure ?? testObj.metric?.name ?? "Metric";
   const metricLabel = testObj.metric?.symbol
-    ? `${testObj.metric?.measure ?? "Metric"} (${testObj.metric.symbol})`
-    : testObj.metric?.measure ?? "Metric";
+    ? `${metricName} (${testObj.metric.symbol})`
+    : metricName;
 
   // If the selected test is globally incompatible, return an empty ranking
   // with explicit reasons instead of throwing and breaking the full view.

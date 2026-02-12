@@ -10,6 +10,7 @@ const { publish } = pubsub;
 const initialState = {
   init: false,
 
+  groupVar: null,
   selectedVar: null,
   assumptions: {
     normality: null,
@@ -69,7 +70,10 @@ export const runComparisonTest = createAsyncThunk(
       const state = getState();
       const variable = state.compare.selectedVar;
       const selectedTest = state.compare.selectedTest;
-      const groupVar = state.cantab.present.groupVar;
+      const groupVar = state.compare.groupVar;
+      if (!groupVar) {
+        throw new Error("Group variable is not set for comparison.");
+      }
 
       const table = aq.from(payload.selection);
       const gTable = table.groupby(groupVar);
@@ -97,8 +101,10 @@ export const checkAssumptions = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const { selection } = getState().dataframe.present;
-      const { groupVar } = getState().cantab.present;
-      const { selectedVar } = getState().compare;
+      const { groupVar, selectedVar } = getState().compare;
+      if (!groupVar) {
+        throw new Error("Group variable is not set for assumptions.");
+      }
 
       const table = aq.from(selection);
       const raw = table.groupby(groupVar).objects({ grouped: "entries" });
@@ -135,6 +141,9 @@ const compareSlice = createSlice({
     },
     setIsNumeric: (state, action) => {
       state.isNumeric = action.payload;
+    },
+    setGroupVar: (state, action) => {
+      state.groupVar = action.payload;
     },
     setSelectedVar: (state, action) => {
       state.selectedVar = action.payload;
@@ -202,6 +211,7 @@ const compareSlice = createSlice({
       });
 
     builder.addCase(updateData.fulfilled, (state) => {
+      state.groupVar = null;
       state.selectedVar = null;
       state.selectedTest = null;
     });
@@ -212,6 +222,7 @@ export default compareSlice.reducer;
 export const {
   setInit,
   setIsNumeric,
+  setGroupVar,
 
   setSelectedVar,
   setSelectedTest,

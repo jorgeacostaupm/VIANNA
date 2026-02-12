@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Select, Typography, Divider } from "antd";
 import DragDropData from "../DragDrop/DragDropData";
 import NullifyValuesPanel from "../NullifyValuesPanel";
-import { setGroupVar, setTimeVar, setIdVar } from "@/store/slices/cantabSlice";
+import { setIdVar } from "@/store/slices/cantabSlice";
 import {
   selectNavioVars,
   selectCategoricalVars,
@@ -110,8 +110,6 @@ const Info = () => {
 const UploadPanel = () => {
   const dispatch = useDispatch();
   const idVar = useSelector((state) => state.cantab.present.idVar);
-  const groupVar = useSelector((state) => state.cantab.present.groupVar);
-  const timeVar = useSelector((state) => state.cantab.present.timeVar);
   const vars = useSelector(selectNavioVars);
 
   const handleChange = useCallback(
@@ -154,14 +152,11 @@ const UploadPanel = () => {
         Configuration Measurements
       </Title>
       <Text type="secondary">
-        These measurements are used for grouping, time-series views, and unique
-        identifiers.
+        Set the unique identifier used across analysis views.
       </Text>
 
       {[
         ["ID measurement", idVar, setIdVar],
-        ["Group measurement", groupVar, setGroupVar],
-        ["Time measurement", timeVar, setTimeVar],
       ].map(([label, value, setter]) => (
         <div
           key={label}

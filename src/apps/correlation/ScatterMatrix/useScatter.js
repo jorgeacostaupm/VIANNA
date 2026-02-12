@@ -14,7 +14,6 @@ let brushInstance = null;
 
 export default function useScatter({ chartRef, legendRef, data, config }) {
   const idVar = useSelector((s) => s.cantab.present.idVar);
-  const timeVar = useSelector((s) => s.cantab.present.timeVar);
   const dimensions = useResizeObserver(chartRef);
   const [hide, setHide] = useState([]);
   const [blur, setBlur] = useState([]);
@@ -22,7 +21,18 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
 
   useEffect(() => {
     const { groupVar, pointSize, variables, pointOpacity, showLegend } = config;
-    if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
+    if (
+      !groupVar ||
+      !dimensions ||
+      !data ||
+      !chartRef.current ||
+      !legendRef.current
+    ) {
+      if (chartRef.current) d3.select(chartRef.current).selectAll("*").remove();
+      if (legendRef.current)
+        d3.select(legendRef.current).selectAll("*").remove();
+      return;
+    }
 
     d3.select(chartRef.current).selectAll("*").remove();
     d3.select(legendRef.current).selectAll("*").remove();
@@ -341,7 +351,6 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
             var2
           ]?.toFixed(2)} <br>`;
           html += d[idVar] ? `${idVar} : ${d[idVar]}<br>` : "";
-          html += d[timeVar] ? `${timeVar} : ${d[timeVar]}` : "";
           tooltip.style("opacity", 1).html(html);
         })
         .on("mousemove", function (e) {

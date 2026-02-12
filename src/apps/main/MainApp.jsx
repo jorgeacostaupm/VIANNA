@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Layout } from "antd";
-import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
+import { Layout, Popover } from "antd";
+import {
+  LoadingOutlined,
+  ReloadOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+} from "@ant-design/icons";
 import GridLayout, { WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import AppBar from "@/components/ui/AppBar";
 import ColoredButton from "@/components/ui/ColoredButton";
 import styles from "@/styles/App.module.css";
 import useRootStyles from "@/hooks/useRootStyles";
@@ -30,6 +34,7 @@ export default function MainApp() {
   const dataframe = useSelector((state) => state.dataframe.present.dataframe);
   const hierarchy = useSelector((state) => state.metadata.attributes);
   const [isLoadingDemoData, setIsLoadingDemoData] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useRootStyles(setInit, APP_NAME);
   const holder = useNotification();
@@ -57,41 +62,84 @@ export default function MainApp() {
     }
   };
 
+  const logoSrc = "./app_name.svg";
+  const mainContentClassName = [
+    styles.mainAppContent,
+    isSidebarOpen
+      ? styles.mainAppContentWithSidebar
+      : styles.mainAppContentWithoutSidebar,
+  ].join(" ");
+  const mainSidebarClassName = [
+    styles.mainSidebar,
+    isSidebarOpen ? styles.mainSidebarOpen : styles.mainSidebarClosed,
+  ].join(" ");
+
   return (
     <>
       {holder}
       <Layout className={styles.fullScreenLayout}>
-        <AppBar description={APP_DESC}>
-          <AppsButtons />
-        </AppBar>
+        <div className={styles.mainSidebarContainer}>
+          <aside className={mainSidebarClassName}>
+            <Popover
+              content={<div className={styles.appBarPopoverContent}>{APP_DESC}</div>}
+              trigger="hover"
+              placement="rightTop"
+            >
+              <img
+                src={logoSrc}
+                alt="VIANNA"
+                className={`${styles.appBarLogo} ${styles.mainSidebarLogo}`}
+              />
+            </Popover>
 
-        <ResponsiveGridLayout
-          className="layout"
-          layout={layout}
-          cols={12}
-          rowHeight={100}
-          isDraggable={false}
-        >
-          <div key={"explorer"}>
-            <Explorer />
-          </div>
-        </ResponsiveGridLayout>
+            <div className={styles.mainSidebarControls}>
+              <AppsButtons />
+            </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "8px 16px 12px",
-            marginBottom: 16,
-          }}
-        >
-          <ColoredButton
-            onClick={onLoadDemoData}
-            icon={isLoadingDemoData ? <LoadingOutlined /> : <ReloadOutlined />}
-            disabled={isLoadingDemoData}
+            <button
+              type="button"
+              className={styles.mainSidebarHideButton}
+              onClick={() => setIsSidebarOpen(false)}
+              aria-label="Hide main sidebar"
+            >
+              <MenuFoldOutlined />
+            </button>
+          </aside>
+
+          {!isSidebarOpen && (
+            <button
+              type="button"
+              className={styles.mainSidebarShowButton}
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="Show main sidebar"
+            >
+              <MenuUnfoldOutlined />
+            </button>
+          )}
+        </div>
+
+        <div className={mainContentClassName}>
+          <ResponsiveGridLayout
+            className="layout"
+            layout={layout}
+            cols={12}
+            rowHeight={100}
+            isDraggable={false}
           >
-            Load demo data
-          </ColoredButton>
+            <div key={"explorer"}>
+              <Explorer />
+            </div>
+          </ResponsiveGridLayout>
+
+          <div className={styles.mainLoadDemoData}>
+            <ColoredButton
+              onClick={onLoadDemoData}
+              icon={isLoadingDemoData ? <LoadingOutlined /> : <ReloadOutlined />}
+              disabled={isLoadingDemoData}
+            >
+              Load demo data
+            </ColoredButton>
+          </div>
         </div>
       </Layout>
     </>

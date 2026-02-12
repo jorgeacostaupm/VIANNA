@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
+import { useSelector } from "react-redux";
 
 import Settings from "./Settings";
 import ChartWithLegend from "@/components/charts/ChartWithLegend";
@@ -37,10 +38,17 @@ function Chart({ data, id, config }) {
 }
 
 export default function PCA({ id, remove }) {
+  const groupVar = useSelector((s) => s.correlation.groupVar);
   const [config, setConfig] = useState(defaultConfig);
   const [params, setParams] = useState(defaultParams);
   const [info, setInfo] = useState(null);
   const [data] = usePCAData(config.isSync, params, setInfo);
+
+  useEffect(() => {
+    setConfig((prev) =>
+      prev.groupVar === groupVar ? prev : { ...prev, groupVar }
+    );
+  }, [groupVar]);
 
   const chart = useMemo(() => {
     return <Chart data={data} config={config} id={id} />;

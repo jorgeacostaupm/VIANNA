@@ -25,7 +25,7 @@ export default function Pairwise({ id, variable, test, remove }) {
   const dims = useResizeObserver(ref);
 
   const selection = useSelector((s) => s.dataframe.present.selection);
-  const groupVar = useSelector((s) => s.cantab.present.groupVar);
+  const groupVar = useSelector((s) => s.compare.groupVar);
 
   const [config, setConfig] = useState({
     isSync: true,
@@ -40,7 +40,10 @@ export default function Pairwise({ id, variable, test, remove }) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    if (!variable || !test || !config.isSync) return;
+    if (!variable || !test || !groupVar || !config.isSync) {
+      setData(null);
+      return;
+    }
 
     try {
       const tmp = computePairwiseData(selection, groupVar, variable, test);
@@ -77,9 +80,35 @@ export default function Pairwise({ id, variable, test, remove }) {
   }, [data, dims, config]);
 
   const infoContent =
-    data?.descriptionJSX || data?.shortDescription || data?.referenceUrl ? (
+    data?.descriptionJSX ||
+    data?.shortDescription ||
+    data?.referenceUrl ||
+    data?.applicability ||
+    (Array.isArray(data?.reportedMeasures) && data.reportedMeasures.length > 0) ||
+    data?.postHoc ? (
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         {data?.shortDescription && <div>{data.shortDescription}</div>}
+        {data?.applicability && (
+          <div>
+            <b>Applies to:</b> {data.applicability}
+          </div>
+        )}
+        {Array.isArray(data?.reportedMeasures) &&
+          data.reportedMeasures.length > 0 && (
+            <div>
+              <b>Reported measures:</b>
+              <ul style={{ margin: "4px 0 0", paddingLeft: "1.1em" }}>
+                {data.reportedMeasures.map((measure) => (
+                  <li key={measure}>{measure}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        {data?.postHoc && (
+          <div>
+            <b>Post hoc:</b> {data.postHoc}
+          </div>
+        )}
         {data?.referenceUrl && (
           <a
             href={data.referenceUrl}

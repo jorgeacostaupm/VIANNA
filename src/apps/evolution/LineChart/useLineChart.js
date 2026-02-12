@@ -1,6 +1,5 @@
 import * as d3 from "d3";
 import { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
 
 import renderLegend from "@/utils/renderLegend";
 import { moveTooltip } from "@/utils/functions";
@@ -11,13 +10,15 @@ import { attachTickLabelGridHover } from "@/utils/gridInteractions";
 
 export default function useLineChart({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
-  const groups = useSelector((s) => s.cantab.present.groups);
-  const selectionGroups = useSelector((s) => s.cantab.present.selectionGroups);
-  const selectionTimestamps = useSelector(
-    (s) => s.cantab.present.selectionTimestamps
-  )
-    .map((t) => "" + t)
-    .sort();
+  const groups = Array.from(
+    new Set(
+      (data?.meanData || [])
+        .map((entry) => entry.group)
+        .concat((data?.participantData || []).map((entry) => entry.group))
+    )
+  ).filter((value) => value != null);
+  const selectionGroups = groups;
+  const selectionTimestamps = (data?.times || []).map((t) => `${t}`);
   const [hide, setHide] = useState([]);
 
   const chartStateRef = useRef({

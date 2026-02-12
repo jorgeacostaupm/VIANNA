@@ -5,16 +5,19 @@ import { pubsub } from "@/utils/pubsub";
 import { selectVars } from "@/store/slices/cantabSlice";
 const { publish } = pubsub;
 
-export default function useDistributionData(getData, variable, isSync = true) {
+export default function useDistributionData(
+  getData,
+  variable,
+  isSync = true,
+  { groupVar = null, timeVar = null } = {}
+) {
   const [data, setData] = useState([]);
   const selection = useSelector((s) => s.dataframe.present.selection);
-  const groupVar = useSelector((s) => s.cantab.present.groupVar);
-  const timeVar = useSelector((s) => s.cantab.present.timeVar);
   const idVar = useSelector((s) => s.cantab.present.idVar);
   const variables = useSelector(selectVars);
 
   useEffect(() => {
-    if (!isSync || !variables.includes(variable)) return;
+    if (!isSync || !variables.includes(variable) || !groupVar) return;
 
     try {
       const result = getData(selection, variable, groupVar, timeVar, idVar);
@@ -27,7 +30,7 @@ export default function useDistributionData(getData, variable, isSync = true) {
       });
       setData(null);
     }
-  }, [isSync, variable, selection, groupVar]);
+  }, [isSync, variable, selection, groupVar, timeVar, idVar, variables, getData]);
 
   return [data, setData];
 }

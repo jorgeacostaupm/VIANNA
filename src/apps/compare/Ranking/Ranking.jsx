@@ -23,7 +23,7 @@ export default function Ranking({ test, remove, id, onVariableClick }) {
   const skippedSignatureRef = useRef("");
   const dimensions = useResizeObserver(ref);
 
-  const groupVar = useSelector((state) => state.cantab.present.groupVar);
+  const groupVar = useSelector((state) => state.compare.groupVar);
   const selection = useSelector((state) => state.dataframe.present.selection);
   const numericVars = useSelector(selectNumericVars);
 
@@ -57,7 +57,8 @@ export default function Ranking({ test, remove, id, onVariableClick }) {
   }, [dimensions, ranking]);
 
   useEffect(() => {
-    if (!test || !config.isSync) {
+    if (!test || !groupVar || !config.isSync) {
+      setData(null);
       return;
     }
 

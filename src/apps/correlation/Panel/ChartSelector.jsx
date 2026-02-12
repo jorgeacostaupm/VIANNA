@@ -12,18 +12,23 @@ export default function ChartSelector({ addView }) {
   const [chart, setChart] = useState(null);
 
   return (
-    <div className={styles.panelBox}>
-      <Select
-        onChange={(v) => setChart(v)}
-        placeholder="Select graph"
-        style={{ width: "300px" }}
-      >
-        {Object.keys(registry).map((v) => (
-          <Option key={v} value={v}>
-            {v}
-          </Option>
-        ))}
-      </Select>
+    <>
+      <div className={styles.selectorField}>
+        <span className={styles.selectorLabel}>Chart type</span>
+        <Select
+          className={styles.selectorControl}
+          onChange={(v) => setChart(v)}
+          placeholder="Select graph"
+          showSearch={true}
+          optionFilterProp="children"
+        >
+          {Object.keys(registry).map((v) => (
+            <Option key={v} value={v}>
+              {v}
+            </Option>
+          ))}
+        </Select>
+      </div>
 
       <ColoredButton
         title={"Add the selected correlation chart"}
@@ -32,6 +37,6 @@ export default function ChartSelector({ addView }) {
           if (chart) addView(chart);
         }}
       />
-    </div>
+    </>
   );
 }

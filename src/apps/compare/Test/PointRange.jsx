@@ -11,7 +11,6 @@ import styles from "@/styles/Charts.module.css";
 import { moveTooltip } from "@/utils/functions";
 import ChartBar from "@/components/charts/ChartBar";
 import tests from "@/utils/tests";
-import store from "@/store/store";
 import { pubsub } from "@/utils/pubsub";
 import { CHART_GRID, CHART_OUTLINE, CHART_ZERO_LINE } from "@/utils/chartTheme";
 import { attachTickLabelGridHover } from "@/utils/gridInteractions";
@@ -23,7 +22,7 @@ export default function PointRange({ id, variable, test, remove }) {
   const dims = useResizeObserver(containerRef);
 
   const selection = useSelector((s) => s.dataframe.present.selection);
-  const groupVar = useSelector((s) => s.cantab.present.groupVar);
+  const groupVar = useSelector((s) => s.compare.groupVar);
 
   const [result, setResult] = useState(null);
   const [config, setConfig] = useState({
@@ -37,7 +36,8 @@ export default function PointRange({ id, variable, test, remove }) {
   });
 
   useEffect(() => {
-    if (!variable || !test || !config.isSync) {
+    if (!variable || !test || !groupVar || !config.isSync) {
+      setResult(null);
       return;
     }
     try {
@@ -82,6 +82,9 @@ export default function PointRange({ id, variable, test, remove }) {
       setResult({
         ...r,
         shortDescription: testObj.shortDescription || testObj.description || "",
+        applicability: testObj.applicability || "",
+        reportedMeasures: testObj.reportedMeasures || [],
+        postHoc: testObj.postHoc || "Not specified.",
         referenceUrl: testObj.referenceUrl || "",
       });
     } catch (error) {
@@ -130,8 +133,10 @@ export default function PointRange({ id, variable, test, remove }) {
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
     const colorScheme = d3.schemeCategory10;
-    const groups = store.getState().cantab.present.groups;
-    const pointColorScale = d3.scaleOrdinal().domain(groups).range(colorScheme);
+    const pointColorScale = d3
+      .scaleOrdinal()
+      .domain(sortedData.map((d) => d.name))
+      .range(colorScheme);
 
     const x = d3
       .scaleBand()
@@ -288,9 +293,35 @@ export default function PointRange({ id, variable, test, remove }) {
   }, [result, dims, config, id]);
 
   const infoContent =
-    result?.descriptionJSX || result?.shortDescription || result?.referenceUrl ? (
+    result?.descriptionJSX ||
+    result?.shortDescription ||
+    result?.referenceUrl ||
+    result?.applicability ||
+    (Array.isArray(result?.reportedMeasures) && result.reportedMeasures.length > 0) ||
+    result?.postHoc ? (
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         {result?.shortDescription && <div>{result.shortDescription}</div>}
+        {result?.applicability && (
+          <div>
+            <b>Applies to:</b> {result.applicability}
+          </div>
+        )}
+        {Array.isArray(result?.reportedMeasures) &&
+          result.reportedMeasures.length > 0 && (
+            <div>
+              <b>Reported measures:</b>
+              <ul style={{ margin: "4px 0 0", paddingLeft: "1.1em" }}>
+                {result.reportedMeasures.map((measure) => (
+                  <li key={measure}>{measure}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        {result?.postHoc && (
+          <div>
+            <b>Post hoc:</b> {result.postHoc}
+          </div>
+        )}
         {result?.referenceUrl && (
           <a
             href={result.referenceUrl}

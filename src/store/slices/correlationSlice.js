@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { updateData } from "../async/dataAsyncReducers";
 
 const initialState = {
   init: false,
+  groupVar: null,
   selectedChart: null,
 };
 
@@ -15,17 +17,20 @@ const correlationSlice = createSlice({
     setSelectedChart: (state, action) => {
       state.selectedChart = action.payload;
     },
+    setGroupVar: (state, action) => {
+      state.groupVar = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(updateData.fulfilled, (state) => {
+      state.groupVar = null;
+    });
   },
 });
 
 export default correlationSlice.reducer;
 export const {
   setInit,
-  setIsScatter,
-  setColumns,
-  setPointsSize,
-  setIsOnlyCorrelations,
-  setNVariables,
-  setSelectedPopulations,
+  setGroupVar,
   setSelectedChart,
 } = correlationSlice.actions;

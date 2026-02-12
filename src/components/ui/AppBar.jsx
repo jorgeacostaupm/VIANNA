@@ -27,7 +27,7 @@ export default function AppBar({ description = null, children }) {
       <Col flex="auto" />
 
       <Col flex="none" className={styles.appBarControls}>
-        <Space size="large" align="center">
+        <Space size="middle" align="center">
           {children}
         </Space>
       </Col>

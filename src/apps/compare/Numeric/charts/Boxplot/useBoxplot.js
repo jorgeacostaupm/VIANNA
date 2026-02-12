@@ -1,6 +1,5 @@
 import * as d3 from "d3";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 import { deepCopy, moveTooltip } from "@/utils/functions";
 import { numMargin, renderLegend } from "../Density/useDensity";
@@ -13,8 +12,11 @@ import { attachTickLabelGridHover } from "@/utils/gridInteractions";
 
 export default function useBoxplot({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
-  const groups = useSelector((s) => s.cantab.present.groups);
-  const selectionGroups = useSelector((s) => s.cantab.present.selectionGroups);
+  const groups = Array.from(new Set((data || []).map((d) => d.type))).filter(
+    (value) => value != null,
+  );
+  const selectionGroups = groups;
+  const groupsKey = groups.join("|");
 
   const { pointSize, showPoints, showLegend, showGrid } = config;
 
@@ -165,7 +167,7 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
         .attr("height", y(stats.q1) - y(stats.q3))
         .attr("fill", color(group))
         .attr("stroke", CHART_OUTLINE)
-        .on("mouseover", function (e) {
+        .on("mouseover", function () {
           tooltip
             .style("visibility", "visible")
             .html(
@@ -328,7 +330,7 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
       yGridG.raise();
       yAxisG.raise();
     }
-  }, [data, dimensions, groups, selectionGroups, showPoints, showLegend, showGrid]);
+  }, [data, dimensions, groupsKey, showPoints, showLegend, showGrid]);
 
   useEffect(() => {
     if (!chartRef.current) return;

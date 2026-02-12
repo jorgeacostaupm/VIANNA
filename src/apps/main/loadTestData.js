@@ -4,7 +4,7 @@ import {
   updateHierarchy,
 } from "@/store/async/metaAsyncReducers";
 import * as api from "@/services/cantabAppServices";
-import { setGroupVar, setIdVar, setTimeVar } from "@/store/slices/cantabSlice";
+import { setIdVar } from "@/store/slices/cantabSlice";
 import { DATASETS } from "@/utils/Constants";
 
 import { pubsub } from "@/utils/pubsub";
@@ -12,8 +12,10 @@ const { publish } = pubsub;
 
 const env = import.meta?.env?.MODE || "dev";
 console.log(`Loading test data for environment: ${env}`);
-const { dataPath, hierarchyPath, descriptionsPath, idVar, groupVar, timeVar } =
-  import.meta.env.PROD ? DATASETS.prod : DATASETS.dev;
+const { dataPath, hierarchyPath, descriptionsPath, idVar } = import.meta.env
+  .PROD
+  ? DATASETS.prod
+  : DATASETS.dev;
 
 export default async function loadTestData(dispatch) {
   try {
@@ -38,8 +40,6 @@ export default async function loadTestData(dispatch) {
     );
 
     dispatch(setIdVar(idVar));
-    dispatch(setGroupVar(groupVar));
-    dispatch(setTimeVar(timeVar));
     return true;
   } catch (error) {
     publish("notification", {

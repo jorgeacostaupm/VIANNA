@@ -17,6 +17,8 @@ export default function EvolutionApp() {
       registry={registry}
       componentName={Apps.EVOLUTION}
       panel={panel}
+      panelPlacement="left"
+      flow="horizontal"
     />
   );
 }

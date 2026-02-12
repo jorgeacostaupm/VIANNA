@@ -1,6 +1,5 @@
 import * as d3 from "d3";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 import { deepCopy, moveTooltip } from "@/utils/functions";
 import {
@@ -17,8 +16,11 @@ import { attachTickLabelGridHover } from "@/utils/gridInteractions";
 
 export default function useViolinplot({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
-  const groups = useSelector((s) => s.cantab.present.groups);
-  const selectionGroups = useSelector((s) => s.cantab.present.selectionGroups);
+  const groups = Array.from(new Set((data || []).map((d) => d.type))).filter(
+    (value) => value != null,
+  );
+  const selectionGroups = groups;
+  const groupsKey = groups.join("|");
 
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
@@ -157,5 +159,5 @@ export default function useViolinplot({ chartRef, legendRef, data, config }) {
       yGridG.raise();
       yAxisG.raise();
     }
-  }, [data, dimensions, groups, selectionGroups, config]);
+  }, [data, dimensions, groupsKey, config]);
 }
