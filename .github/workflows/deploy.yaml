@@ -25,4 +25,4 @@ jobs:
 
       - name: Deploy via SCP
         run: |
-          scp -o StrictHostKeyChecking=no -r ./dist/* jacosta@olmo.datsi.fi.upm.es:/home/jacosta/public_html/prototypes/VANA
+          scp -o StrictHostKeyChecking=no -r ./dist/* jacosta@olmo.datsi.fi.upm.es:/home/jacosta/public_html/prototypes/VIANNA/

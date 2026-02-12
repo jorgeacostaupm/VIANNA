@@ -15,8 +15,8 @@ const withBase = (p) => `${import.meta.env.BASE_URL}${p}`;
 
 export const DATASETS = {
   prod: {
-    dataPath: withBase("vis/csv/aimind-fake-data.csv"),
-    hierarchyPath: withBase("vis/hierarchies/ai-mind-hierarchy.json"),
+    dataPath: withBase("vis/csv/ai-mind-demo-data.csv"),
+    hierarchyPath: withBase("vis/hierarchies/ai-mind-demo-hierarchy.json"),
     descriptionsPath: withBase(
       "vis/descriptions/ai-mind-variable-descriptions.csv",
     ),
@@ -26,7 +26,7 @@ export const DATASETS = {
   },
   dev: {
     dataPath: withBase("vis/csv/private/ai-mind-data-sept-2025.csv"),
-    hierarchyPath: withBase("vis/hierarchies/ai-mind hierarchy.json"),
+    hierarchyPath: withBase("vis/hierarchies/ai-mind-hierarchy.json"),
     descriptionsPath: withBase(
       "vis/descriptions/ai-mind variable descriptions.csv",
     ),
