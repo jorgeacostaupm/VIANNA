@@ -11,6 +11,7 @@ import { pubsub } from "@/utils/pubsub";
 const { publish } = pubsub;
 
 const env = import.meta?.env?.MODE || "dev";
+console.log(`Loading test data for environment: ${env}`);
 const { dataPath, hierarchyPath, descriptionsPath, idVar, groupVar, timeVar } =
   env === "production" ? DATASETS.prod : DATASETS.dev;
 
