@@ -21,8 +21,7 @@ jobs:
       - name: Build project
         run: |
           npm install
-          VITE_BASE_PATH=/apache/~jacosta/prototypes/VANA/
-          npm run build
+          VITE_BASE_PATH=/apache/~jacosta/prototypes/VANA/ npm run build
 
       - name: Deploy via rsync
         run: |
