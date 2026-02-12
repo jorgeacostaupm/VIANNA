@@ -1,3 +1,6 @@
+import { withBasePath } from "@/utils/publicPaths";
+import { ALL_FUNCTIONS } from "@/apps/hierarchy/menu/logic/formulaConstants";
+
 export const APP_NAME = "VANA";
 
 export const DEFAULT_ID_VARIABLE = "pseudon_id";
@@ -13,17 +16,21 @@ export const navioLabelHeight = 140;
 
 export const DATASETS = {
   prod: {
-    dataPath: "./vis/csv/testData.csv",
-    hierarchyPath: "./vis/hierarchies/testDataHier.json",
-    descriptionsPath: "./vis/descriptions/ai-mind variable descriptions.csv",
+    dataPath: withBasePath("vis/csv/testData.csv"),
+    hierarchyPath: withBasePath("vis/hierarchies/testDataHier.json"),
+    descriptionsPath: withBasePath(
+      "vis/descriptions/ai-mind variable descriptions.csv",
+    ),
     idVar: "id",
     groupVar: "Country",
     timeVar: "Visit Name",
   },
   dev: {
-    dataPath: "./vis/csv/private/ai-mind data Sept 2025.csv",
-    hierarchyPath: "./vis/hierarchies/ai-mind hierarchy.json",
-    descriptionsPath: "./vis/descriptions/ai-mind variable descriptions.csv",
+    dataPath: withBasePath("vis/csv/private/ai-mind data Sept 2025.csv"),
+    hierarchyPath: withBasePath("vis/hierarchies/ai-mind hierarchy.json"),
+    descriptionsPath: withBasePath(
+      "vis/descriptions/ai-mind variable descriptions.csv",
+    ),
     idVar: "pseudon_id",
     groupVar: "site",
     timeVar: "visit",
@@ -126,6 +133,4 @@ EXAMPLES:
   • Conditional: $(Age) > 30 && $(Status) == "Active"
   `;
 }
-
-import { ALL_FUNCTIONS } from "@/apps/hierarchy/menu/logic/formulaConstants";
 export const CUST_HELP = generateHelpText(ALL_FUNCTIONS);

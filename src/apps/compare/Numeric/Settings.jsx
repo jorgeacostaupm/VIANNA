@@ -26,6 +26,13 @@ export default function Settings({ config, setConfig }) {
   const update = (field, value) =>
     setConfig((prev) => ({ ...prev, [field]: value }));
 
+  const updateChartType = (nextType) =>
+    setConfig((prev) => ({
+      ...prev,
+      chartType: nextType,
+      showLegend: nextType === "box" || nextType === "violin" ? false : true,
+    }));
+
   const showBins =
     chartType === "density" ||
     chartType === "histogram" ||
@@ -44,7 +51,7 @@ export default function Settings({ config, setConfig }) {
             optionType="button"
             buttonStyle="solid"
             value={chartType}
-            onChange={(e) => update("chartType", e.target.value)}
+            onChange={(e) => updateChartType(e.target.value)}
           >
             <Radio.Button value="density">Density</Radio.Button>
             <Radio.Button value="histogram">Histogram</Radio.Button>

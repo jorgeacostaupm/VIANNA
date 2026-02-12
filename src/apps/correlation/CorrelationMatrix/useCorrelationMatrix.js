@@ -150,6 +150,8 @@ export default function useCorrelationMatrix({ chartRef, data, config, params })
         .attr("y", position(y))
         .attr("width", position.bandwidth())
         .attr("height", position.bandwidth())
+        .attr("rx", 3)
+        .attr("ry", 3)
         .style("fill", color(value))
         .on("mouseover", function (e, d) {
           const target = e.target;

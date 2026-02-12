@@ -1,9 +1,10 @@
 import React from "react";
 import { Row, Space, Popover, Col } from "antd";
 import styles from "@/styles/App.module.css";
+import { withBasePath } from "@/utils/publicPaths";
 
 export default function AppBar({ description = null, children }) {
-  const logoSrc = "./app_name.svg";
+  const logoSrc = withBasePath("app_name.svg");
   const logo = (
     <img src={logoSrc} alt="VANA" className={styles.appBarLogo} />
   );

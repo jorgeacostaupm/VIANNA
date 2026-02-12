@@ -166,10 +166,12 @@ export default class RankingPlot {
       .text(vis.config.measure);
 
     vis.xAxisG
-      .call(d3.axisBottom(vis.x_scale))
+      .call(d3.axisBottom(vis.x_scale).tickSize(0))
       .selectAll("text")
       .attr("transform", "translate(0,0)rotate(-15)")
       .style("text-anchor", "end");
+    vis.xAxisG.select(".domain").remove();
+    vis.xAxisG.selectAll(".tick line").remove();
 
     vis.xAxisG
       .selectAll(".tick")
@@ -198,6 +200,7 @@ export default class RankingPlot {
       yAxis.tickSize(-vis.width);
     }
     vis.yAxisG.call(yAxis);
+    vis.yAxisG.select(".domain").remove();
     if (vis.config.showGrid) {
       vis.yAxisG
         .selectAll(".tick line")
@@ -219,21 +222,14 @@ export default class RankingPlot {
       });
 
       vis.yAxisG.raise();
-      vis.xAxisG.select(".domain").attr("stroke", "none");
-      vis.yAxisG.select(".domain").attr("stroke", "none");
     } else {
       vis.yAxisG
         .selectAll(".tick line")
-        .classed("chart-grid-line", false)
-        .classed("grid-line-active", false)
-        .attr("stroke", null)
-        .attr("stroke-dasharray", null);
+        .remove();
       vis.yAxisG
         .selectAll(".tick text")
         .on("mouseover.grid-line-highlight", null)
         .on("mouseout.grid-line-highlight", null);
-      vis.xAxisG.select(".domain").attr("stroke", null);
-      vis.yAxisG.select(".domain").attr("stroke", null);
     }
   }
 }

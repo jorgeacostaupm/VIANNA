@@ -12,8 +12,8 @@ import Vilonplot from "./charts/Violinplot/Violinplot";
 const defaultConfig = {
   chartType: "box",
   isSync: true,
-  showLegend: true,
-  showGrid: false,
+  showLegend: false,
+  showGrid: true,
   useCustomRange: false,
   range: [null, null],
   nPoints: 30,

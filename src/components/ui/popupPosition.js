@@ -1,5 +1,5 @@
 const DEFAULT_VIEW_BAR_HEIGHT = 52;
-const VIEW_MARGIN = 5;
+const VIEW_MARGIN = 1;
 
 export function getViewOverlayPosition(triggerNode) {
   if (typeof window === "undefined") return null;
@@ -16,7 +16,7 @@ export function getViewOverlayPosition(triggerNode) {
   const top = Math.max(VIEW_MARGIN, Math.round(barBottom + VIEW_MARGIN));
   const right = Math.max(
     VIEW_MARGIN,
-    Math.round(window.innerWidth - viewRect.right + VIEW_MARGIN)
+    Math.round(window.innerWidth - viewRect.right + VIEW_MARGIN),
   );
 
   return {

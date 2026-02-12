@@ -76,7 +76,7 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
       .scaleLinear()
       .domain([yMin, yMax])
       .range([chartHeight, 0])
-      .nice();
+      .nice(5);
 
     let yGridG = null;
     if (showGrid) {
@@ -93,16 +93,20 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
         .call((g) => g.select(".domain").remove());
     }
 
-    chart
+    const xAxisG = chart
       .append("g")
       .attr("class", "x-axis")
       .attr("transform", `translate(0,${chartHeight})`)
       .call(d3.axisBottom(x));
+    xAxisG.select(".domain").remove();
+    xAxisG.selectAll(".tick line").remove();
 
     const yAxisG = chart
       .append("g")
       .attr("class", "y-axis")
       .call(d3.axisLeft(y).ticks(5));
+    yAxisG.select(".domain").remove();
+    yAxisG.selectAll(".tick line").remove();
 
     if (showGrid && yGridG) {
       attachTickLabelGridHover({

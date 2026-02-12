@@ -15,9 +15,8 @@ import { Settings } from "./PointRange";
 import {
   CHART_GRID,
   CHART_OUTLINE,
-  CHART_ZERO_LINE,
 } from "@/utils/chartTheme";
-import { attachTickLabelToNearestGridLine } from "@/utils/gridInteractions";
+import { attachTickLabelGridHover } from "@/utils/gridInteractions";
 
 const { publish } = pubsub;
 
@@ -30,13 +29,12 @@ export default function Pairwise({ id, variable, test, remove }) {
 
   const [config, setConfig] = useState({
     isSync: true,
-    showCaps: false,
+    showCaps: true,
     capSize: 3,
     markerShape: "circle",
     markerSize: 5,
-    showZeroLine: true,
-    showGrid: true,
-    sortBy: "effect",
+    positiveOnly: true,
+    sortDescending: true,
   });
 
   const [data, setData] = useState(null);
@@ -124,30 +122,32 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
     capSize,
     markerShape,
     markerSize,
-    showZeroLine,
-    showGrid,
-    sortBy,
+    positiveOnly,
+    sortDescending,
   } = config;
-  let data = result.pairwiseEffects.map((d) => {
-    if (d.value < 0) {
-      return {
-        ...d,
-        value: -d.value,
-        groups: [...d.groups].reverse(),
-        ci95: { lower: -d.ci95.upper, upper: -d.ci95.lower },
-      };
-    }
-    return d;
-  });
+  let data = result.pairwiseEffects.map((d) => ({
+    ...d,
+    groups: [...d.groups],
+    ci95: { ...d.ci95 },
+  }));
 
-  data.sort((a, b) => {
-    if (sortBy === "label") {
-      return String(a.groups.join(" vs ")).localeCompare(
-        String(b.groups.join(" vs "))
-      );
-    }
-    return b.value - a.value;
-  });
+  if (positiveOnly) {
+    data = data.map((d) => {
+      if (d.value < 0) {
+        return {
+          ...d,
+          value: -d.value,
+          groups: [...d.groups].reverse(),
+          ci95: { lower: -d.ci95.upper, upper: -d.ci95.lower },
+        };
+      }
+      return d;
+    });
+  }
+
+  data.sort((a, b) =>
+    sortDescending ? b.value - a.value : a.value - b.value
+  );
 
   const labels = data.map((d) => d.groups.join(" vs "));
 
@@ -194,9 +194,10 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
     .range([0, chartWidth]);
   const y = d3.scaleBand().domain(labels).range([0, chartHeight]).padding(0.2);
 
-  chart
-    .append("g")
-    .call(d3.axisLeft(y))
+  const yAxisG = chart.append("g").call(d3.axisLeft(y));
+  yAxisG.select(".domain").remove();
+  yAxisG.selectAll(".tick line").remove();
+  yAxisG
     .selectAll("text")
     .each(function () {
       const textEl = d3.select(this);
@@ -219,45 +220,37 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
     .append("g")
     .attr("transform", `translate(0,${chartHeight})`)
     .call(d3.axisBottom(x).ticks(5));
+  xAxisG.select(".domain").remove();
+  xAxisG.selectAll(".tick line").remove();
 
-  if (showZeroLine && x.domain()[0] < 0 && x.domain()[1] > 0) {
-    chart
-      .append("line")
-      .attr("class", "zero-line")
-      .attr("stroke", CHART_ZERO_LINE)
-      .attr("stroke-dasharray", "4 2")
-      .attr("x1", x(0))
-      .attr("x2", x(0))
-      .attr("y1", 0)
-      .attr("y2", chartHeight);
-  }
-
-  let gridLines = null;
-  if (showGrid) {
-    const minVal = x.domain()[0];
-    const maxVal = x.domain()[1];
-    const startGrid = Math.floor(minVal * 10) / 10;
-    const endGrid = Math.ceil(maxVal * 10) / 10;
-
-    for (let gridValue = startGrid; gridValue <= endGrid; gridValue += 0.1) {
-      if (gridValue === 0) continue;
-
-      if (gridValue >= minVal && gridValue <= maxVal) {
-        chart
-          .append("line")
-          .attr("stroke", CHART_GRID)
-          .attr("stroke-width", 1)
-          .attr("stroke-dasharray", "8 6")
-          .attr("x1", x(gridValue))
-          .attr("x2", x(gridValue))
-          .attr("y1", 0)
-          .attr("y2", chartHeight)
-          .attr("class", "grid-line");
-      }
-    }
-
-    gridLines = chart.selectAll(".grid-line");
-  }
+  const xGridG = chart
+    .append("g")
+    .attr("class", "grid x-grid")
+    .attr("transform", `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(x).ticks(5).tickSize(-chartHeight).tickFormat(""));
+  xGridG.select(".domain").remove();
+  xGridG
+    .selectAll(".tick line")
+    .attr("stroke", CHART_GRID)
+    .attr("stroke-dasharray", "8 6");
+  xGridG
+    .selectAll(".tick")
+    .filter((_, i, nodes) => i === 0 || i === nodes.length - 1)
+    .select("line")
+    .classed("chart-grid-line", false)
+    .attr("stroke", "none");
+  const zeroX = x(0);
+  const isZeroGridTick = (tickValue) => {
+    const tickNum = Number(+tickValue);
+    if (!Number.isFinite(tickNum) || !Number.isFinite(zeroX)) return false;
+    return Math.abs(x(tickNum) - zeroX) < 0.5;
+  };
+  xGridG
+    .selectAll(".tick")
+    .filter((tickValue) => isZeroGridTick(tickValue))
+    .select("line")
+    .classed("chart-grid-line", false)
+    .attr("stroke", "none");
 
   chart
     .selectAll(".effect-bar")
@@ -354,13 +347,16 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
     .on("mousemove", (event) => moveTooltip(event, tooltip, chart))
     .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
-  if (showGrid && gridLines && !gridLines.empty()) {
-    attachTickLabelToNearestGridLine({
-      axisGroup: xAxisG,
-      gridLines,
-      valueToPosition: (tickValue) => x(+tickValue),
-    });
-    gridLines.raise();
-    xAxisG.raise();
-  }
+  attachTickLabelGridHover({
+    axisGroup: xAxisG,
+    gridGroup: xGridG,
+    includeTick: (tickValue, i, nodes) => {
+      if (i === 0 || i === nodes.length - 1) return false;
+      if (isZeroGridTick(tickValue)) return false;
+      return true;
+    },
+  });
+
+  xGridG.raise();
+  xAxisG.raise();
 }

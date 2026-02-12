@@ -80,12 +80,16 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
         .call((g) => g.select(".domain").remove());
     }
 
-    chart
+    const xAxisG = chart
       .append("g")
       .attr("transform", `translate(0,${chartHeight})`)
       .call(d3.axisBottom(x));
+    xAxisG.select(".domain").remove();
+    xAxisG.selectAll(".tick line").remove();
 
     const yAxisG = chart.append("g").call(d3.axisLeft(y).ticks(5));
+    yAxisG.select(".domain").remove();
+    yAxisG.selectAll(".tick line").remove();
 
     if (showGrid && yGridG) {
       attachTickLabelGridHover({

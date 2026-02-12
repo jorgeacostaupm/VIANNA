@@ -20,10 +20,11 @@
 
 .panel {
   padding: var(--space-3);
+  min-height: 30vh;
   max-height: 70vh;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-width: 500px;
 }
 

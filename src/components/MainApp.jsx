@@ -13,6 +13,7 @@ import { pubsub } from "@/utils/pubsub";
 import styles from "@/styles/App.module.css";
 import { setInit } from "@/store/slices/cantabSlice";
 import { APP_NAME, APP_DESC } from "@/utils/Constants";
+import { withBasePath } from "@/utils/publicPaths";
 
 const { publish } = pubsub;
 const ResponsiveGridLayout = WidthProvider(GridLayout);
@@ -57,14 +58,14 @@ const idVar = "id";
 const groupVar = "Country";
 const timeVar = "Visit Name";
 
-const shortData = "./vis/csv/full_data.csv";
-const largeData = "./vis/csv/largeTestData.csv";
-const financial = "./vis/csv/financial.xls";
-const realData = "./vis/csv/realData.csv";
+const shortData = withBasePath("vis/csv/full_data.csv");
+const largeData = withBasePath("vis/csv/largeTestData.csv");
+const financial = withBasePath("vis/csv/financial.xls");
+const realData = withBasePath("vis/csv/realData.csv");
 
-const largeHierarchy = "./vis/hierarchies/largeTestDatahierarchy.json";
-const financialHierarchy = "./vis/hierarchies/financialHierarchy.json";
-const realDataHierarchy = "./vis/hierarchies/realData.json";
+const largeHierarchy = withBasePath("vis/hierarchies/largeTestDatahierarchy.json");
+const financialHierarchy = withBasePath("vis/hierarchies/financialHierarchy.json");
+const realDataHierarchy = withBasePath("vis/hierarchies/realData.json");
 
 const hierarchyFile = largeHierarchy;
 const dataFile = largeData;

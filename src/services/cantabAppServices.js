@@ -1,4 +1,5 @@
 import * as aq from "arquero";
+import { withBasePath } from "@/utils/publicPaths";
 
 export const fetchScenarioRunData = async (id) => {
   const response = await fetch(`/server/api/vis/scenarioruncantab/${id}/`);
@@ -7,7 +8,9 @@ export const fetchScenarioRunData = async (id) => {
 };
 
 export const fetchDefaultHierarchy = async () => {
-  const response = await fetch("./vis/hierarchies/default_hierarchy_v1.1.json");
+  const response = await fetch(
+    withBasePath("vis/hierarchies/default_hierarchy_v1.1.json"),
+  );
   if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
   return response.json();
 };

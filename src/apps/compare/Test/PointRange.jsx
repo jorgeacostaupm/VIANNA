@@ -13,7 +13,8 @@ import ChartBar from "@/components/charts/ChartBar";
 import tests from "@/utils/tests";
 import store from "@/store/store";
 import { pubsub } from "@/utils/pubsub";
-import { CHART_OUTLINE, CHART_ZERO_LINE } from "@/utils/chartTheme";
+import { CHART_GRID, CHART_OUTLINE, CHART_ZERO_LINE } from "@/utils/chartTheme";
+import { attachTickLabelGridHover } from "@/utils/gridInteractions";
 
 const { publish } = pubsub;
 
@@ -27,7 +28,7 @@ export default function PointRange({ id, variable, test, remove }) {
   const [result, setResult] = useState(null);
   const [config, setConfig] = useState({
     isSync: true,
-    showCaps: false,
+    showCaps: true,
     capSize: 3,
     markerShape: "circle",
     markerSize: 5,
@@ -146,12 +147,29 @@ export default function PointRange({ id, variable, test, remove }) {
       ])
       .range([chartHeight, 0])
       .nice();
+    const yTickCount = 4;
 
-    chart.append("g").call(d3.axisLeft(y));
-    chart
+    const yGridG = chart
+      .append("g")
+      .attr("class", "grid y-grid")
+      .call(
+        d3.axisLeft(y).ticks(yTickCount).tickSize(-chartWidth).tickFormat("")
+      );
+    yGridG.select(".domain").remove();
+    yGridG
+      .selectAll(".tick line")
+      .attr("stroke", CHART_GRID)
+      .attr("stroke-dasharray", "8 6");
+
+    const yAxisG = chart.append("g").call(d3.axisLeft(y).ticks(yTickCount));
+    yAxisG.select(".domain").remove();
+    yAxisG.selectAll(".tick line").remove();
+    const xAxisG = chart
       .append("g")
       .attr("transform", `translate(0,${chartHeight})`)
       .call(d3.axisBottom(x));
+    xAxisG.select(".domain").remove();
+    xAxisG.selectAll(".tick line").remove();
 
     if (showZeroLine && y.domain()[0] < 0 && y.domain()[1] > 0) {
       chart
@@ -259,6 +277,14 @@ export default function PointRange({ id, variable, test, remove }) {
       })
       .on("mousemove", (event) => moveTooltip(event, tooltip, chart))
       .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+    attachTickLabelGridHover({
+      axisGroup: yAxisG,
+      gridGroup: yGridG,
+    });
+
+    yGridG.raise();
+    yAxisG.raise();
   }, [result, dims, config, id]);
 
   const infoContent =
@@ -308,23 +334,18 @@ export function Settings({ config, setConfig, variant = "pointrange" }) {
     markerShape,
     markerSize,
     showZeroLine,
-    showGrid,
+    positiveOnly,
+    sortDescending,
     sortBy,
   } = config;
   const update = (field, value) =>
     setConfig((prev) => ({ ...prev, [field]: value }));
   const disabled = !isSync;
 
-  const sortOptions =
-    variant === "pairwise"
-      ? [
-          { value: "effect", label: "Effect size" },
-          { value: "label", label: "Group name" },
-        ]
-      : [
-          { value: "name", label: "Group name" },
-          { value: "value", label: "Mean value" },
-        ];
+  const sortOptions = [
+    { value: "name", label: "Group name" },
+    { value: "value", label: "Mean value" },
+  ];
 
   return (
     <div className={panelStyles.panel}>
@@ -384,33 +405,53 @@ export function Settings({ config, setConfig, variant = "pointrange" }) {
 
       <div className={panelStyles.section}>
         <div className={panelStyles.sectionTitle}>Guides</div>
-        <div className={panelStyles.row}>
-          <Text className={panelStyles.label}>Zero line</Text>
-          <Switch
-            checked={showZeroLine}
-            disabled={disabled}
-            onChange={(v) => update("showZeroLine", v)}
-          />
-        </div>
-        {variant === "pairwise" && (
+        {variant !== "pairwise" && (
           <div className={panelStyles.row}>
-            <Text className={panelStyles.label}>Grid lines</Text>
+            <Text className={panelStyles.label}>Zero line</Text>
             <Switch
-              checked={showGrid}
+              checked={showZeroLine}
               disabled={disabled}
-              onChange={(v) => update("showGrid", v)}
+              onChange={(v) => update("showZeroLine", v)}
             />
           </div>
         )}
-        <div className={panelStyles.rowStack}>
-          <Text className={panelStyles.label}>Sort by</Text>
-          <Select
-            value={sortBy}
-            onChange={(v) => update("sortBy", v)}
-            options={sortOptions}
-            disabled={disabled}
-          />
-        </div>
+        {variant === "pairwise" && (
+          <div className={panelStyles.row}>
+            <Text className={panelStyles.label}>Positive effects only</Text>
+            <Switch
+              checked={positiveOnly}
+              disabled={disabled}
+              onChange={(v) => update("positiveOnly", v)}
+            />
+          </div>
+        )}
+        {variant === "pairwise" && (
+          <div className={panelStyles.row}>
+            <Text className={panelStyles.label}>Sort descending</Text>
+            <Switch
+              checked={sortDescending}
+              disabled={disabled}
+              onChange={(v) => update("sortDescending", v)}
+            />
+          </div>
+        )}
+        {variant === "pairwise" && (
+          <div className={panelStyles.row}>
+            <Text className={panelStyles.label}>Grid lines</Text>
+            <Switch checked disabled />
+          </div>
+        )}
+        {variant !== "pairwise" && (
+          <div className={panelStyles.rowStack}>
+            <Text className={panelStyles.label}>Sort by</Text>
+            <Select
+              value={sortBy}
+              onChange={(v) => update("sortBy", v)}
+              options={sortOptions}
+              disabled={disabled}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

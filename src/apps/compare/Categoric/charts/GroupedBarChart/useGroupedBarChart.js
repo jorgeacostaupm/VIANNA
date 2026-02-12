@@ -91,11 +91,12 @@ export default function useGroupedBarChart({
       .nice()
       .range([chartHeight, 0]);
 
-    chart
+    const xAxisG = chart
       .append("g")
       .attr("transform", `translate(0,${chartHeight})`)
-      .call(d3.axisBottom(x0))
-      .selectAll("text");
+      .call(d3.axisBottom(x0));
+    xAxisG.select(".domain").remove();
+    xAxisG.selectAll(".tick line").remove();
 
     if (showGrid) {
       chart
@@ -105,7 +106,9 @@ export default function useGroupedBarChart({
         .call((g) => g.select(".domain").remove());
     }
 
-    chart.append("g").call(d3.axisLeft(y).ticks(null, "d"));
+    const yAxisG = chart.append("g").call(d3.axisLeft(y).ticks(null, "d"));
+    yAxisG.select(".domain").remove();
+    yAxisG.selectAll(".tick line").remove();
 
     const inactiveOpacity = 0.25;
     const setCategoryHighlight = (activeCategory = null) => {

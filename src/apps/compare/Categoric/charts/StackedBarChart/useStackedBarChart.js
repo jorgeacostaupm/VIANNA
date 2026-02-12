@@ -116,11 +116,12 @@ export default function useStackedBarChart({
       .domain(orderedCategories)
       .range(colorScheme);
 
-    chart
+    const xAxisG = chart
       .append("g")
       .attr("transform", `translate(0,${chartHeight})`)
-      .call(d3.axisBottom(x))
-      .selectAll("text");
+      .call(d3.axisBottom(x));
+    xAxisG.select(".domain").remove();
+    xAxisG.selectAll(".tick line").remove();
 
     if (showGrid) {
       const yGridAxis = d3.axisLeft(y).tickSize(-chartWidth).tickFormat("");
@@ -143,7 +144,9 @@ export default function useStackedBarChart({
     } else {
       yAxis.ticks(null, "d");
     }
-    chart.append("g").call(yAxis);
+    const yAxisG = chart.append("g").call(yAxis);
+    yAxisG.select(".domain").remove();
+    yAxisG.selectAll(".tick line").remove();
 
     const inactiveOpacity = 0.25;
     const setCategoryHighlight = (activeCategory = null) => {
