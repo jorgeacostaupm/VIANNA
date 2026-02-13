@@ -1,10 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 :root {
-  --font-family-base: "Manrope", "Segoe UI", Roboto, "Helvetica Neue", Arial,
+  --font-family-base:
+    "Manrope", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+    sans-serif;
+  --font-family-display:
+    "Space Grotesk", "Manrope", "Segoe UI", Roboto, "Helvetica Neue", Arial,
     "Noto Sans", sans-serif;
-  --font-family-display: "Space Grotesk", "Manrope", "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
   --font-size-xs: 12px;
   --font-size-sm: 14px;
@@ -81,7 +83,7 @@
   --chart-axis: var(--color-ink-secondary);
   --chart-axis-muted: var(--color-ink-tertiary);
   --chart-grid: #e2e8f0;
-  --chart-grid-strong: #cbd5e1;
+  --chart-grid-strong: #595d61;
   --chart-outline: var(--color-ink-secondary);
   --chart-outline-muted: var(--color-ink-tertiary);
   --chart-zero-line: #94a3b8;
@@ -117,7 +119,8 @@ body {
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   color: var(--color-ink);
-  background: radial-gradient(
+  background:
+    radial-gradient(
       1200px 900px at 12% -10%,
       rgba(30, 112, 194, 0.08),
       transparent 60%
@@ -137,10 +140,12 @@ svg tspan {
 }
 
 svg .grid line {
-  stroke: var(--chart-grid);
-  stroke-dasharray: 8 6;
+  stroke: var(--chart-grid-strong);
+  stroke-dasharray: none;
   stroke-width: 1;
   stroke-linecap: butt;
+  shape-rendering: crispEdges;
+  vector-effect: non-scaling-stroke;
 }
 
 svg .grid path {

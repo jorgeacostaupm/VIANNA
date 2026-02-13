@@ -123,7 +123,7 @@ export const dataSlice = createSlice({
         state.dataframe = action.payload.data;
         state.version += 1;
       })
-      .addCase(generateColumn.rejected, (state, action) => {});
+      .addCase(generateColumn.rejected, () => {});
 
     builder.addCase(generateColumnBatch.fulfilled, (state, action) => {
       state.dataframe = action.payload.data;
@@ -162,7 +162,6 @@ export const {
   setDataframe,
   setSelection,
   updateConfig,
-  editData,
 } = dataSlice.actions;
 
 /* const deriveOperation = (a, o, t, f) => {

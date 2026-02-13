@@ -1,22 +1,25 @@
 import * as d3 from "d3";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
-import { deepCopy, moveTooltip } from "@/utils/functions";
+import { moveTooltip } from "@/utils/functions";
 import { numMargin, renderLegend } from "../Density/useDensity";
 import useResizeObserver from "@/hooks/useResizeObserver";
-import {
-  CHART_OUTLINE,
-  CHART_OUTLINE_MUTED,
-} from "@/utils/chartTheme";
-import { attachTickLabelGridHover } from "@/utils/gridInteractions";
+import useGroupColorDomain from "@/hooks/useGroupColorDomain";
+import { CHART_OUTLINE, CHART_OUTLINE_MUTED } from "@/utils/chartTheme";
+import { paintLayersInOrder } from "@/utils/gridInteractions";
 
 export default function useBoxplot({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
+  const groupVar = useSelector((s) => s.compare.groupVar);
   const groups = Array.from(new Set((data || []).map((d) => d.type))).filter(
-    (value) => value != null,
+    (value) => value != null
   );
-  const selectionGroups = groups;
-  const groupsKey = groups.join("|");
+  const { colorDomain, orderedGroups: selectionGroups } = useGroupColorDomain(
+    groupVar,
+    groups
+  );
+  const groupsKey = selectionGroups.join("|");
 
   const { pointSize, showPoints, showLegend, showGrid } = config;
 
@@ -44,10 +47,13 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
       .append("g")
       .attr("transform", `translate(${numMargin.left},${numMargin.top})`);
 
-    const color = d3.scaleOrdinal().domain(groups).range(colorScheme);
+    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
 
-    let tmp = deepCopy(selectionGroups).sort();
-    const x = d3.scaleBand().domain(tmp).range([0, chartWidth]).padding(0.4);
+    const x = d3
+      .scaleBand()
+      .domain(selectionGroups)
+      .range([0, chartWidth])
+      .padding(0.4);
 
     const grouped = d3.group(data, (d) => d.type);
 
@@ -73,15 +79,6 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
 
     const y = d3.scaleLinear().domain(yDomain).nice().range([chartHeight, 0]);
 
-    let yGridG = null;
-    if (showGrid) {
-      yGridG = chart
-        .append("g")
-        .attr("class", "grid y-grid")
-        .call(d3.axisLeft(y).ticks(5).tickSize(-chartWidth).tickFormat(""))
-        .call((g) => g.select(".domain").remove());
-    }
-
     const xAxisG = chart
       .append("g")
       .attr("transform", `translate(0,${chartHeight})`)
@@ -92,13 +89,6 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
     const yAxisG = chart.append("g").call(d3.axisLeft(y).ticks(5));
     yAxisG.select(".domain").remove();
     yAxisG.selectAll(".tick line").remove();
-
-    if (showGrid && yGridG) {
-      attachTickLabelGridHover({
-        axisGroup: yAxisG,
-        gridGroup: yGridG,
-      });
-    }
 
     function computeBoxStats(values) {
       values = values.sort(d3.ascending);
@@ -129,7 +119,7 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
 
     const groupsG = chart
       .selectAll(".boxplot")
-      .data(groups)
+      .data(selectionGroups)
       .join("g")
       .attr("class", "boxplot")
       .attr("transform", (d) => `translate(${x(d)}, 0)`);
@@ -179,7 +169,7 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
               Q3: ${stats.q3.toFixed(2)}<br/>
               Min (whisker): ${stats.lower.toFixed(2)}<br/>
               Max (whisker): ${stats.upper.toFixed(2)}
-            `
+            `,
             )
             .style("opacity", 1);
         })
@@ -286,12 +276,12 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
             return gEnter;
           },
           (update) => update,
-          (exit) => exit.remove()
+          (exit) => exit.remove(),
         )
         .classed("hide", !showPoints)
         .attr(
           "transform",
-          (d) => `translate(${boxWidth / 2 + d._jitter}, ${y(d.value)})`
+          (d) => `translate(${boxWidth / 2 + d._jitter}, ${y(d.value)})`,
         )
         .attr("opacity", 0.9)
         .on("mouseover", function (e, d) {
@@ -326,11 +316,29 @@ export default function useBoxplot({ chartRef, legendRef, data, config }) {
       renderLegend(legend, selectionGroups, color, null, null, null, null);
     }
 
-    if (showGrid && yGridG) {
-      yGridG.raise();
-      yAxisG.raise();
+    const yGridG = showGrid
+      ? chart
+        .append("g")
+        .attr("class", "grid y-grid")
+        .call(d3.axisLeft(y).ticks(5).tickSize(-chartWidth).tickFormat(""))
+        .call((g) => g.select(".domain").remove())
+      : null;
+
+    if (yGridG) {
+      paintLayersInOrder({
+        chartGroup: chart,
+        layers: [xAxisG, yAxisG, yGridG],
+      });
     }
-  }, [data, dimensions, groupsKey, showPoints, showLegend, showGrid]);
+  }, [
+    data,
+    dimensions,
+    groupsKey,
+    showPoints,
+    showLegend,
+    showGrid,
+    colorDomain,
+  ]);
 
   useEffect(() => {
     if (!chartRef.current) return;

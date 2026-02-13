@@ -1,7 +1,6 @@
 import { Modal, Select, InputNumber, Input, Button, Typography } from "antd";
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { pubsub } from "@/utils/pubsub";
 
 import {
   ALL_FUNCTIONS,
@@ -11,19 +10,14 @@ import {
 } from "../menu/logic/formulaConstants";
 import { applyOperation } from "@/store/async/metaAsyncReducers";
 import { getCategoricalKeys } from "@/utils/functions";
+import {
+  buildListResultDescription,
+  notify,
+  notifyError,
+} from "@/utils/notifications";
 
 const { Option, OptGroup } = Select;
 const { Text } = Typography;
-const { publish } = pubsub;
-
-const formatPreview = (items, formatter, max = 6) => {
-  if (!Array.isArray(items) || items.length === 0) return "-";
-  const preview = items.slice(0, max).map(formatter).filter(Boolean);
-  const remaining = items.length - preview.length;
-  return remaining > 0
-    ? `${preview.join(", ")} (+${remaining} more)`
-    : preview.join(", ");
-};
 
 const toNodeLabel = (node) => {
   const name = node?.name || node?.aggregationName || "Unknown node";
@@ -245,18 +239,15 @@ export default function OperationModal({
         const { total = safeSelectedNodes.length, applied = [], failed = [] } =
           action.payload || {};
 
-        const description = [
-          applied.length > 0
-            ? `Created (${applied.length}/${total}): ${formatPreview(applied, toNodeLabel)}`
-            : "",
-          failed.length > 0
-            ? `Failed (${failed.length}/${total}): ${formatPreview(failed, toFailureLabel, 4)}`
-            : "",
-        ]
-          .filter(Boolean)
-          .join("\n");
+        const description = buildListResultDescription({
+          successLabel: `Created (${applied.length}/${total})`,
+          successItems: applied.map(toNodeLabel),
+          failureLabel: `Failed (${failed.length}/${total})`,
+          failureItems: failed.map(toFailureLabel),
+          maxItems: 5,
+        });
 
-        publish("notification", {
+        notify({
           message:
             failed.length === 0
               ? "Operation applied"
@@ -274,13 +265,10 @@ export default function OperationModal({
           duration: 6,
         });
       } else {
-        publish("notification", {
+        notifyError({
           message: "Operation failed",
-          description:
-            action.payload ||
-            action.error?.message ||
-            "Error applying operation to selection.",
-          type: "error",
+          error: action.payload || action.error,
+          fallback: "Error applying operation to selected nodes.",
           pauseOnHover: true,
         });
       }

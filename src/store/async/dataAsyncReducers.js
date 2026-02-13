@@ -1,4 +1,5 @@
 import * as aq from "arquero";
+import { Modal } from "antd";
 import processFormula from "@/utils/processFormula";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import { getFileName, getVariableTypes } from "@/utils/functions";
@@ -7,9 +8,48 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { buildMetaFromVariableTypes } from "../async/metaAsyncReducers";
 import { setDataframe } from "../slices/dataSlice";
 
+const isEmptyNumericValue = (value) =>
+  value === null || value === undefined || value === "";
+
+const isNonNumericValue = (value) =>
+  !isEmptyNumericValue(value) && Number.isNaN(Number(value));
+
+const countNonNumericInColumn = (rows, column) =>
+  rows.reduce(
+    (count, row) => count + (isNonNumericValue(row[column]) ? 1 : 0),
+    0,
+  );
+
+const normalizeNumericColumn = (rows, column) =>
+  rows.map((row) => {
+    const value = row[column];
+    if (isEmptyNumericValue(value)) {
+      return { ...row, [column]: null };
+    }
+
+    const numberValue = Number(value);
+    return {
+      ...row,
+      [column]: Number.isNaN(numberValue) ? null : numberValue,
+    };
+  });
+
+const confirmNumericConversion = ({ column, invalidCount, totalCount }) =>
+  new Promise((resolve) => {
+    Modal.confirm({
+      title: `Convert "${column}" to numeric values?`,
+      content: `${invalidCount} of ${totalCount} value(s) are not numeric and will be replaced with null.`,
+      okText: "Convert and replace",
+      cancelText: "Cancel",
+      okButtonProps: { danger: true },
+      onOk: () => resolve(true),
+      onCancel: () => resolve(false),
+    });
+  });
+
 export const generateColumn = createAsyncThunk(
   "dataframe/agg-generate",
-  async ({ colName, formula }, { getState, rejectWithValue }) => {
+  async ({ colName, formula, enforceNumber = false }, { getState, rejectWithValue }) => {
     try {
       const dt = getState().dataframe.present.dataframe;
       const qt = getState().cantab.present.quarantineData;
@@ -30,6 +70,30 @@ export const generateColumn = createAsyncThunk(
               .derive({ [colName]: derivedFn }, { drop: false })
               .objects()
           : [];
+
+      if (enforceNumber) {
+        const invalidCount =
+          countNonNumericInColumn(data, colName) +
+          countNonNumericInColumn(quarantineData, colName);
+        const hasInvalid = invalidCount > 0;
+
+        if (hasInvalid) {
+          const proceed = await confirmNumericConversion({
+            column: colName,
+            invalidCount,
+            totalCount: data.length + quarantineData.length,
+          });
+
+          if (!proceed) {
+            return rejectWithValue("Conversion canceled by user");
+          }
+        }
+
+        return {
+          data: normalizeNumericColumn(data, colName),
+          quarantineData: normalizeNumericColumn(quarantineData, colName),
+        };
+      }
 
       return { data, quarantineData };
     } catch (error) {
@@ -86,7 +150,7 @@ export const generateEmpty = createAsyncThunk(
         .derive({ [colName]: () => null }, { drop: false })
         .objects();
       return result;
-    } catch (error) {
+    } catch {
       return rejectWithValue("Empty aggregation failed");
     }
   }
@@ -100,7 +164,7 @@ export const removeColumn = createAsyncThunk(
       const removed = [colName];
       const result = aq.from(state.dataframe).select(aq.not(removed)).objects();
       return result;
-    } catch (error) {
+    } catch {
       return rejectWithValue("Failed to remove attribute");
     }
   }
@@ -108,12 +172,12 @@ export const removeColumn = createAsyncThunk(
 
 export const removeBatch = createAsyncThunk(
   "dataframe/remove-batch",
-  async ({ cols }, { getState }) => {
+  async ({ cols }, { getState, rejectWithValue }) => {
     try {
       const state = getState().dataframe.present;
       const result = aq.from(state.dataframe).select(aq.not(cols)).objects();
       return result;
-    } catch (error) {
+    } catch {
       return rejectWithValue("Failed to batch remove");
     }
   }
@@ -128,24 +192,20 @@ export const convertColumnType = createAsyncThunk(
 
       let newDf;
       switch (dtype) {
-        case "number":
+        case "number": {
           const data = dataframe.objects();
-          const hasInvalid = data.some((row) => {
-            const val = row[column];
-            if (val === null || val === undefined || val === "") return false;
-            return isNaN(Number(val));
-          });
+          const invalidCount = countNonNumericInColumn(data, column);
+          const hasInvalid = invalidCount > 0;
 
           if (hasInvalid) {
-            const proceed = window.confirm(
-              `⚠️ There are non-numeric values in "${column}".
-They will be converted to null, and you may lose information.
-Do you want to continue?`
-            );
+            const proceed = await confirmNumericConversion({
+              column,
+              invalidCount,
+              totalCount: data.length,
+            });
 
             if (!proceed) {
-              // Salir sin hacer cambios
-              return rejectWithValue("Update aborted by user");
+              return rejectWithValue("Conversion canceled by user");
             }
           }
           newDf = dataframe.derive({
@@ -157,6 +217,7 @@ Do you want to continue?`
             },
           });
           break;
+        }
 
         case "string":
           newDf = dataframe.derive({
@@ -219,7 +280,7 @@ export const replaceValuesWithNull = createAsyncThunk(
       return {
         value,
       };
-    } catch (err) {
+    } catch {
       return rejectWithValue("Something went wrong nullifiying values");
     }
   }
@@ -233,7 +294,7 @@ export const updateData = createAsyncThunk(
   ) => {
     try {
       let dt = aq.from(data);
-      let meta = getVariableTypes(data);
+      const meta = getVariableTypes(data);
       dt = dt.derive({ [ORDER_VARIABLE]: aq.op.row_number() });
       if (isGenerateHierarchy) {
         dispatch(buildMetaFromVariableTypes(meta));
@@ -245,7 +306,7 @@ export const updateData = createAsyncThunk(
         isNewColumns: isGenerateHierarchy,
         varTypes: meta,
       };
-    } catch (err) {
+    } catch {
       return rejectWithValue("Something is wrong with API data");
     }
   }

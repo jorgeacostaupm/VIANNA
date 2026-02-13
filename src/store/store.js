@@ -7,8 +7,9 @@ import metaReducer from "./slices/metaSlice";
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
-  HYDRATE_SHARED_STATE,
   initializeSharedStateSync,
+  sharedStateSyncMiddleware,
+  withSharedStateSyncReducer,
 } from "./sharedStateSync";
 
 const baseReducer = combineReducers({
@@ -20,17 +21,7 @@ const baseReducer = combineReducers({
   dataframe: dataReducer,
 });
 
-const reducer = (state, action) => {
-  if (action?.type === HYDRATE_SHARED_STATE) {
-    if (!action.payload || typeof action.payload !== "object") return state;
-    const currentState = state ?? baseReducer(undefined, { type: "@@INIT" });
-    return {
-      ...currentState,
-      ...action.payload,
-    };
-  }
-  return baseReducer(state, action);
-};
+const reducer = withSharedStateSyncReducer(baseReducer);
 
 const store = configureStore({
   reducer,
@@ -39,14 +30,16 @@ const store = configureStore({
       immutableCheck: false,
       serializableCheck: false,
       immutableStateInvariant: false,
-    }),
+    }).concat(sharedStateSyncMiddleware),
 });
 
 let syncInitializationPromise = null;
 
 export const initializeStoreSync = () => {
   if (!syncInitializationPromise) {
-    syncInitializationPromise = initializeSharedStateSync(store);
+    syncInitializationPromise = Promise.resolve(
+      initializeSharedStateSync(store),
+    );
   }
   return syncInitializationPromise;
 };

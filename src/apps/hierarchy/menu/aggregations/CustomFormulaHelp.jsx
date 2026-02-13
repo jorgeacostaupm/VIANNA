@@ -1,11 +1,10 @@
 import { Typography } from "antd";
 import { ROW_FUNCTIONS, COLUMN_FUNCTIONS, SPECIAL_FUNCTIONS } from "../logic/formulaConstants";
 import { copyClipboard } from "@/utils/functions";
-import { pubsub } from "@/utils/pubsub";
+import { notifySuccess, notifyWarning } from "@/utils/notifications";
 import styles from "./CustomFormulaHelp.module.css";
 
 const { Text } = Typography;
-const { publish } = pubsub;
 
 const QUICK_RULES = [
   "Reference variables as $(Variable Name).",
@@ -82,17 +81,15 @@ export default function CustomFormulaHelp() {
   const handleCopy = async (value, message) => {
     try {
       await copyClipboard(value);
-      publish("notification", {
+      notifySuccess({
         message,
         description: value,
-        type: "success",
         duration: 1.5,
       });
     } catch {
-      publish("notification", {
+      notifyWarning({
         message: "Copy unavailable",
         description: "Copy the text manually from the help panel.",
-        type: "warning",
         duration: 2,
       });
     }

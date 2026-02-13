@@ -2,7 +2,13 @@ import { Button } from "antd";
 import buttonStyles from "@/styles/Buttons.module.css";
 import AutoCloseTooltip from "./AutoCloseTooltip";
 
-export default function PanelButton({ title, icon, onClick, disabled = false }) {
+export default function PanelButton({
+  title,
+  icon,
+  onClick,
+  disabled = false,
+  ariaLabel,
+}) {
   return (
     <AutoCloseTooltip title={title}>
       <Button
@@ -11,6 +17,7 @@ export default function PanelButton({ title, icon, onClick, disabled = false }) 
         icon={icon}
         onClick={onClick}
         disabled={disabled}
+        aria-label={ariaLabel || title}
       />
     </AutoCloseTooltip>
   );

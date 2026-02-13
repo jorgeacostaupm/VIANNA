@@ -72,7 +72,7 @@ export function getCorrelationData(data, params) {
 
   if (variables.length < 2) return null;
 
-  data.forEach((row, rowIndex) => {
+  data.forEach((row) => {
     variables.forEach((varName) => {
       const raw = row[varName];
       const num = parseFloat(raw);

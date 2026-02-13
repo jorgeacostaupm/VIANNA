@@ -1,10 +1,12 @@
 import { useEffect, useLayoutEffect } from "react";
 import { useDispatch } from "react-redux";
 
+const DEFAULT_ROOT_STYLES = { padding: 0, maxWidth: "100vw" };
+
 const useRootStyles = (
   setInit,
   title,
-  applyStyles = { padding: 0, maxWidth: "100vw" },
+  applyStyles = DEFAULT_ROOT_STYLES,
 ) => {
   const dispatch = useDispatch();
 

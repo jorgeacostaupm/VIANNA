@@ -1,11 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { pubsub } from "@/utils/pubsub";
 import tests from "@/utils/tests";
 import { runShapiroWilk, runLevene } from "@/utils/stats";
 import { updateData } from "../async/dataAsyncReducers";
 import * as aq from "arquero";
-
-const { publish } = pubsub;
+import { notifyError } from "@/utils/notifications";
 
 const initialState = {
   init: false,
@@ -168,10 +166,10 @@ const compareSlice = createSlice({
       .addCase(runAllComparisonTests.rejected, (state, action) => {
         state.rankingLoading = false;
         state.error = action.payload || action.error.message;
-        publish("notification", {
-          message: "Error executing test for all variables",
-          description: state.error,
-          type: "error",
+        notifyError({
+          message: "Could not run test for all variables",
+          error: state.error,
+          fallback: "Failed to execute ranking test for selected variables.",
           source: "test",
         });
       });
@@ -188,10 +186,10 @@ const compareSlice = createSlice({
       .addCase(runComparisonTest.rejected, (state, action) => {
         state.testLoading = false;
         state.error = action.payload || action.error.message;
-        publish("notification", {
-          message: "Error executing test",
-          description: state.error,
-          type: "error",
+        notifyError({
+          message: "Could not run selected test",
+          error: state.error,
+          fallback: "Failed to execute the selected test.",
           source: "test",
         });
       });

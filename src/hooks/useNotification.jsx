@@ -6,10 +6,31 @@ import { pubsub } from "@/utils/pubsub";
 
 let notificationHandler = null;
 
+const normalizeDescription = (description) => {
+  if (description == null) return "";
+  if (
+    typeof description === "string" ||
+    typeof description === "number" ||
+    typeof description === "boolean"
+  ) {
+    return String(description);
+  }
+  if (description instanceof Error) {
+    return description.message || String(description);
+  }
+  try {
+    return JSON.stringify(description, null, 2);
+  } catch {
+    return String(description);
+  }
+};
+
 function subscribeToNotification(api) {
   if (notificationHandler) return;
 
   notificationHandler = (data) => {
+    const normalizedDescription = normalizeDescription(data.description);
+
     api.open({
       message: data.message || "Notification",
       description: (
@@ -20,7 +41,7 @@ function subscribeToNotification(api) {
             whiteSpace: "pre-line",
           }}
         >
-          {data.description || ""}
+          {normalizedDescription}
         </div>
       ),
 

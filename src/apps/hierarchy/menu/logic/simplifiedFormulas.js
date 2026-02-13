@@ -33,7 +33,7 @@ export const generateFormulaSimplified = (operation, attributes) => {
 
   try {
     parsed = parser.parse(formula);
-  } catch (error) {
+  } catch {
     return { valid: false, msg: "Fallo de Sintaxis al crear la fórmula" };
   }
 

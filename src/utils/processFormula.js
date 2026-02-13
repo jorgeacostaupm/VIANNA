@@ -53,7 +53,7 @@ const datetime = (
   hours = 0,
   minutes = 0,
   seconds = 0,
-  milliseconds = 0
+  milliseconds = 0,
 ) => {
   if (year == null) return null;
   const y = Number(year);
@@ -81,7 +81,9 @@ const month = (value) => {
 const week = (value) => {
   const date = toDate(value);
   if (!date) return null;
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
@@ -170,6 +172,21 @@ const FORMULA_FUNCTIONS = {
   greatest,
   least,
 };
+const FORMULA_FUNCTION_NAMES = Object.keys(FORMULA_FUNCTIONS);
+
+function extractExpression(formula) {
+  return formula.startsWith("(r) => ") ? formula.substring(7) : formula;
+}
+
+function compileFormulaEvaluator(expression, specialIds = []) {
+  const fnBindings = FORMULA_FUNCTION_NAMES.join(", ");
+  return new Function(
+    "r",
+    "fns",
+    ...specialIds,
+    `"use strict"; const { ${fnBindings} } = fns; return (${expression});`,
+  );
+}
 
 // ==================== REGISTRO DE PROCESADORES ESPECIALES ====================
 
@@ -311,36 +328,13 @@ function processAggregationFunctions(formula, table) {
  * Crea una función combinada que evalúa múltiples funciones especiales
  */
 function createCombinedFunction(formula, specialFunctions) {
+  const expression = extractExpression(formula);
+  const specialIds = specialFunctions.map((specialFn) => specialFn.id);
+  const evaluator = compileFormulaEvaluator(expression, specialIds);
+
   return (row) => {
-    let evalFormula = formula;
-
-    // Reemplazar cada marcador de función con su valor calculado
-    specialFunctions.forEach(({ id, fn }) => {
-      const functionValue = fn(row);
-
-      // Convertir valores a formato seguro para evaluación
-      const safeValue =
-        typeof functionValue === "number"
-          ? functionValue
-          : JSON.stringify(functionValue);
-
-      evalFormula = evalFormula.replace(id, safeValue);
-    });
-
-    // Extraer la expresión (remover "(r) => " si existe)
-    const expression = evalFormula.startsWith("(r) => ")
-      ? evalFormula.substring(7)
-      : evalFormula;
-
-    try {
-      // Crear y ejecutar una función temporal
-      const tempFn = eval(`(r) => ${expression}`);
-      return tempFn(row);
-    } catch (error) {
-      console.error("Error evaluating combined function:", error);
-      console.error("Expression:", expression);
-      throw error;
-    }
+    const specialValues = specialFunctions.map(({ fn }) => fn(row));
+    return evaluator(row, FORMULA_FUNCTIONS, ...specialValues);
   };
 }
 
@@ -350,9 +344,6 @@ function createCombinedFunction(formula, specialFunctions) {
  * Procesa una fórmula, manejando funciones especiales y de agregación
  */
 export default function processFormula(table, formula) {
-  void FORMULA_FUNCTIONS;
-  console.log("Processing formula:", formula);
-
   // Paso 1: Procesar funciones especiales (zscore, zscoreByGroup, etc.)
   const { formulaProcessed: formulaAfterSpecial, specialFunctions } =
     processSpecialFunctions(formula, table);
@@ -360,22 +351,16 @@ export default function processFormula(table, formula) {
   // Paso 2: Procesar funciones de agregación estándar (__AGG__)
   const finalFormula = processAggregationFunctions(formulaAfterSpecial, table);
 
-  console.log("Formula after processing:", finalFormula);
-  console.log("Number of special functions:", specialFunctions.length);
-  console.log(
-    "Special function types:",
-    specialFunctions.map((f) => f.type)
-  );
-
   // Paso 3: Construir función final según lo que se encontró
   if (specialFunctions.length > 0) {
     // Si hay funciones especiales, crear una función combinada
     const combinedFn = createCombinedFunction(finalFormula, specialFunctions);
     return aq.escape(combinedFn);
   } else {
-    // Si no hay funciones especiales, evaluar normalmente
-    console.log("No special functions, evaluating normally");
-    return eval(finalFormula);
+    // Si no hay funciones especiales, compilar una única función para cada fila.
+    const expression = extractExpression(finalFormula);
+    const evaluator = compileFormulaEvaluator(expression);
+    return aq.escape((r) => evaluator(r, FORMULA_FUNCTIONS));
   }
 }
 

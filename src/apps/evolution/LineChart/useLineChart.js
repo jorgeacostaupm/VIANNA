@@ -1,22 +1,31 @@
 import * as d3 from "d3";
 import { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
 
-import renderLegend from "@/utils/renderLegend";
 import { moveTooltip } from "@/utils/functions";
 import useResizeObserver from "@/hooks/useResizeObserver";
+import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { numMargin } from "@/apps/compare/Numeric/charts/Density/useDensity";
 import { CHART_OUTLINE } from "@/utils/chartTheme";
-import { attachTickLabelGridHover } from "@/utils/gridInteractions";
+import {
+  attachTickLabelGridHover,
+  paintLayersInOrder,
+} from "@/utils/gridInteractions";
 
 export default function useLineChart({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
-  const groups = Array.from(
+  const groupVar = useSelector((s) => s.evolution.groupVar);
+  const rawGroups = Array.from(
     new Set(
       (data?.meanData || [])
         .map((entry) => entry.group)
         .concat((data?.participantData || []).map((entry) => entry.group))
     )
   ).filter((value) => value != null);
+  const { colorDomain, orderedGroups: groups } = useGroupColorDomain(
+    groupVar,
+    rawGroups
+  );
   const selectionGroups = groups;
   const selectionTimestamps = (data?.times || []).map((t) => `${t}`);
   const [hide, setHide] = useState([]);
@@ -66,7 +75,10 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
       .append("g")
       .attr("transform", `translate(${numMargin.left},${numMargin.top})`);
 
-    const color = d3.scaleOrdinal().domain(groups).range(d3.schemeCategory10);
+    const color = d3
+      .scaleOrdinal()
+      .domain(colorDomain)
+      .range(d3.schemeCategory10);
 
     const x = d3
       .scaleBand()
@@ -344,14 +356,38 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
     if (showObs) renderParticipants();
     if (showMeans) renderMeans();
 
+    const inactiveOpacity = 0.12;
+    const setGroupHighlight = (activeGroup = null) => {
+      const hasActiveGroup = activeGroup !== null;
+      const resolveOpacity = (d) => {
+        if (!hasActiveGroup) return 1;
+        return d?.group === activeGroup ? 1 : inactiveOpacity;
+      };
+
+      chart.selectAll(".evolution").attr("opacity", resolveOpacity);
+      chart.selectAll(".evolutionMean").attr("opacity", resolveOpacity);
+      chart.selectAll(".evolutionStd").attr("opacity", resolveOpacity);
+      chart.selectAll(".evolutionCI").attr("opacity", resolveOpacity);
+
+      legend.selectAll(".legend-item").attr("opacity", (d) => {
+        if (!hasActiveGroup) return 1;
+        return d === activeGroup ? 1 : inactiveOpacity;
+      });
+    };
+
     // legend
     if (showLegend !== false) {
-      renderLegend(legend, selectionGroups, color, null, null, hide, setHide);
+      renderLineLegend(legend, selectionGroups, color, hide, setHide, {
+        onItemMouseOver: setGroupHighlight,
+        onItemMouseOut: () => setGroupHighlight(null),
+      });
     }
 
     if (showGrid && yGridG) {
-      yGridG.raise();
-      yAxisG.raise();
+      paintLayersInOrder({
+        chartGroup: chart,
+        layers: [xAxisG, yAxisG, yGridG],
+      });
     }
 
     chartStateRef.current = {
@@ -380,6 +416,7 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
     showStds,
     showLegend,
     showGrid,
+    colorDomain,
   ]);
 
   useEffect(() => {
@@ -482,4 +519,87 @@ function getYRange(
 
   const pad = (max - min) * 0.01 || 1;
   return [min - pad, max + pad];
+}
+
+function renderLineLegend(
+  legend,
+  groups,
+  color,
+  hide,
+  setHide,
+  { onItemMouseOver, onItemMouseOut } = {}
+) {
+  const circleSize = 10;
+  const padding = 6;
+  const lineHeight = circleSize * 2 + padding;
+
+  const legendGroup = legend
+    .append("g")
+    .attr("class", "legend-group")
+    .style("cursor", "pointer");
+
+  const orderedGroups = Array.isArray(groups) ? [...groups] : [];
+
+  orderedGroups.forEach((group, i) => {
+    const y = i * lineHeight + circleSize * 2;
+
+    const legendItem = legendGroup
+      .append("g")
+      .attr("class", "legend-item")
+      .attr("transform", `translate(0,${y})`)
+      .datum(group)
+      .on("mouseover", () => onItemMouseOver?.(group))
+      .on("mouseout", () => onItemMouseOut?.())
+      .on("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        setHide((prev) => {
+          const isHidden = prev.includes(group);
+          const next = isHidden
+            ? prev.filter((g) => g !== group)
+            : [...prev, group];
+
+          legendItem.select(".legend-label").classed("cross", !isHidden);
+          return next;
+        });
+      });
+
+    legendItem
+      .append("circle")
+      .attr("class", "legend-circle")
+      .attr("cx", circleSize + 10)
+      .attr("cy", 0)
+      .attr("r", circleSize)
+      .style("fill", color(group));
+
+    legendItem
+      .append("text")
+      .attr("class", "legend-label")
+      .classed("cross", hide.includes(group))
+      .attr("x", circleSize * 2 + 15)
+      .attr("y", 4)
+      .text(group);
+  });
+
+  const bbox = legendGroup.node().getBBox();
+
+  const parent = legend.node().parentNode;
+  const { width, height } = parent.getBoundingClientRect();
+
+  if (height > bbox.y + bbox.height) {
+    d3.select(parent).style("align-items", "center");
+  } else {
+    d3.select(parent).style("align-items", null);
+  }
+
+  if (width > bbox.x + bbox.width) {
+    d3.select(parent).style("justify-content", "center");
+  } else {
+    d3.select(parent).style("justify-content", null);
+  }
+
+  legend
+    .attr("width", bbox.x + bbox.width)
+    .attr("height", bbox.y + bbox.height);
 }

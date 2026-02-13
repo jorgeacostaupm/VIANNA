@@ -1,147 +1,121 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Layout, Popover } from "antd";
-import {
-  LoadingOutlined,
-  ReloadOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-} from "@ant-design/icons";
-import GridLayout, { WidthProvider } from "react-grid-layout";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
+import { Button, Card, Space, Typography } from "antd";
+import { DatabaseOutlined } from "@ant-design/icons";
 
-import ColoredButton from "@/components/ui/ColoredButton";
-import styles from "@/styles/App.module.css";
 import useRootStyles from "@/hooks/useRootStyles";
 import useNotification from "@/hooks/useNotification";
-import { APP_NAME, APP_DESC } from "@/utils/Constants";
-import { pubsub } from "@/utils/pubsub";
+import { APP_NAME } from "@/utils/Constants";
+import SingleViewAppLayout from "@/components/ui/SingleViewAppLayout";
+import styles from "@/styles/App.module.css";
 
 import { setInit } from "@/store/slices/cantabSlice";
+import { notifyError } from "@/utils/notifications";
 
 import Explorer from "../explorer";
 import loadTestData from "./loadTestData";
 import AppsButtons from "./AppsButtons";
+import MainSidebar from "./MainSidebar";
 
-const { publish } = pubsub;
-const ResponsiveGridLayout = WidthProvider(GridLayout);
-
-const layout = [{ i: "explorer", x: 0, y: 0, w: 12, h: 7 }];
+const { Text } = Typography;
 
 export default function MainApp() {
   const dispatch = useDispatch();
   const dataframe = useSelector((state) => state.dataframe.present.dataframe);
-  const hierarchy = useSelector((state) => state.metadata.attributes);
-  const [isLoadingDemoData, setIsLoadingDemoData] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isLoadingDemo, setIsLoadingDemo] = useState(false);
+  const [isChoiceDismissed, setIsChoiceDismissed] = useState(false);
+  const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
 
   useRootStyles(setInit, APP_NAME);
   const holder = useNotification();
 
-  useEffect(() => {
-    if (Array.isArray(dataframe) && dataframe.length > 0) {
-      if (Array.isArray(hierarchy) && hierarchy.length > 0) return;
-    }
-    loadTestData(dispatch);
-  }, [dispatch, dataframe, hierarchy]);
+  const hasData = Array.isArray(dataframe) && dataframe.length > 0;
+  const shouldShowInitialChoice = useMemo(
+    () => !isChoiceDismissed && !hasData,
+    [isChoiceDismissed, hasData],
+  );
 
-  const onLoadDemoData = async () => {
-    if (isLoadingDemoData) return;
-    setIsLoadingDemoData(true);
+  const handleLoadDemo = async () => {
+    setIsDataManagementOpen(false);
+    setIsLoadingDemo(true);
     try {
-      const isLoaded = await loadTestData(dispatch);
-      if (isLoaded) {
-        publish("notification", {
-          message: "Demo data loaded",
-          type: "success",
-        });
+      const loaded = await loadTestData(dispatch);
+      if (loaded) {
+        setIsChoiceDismissed(true);
       }
+    } catch (error) {
+      notifyError({
+        message: "Could not load demo data",
+        error,
+      });
     } finally {
-      setIsLoadingDemoData(false);
+      setIsLoadingDemo(false);
     }
   };
 
-  const logoSrc = "./app_name.svg";
-  const mainContentClassName = [
-    styles.mainAppContent,
-    isSidebarOpen
-      ? styles.mainAppContentWithSidebar
-      : styles.mainAppContentWithoutSidebar,
-  ].join(" ");
-  const mainSidebarClassName = [
-    styles.mainSidebar,
-    isSidebarOpen ? styles.mainSidebarOpen : styles.mainSidebarClosed,
-  ].join(" ");
+  const handleLoadMyData = () => {
+    setIsChoiceDismissed(true);
+    setIsDataManagementOpen(true);
+  };
+
+  const handleContinueWithoutData = () => {
+    setIsChoiceDismissed(true);
+    setIsDataManagementOpen(false);
+  };
 
   return (
     <>
       {holder}
-      <Layout className={styles.fullScreenLayout}>
-        <div className={styles.mainSidebarContainer}>
-          <aside className={mainSidebarClassName}>
-            <Popover
-              content={<div className={styles.appBarPopoverContent}>{APP_DESC}</div>}
-              trigger="hover"
-              placement="rightTop"
-            >
-              <img
-                src={logoSrc}
-                alt="VIANNA"
-                className={`${styles.appBarLogo} ${styles.mainSidebarLogo}`}
+      <SingleViewAppLayout
+        sidebar={
+          shouldShowInitialChoice ? null : (
+            <MainSidebar>
+              <AppsButtons
+                dataManagementOpen={isDataManagementOpen}
+                onDataManagementOpenChange={setIsDataManagementOpen}
               />
-            </Popover>
-
-            <div className={styles.mainSidebarControls}>
-              <AppsButtons />
-            </div>
-
-            <button
-              type="button"
-              className={styles.mainSidebarHideButton}
-              onClick={() => setIsSidebarOpen(false)}
-              aria-label="Hide main sidebar"
-            >
-              <MenuFoldOutlined />
-            </button>
-          </aside>
-
-          {!isSidebarOpen && (
-            <button
-              type="button"
-              className={styles.mainSidebarShowButton}
-              onClick={() => setIsSidebarOpen(true)}
-              aria-label="Show main sidebar"
-            >
-              <MenuUnfoldOutlined />
-            </button>
-          )}
-        </div>
-
-        <div className={mainContentClassName}>
-          <ResponsiveGridLayout
-            className="layout"
-            layout={layout}
-            cols={12}
-            rowHeight={100}
-            isDraggable={false}
-          >
-            <div key={"explorer"}>
-              <Explorer />
-            </div>
-          </ResponsiveGridLayout>
-
+            </MainSidebar>
+          )
+        }
+        viewKey="explorer"
+      >
+        {shouldShowInitialChoice ? (
           <div className={styles.mainLoadDemoData}>
-            <ColoredButton
-              onClick={onLoadDemoData}
-              icon={isLoadingDemoData ? <LoadingOutlined /> : <ReloadOutlined />}
-              disabled={isLoadingDemoData}
-            >
-              Load demo data
-            </ColoredButton>
+            <Card className={styles.initialDataChoiceCard}>
+              <Space direction="vertical" size="middle">
+                <Text strong>Select how you want to start</Text>
+                <Text type="secondary">
+                  Load demo files to explore the app, or upload your own data.
+                </Text>
+                <Space wrap>
+                  <Button
+                    type="primary"
+                    onClick={handleLoadDemo}
+                    loading={isLoadingDemo}
+                  >
+                    Load Demo Data
+                  </Button>
+                  <Button
+                    type="default"
+                    icon={<DatabaseOutlined />}
+                    onClick={handleLoadMyData}
+                  >
+                    Load My Data
+                  </Button>
+                </Space>
+                <Button
+                  type="text"
+                  icon={<DatabaseOutlined />}
+                  onClick={handleContinueWithoutData}
+                >
+                  Continue without data
+                </Button>
+              </Space>
+            </Card>
           </div>
-        </div>
-      </Layout>
+        ) : null}
+        {shouldShowInitialChoice ? null : <Explorer />}
+      </SingleViewAppLayout>
     </>
   );
 }

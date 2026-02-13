@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { getCorrelationData as getData } from "@/utils/functionsCorrelation";
-import { pubsub } from "@/utils/pubsub";
-
-const { publish } = pubsub;
+import { notifyError } from "@/utils/notifications";
 
 export default function useCorrelationMatrixData(
   isSync = true,
@@ -19,8 +17,6 @@ export default function useCorrelationMatrixData(
 
     try {
       const res = getData(selection, params);
-
-      console.log("RES", res);
       if (params.nTop > 0 && res) {
         const info = getInfo(res, params.nTop);
         setInfo(info);
@@ -30,10 +26,10 @@ export default function useCorrelationMatrixData(
 
       setData(res);
     } catch (error) {
-      publish("notification", {
-        message: "Error computing data",
-        description: error.message,
-        type: "error",
+      notifyError({
+        message: "Could not compute correlation matrix",
+        error,
+        fallback: "Correlation matrix calculation failed.",
       });
       setData(null);
     }

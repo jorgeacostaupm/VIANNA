@@ -28,7 +28,7 @@ const DropArea = ({
   save,
 }) => {
   const [active, setActive] = useState(false);
-  const [searchText, updateSearch] = useState("");
+  const [searchText] = useState("");
 
   const { errors } = useFormikContext();
 
@@ -92,11 +92,6 @@ const DropArea = ({
 
     moveNode(transfered, true, position);
   };
-
-  const opStyle =
-    aggOp !== "mean"
-      ? { gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))" }
-      : { gridTemplateColumns: "repeat(2, 1fr)" };
 
   return (
     <>

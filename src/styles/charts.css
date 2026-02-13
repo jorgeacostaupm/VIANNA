@@ -103,7 +103,9 @@ rect.bar {
   stroke: rgba(15, 23, 42, 0.15);
   stroke-width: 0.6;
   filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.12));
-  transition: opacity var(--transition-fast), filter var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    filter var(--transition-fast);
 }
 
 rect.histogram-bar {
@@ -172,26 +174,21 @@ path.violin {
 }
 
 svg .grid .tick line,
-.chart-grid-line,
+svg .grid line,
+svg line.chart-grid-line,
 .grid-line {
   pointer-events: none;
-  stroke-opacity: 0.7;
-  stroke-dasharray: 8 6;
+  stroke: var(--chart-grid-strong);
+  stroke-width: 1;
+  stroke-dasharray: 7 9;
   stroke-linecap: butt;
-  transition:
-    stroke var(--transition-fast),
-    stroke-opacity var(--transition-fast),
-    stroke-width var(--transition-fast);
+  shape-rendering: crispEdges;
+  vector-effect: non-scaling-stroke;
 }
 
 .grid-line-active {
   stroke: var(--chart-grid-strong);
-  stroke-opacity: 1;
-  stroke-width: 2.4;
-}
-
-.grid-line {
-  stroke: var(--chart-grid);
+  stroke-width: 1;
 }
 
 .zero-line {

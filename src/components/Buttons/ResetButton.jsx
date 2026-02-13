@@ -5,9 +5,7 @@ import { RollbackOutlined } from "@ant-design/icons";
 import { setDataframe } from "@/store/slices/dataSlice";
 import BarButton from "@/components/ui/BarButton";
 import { setFilteredData } from "@/store/slices/cantabSlice";
-import { pubsub } from "@/utils/pubsub";
-
-const { publish } = pubsub;
+import { notifySuccess, notifyWarning } from "@/utils/notifications";
 
 export default function ResetButton() {
   const dispatch = useDispatch();
@@ -17,21 +15,18 @@ export default function ResetButton() {
   );
 
   const onReset = () => {
-    let configuration;
     if (!filteredData || filteredData.length === 0) {
-      configuration = {
-        message: "No data to restore",
-        type: "warning",
-      };
+      notifyWarning({
+        message: "No backup data to restore",
+        description: "There are no filtered rows waiting to be restored.",
+      });
     } else {
-      configuration = {
-        message: "Data restored",
-        type: "success",
-      };
       dispatch(setDataframe([...filteredData, ...dataframe]));
       dispatch(setFilteredData(null));
+      notifySuccess({
+        message: "Original data restored",
+      });
     }
-    publish("notification", configuration);
   };
 
   return (

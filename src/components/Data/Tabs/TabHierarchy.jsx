@@ -13,19 +13,16 @@ import {
 import { addAttribute, removeAttribute } from "@/store/async/metaAsyncReducers";
 import { getRandomInt } from "@/utils/functions";
 import { HIDDEN_VARIABLES, VariableTypes } from "@/utils/Constants";
-import { pubsub } from "@/utils/pubsub";
+import {
+  buildListResultDescription,
+  formatListPreview,
+  notify,
+  notifyError,
+  notifyInfo,
+} from "@/utils/notifications";
+import styles from "../Data.module.css";
 
 const { Title, Text } = Typography;
-const { publish } = pubsub;
-
-const formatPreview = (arr, max = 12) => {
-  if (!arr || arr.length === 0) return "—";
-  const preview = arr.slice(0, max);
-  const remaining = arr.length - preview.length;
-  return remaining > 0
-    ? `${preview.join(", ")} (+${remaining} more)`
-    : preview.join(", ");
-};
 
 const getDataframeVariables = (dataframe) => {
   if (!Array.isArray(dataframe) || dataframe.length === 0) return [];
@@ -48,6 +45,11 @@ const SyncPanel = () => {
   const hierarchy = useSelector((state) => state.metadata.attributes);
   const varTypes = useSelector((state) => state.cantab.present.varTypes || {});
   const [actionLoading, setActionLoading] = useState(null);
+  const [actionProgress, setActionProgress] = useState({
+    mode: null,
+    completed: 0,
+    total: 0,
+  });
 
   const {
     datasetVars,
@@ -91,25 +93,24 @@ const SyncPanel = () => {
 
   const handleAddMissingNodes = useCallback(async () => {
     if (missingVars.length === 0) {
-      publish("notification", {
+      notifyInfo({
         message: "No missing nodes",
         description: "Hierarchy already contains all dataset variables.",
-        type: "info",
       });
       return;
     }
 
     if (!hasRootNode) {
-      publish("notification", {
+      notifyError({
         message: "Cannot add missing nodes",
         description:
           "The hierarchy root node (id: 0, type: root) is missing. Upload a valid hierarchy first.",
-        type: "error",
       });
       return;
     }
 
     setActionLoading("add");
+    setActionProgress({ mode: "add", completed: 0, total: missingVars.length });
     const added = [];
     const failed = [];
 
@@ -128,23 +129,26 @@ const SyncPanel = () => {
       } catch {
         failed.push(varName);
       }
+      setActionProgress((prev) => ({
+        ...prev,
+        completed: prev.completed + 1,
+      }));
     }
 
     setActionLoading(null);
+    setActionProgress({ mode: null, completed: 0, total: 0 });
 
-    publish("notification", {
+    notify({
       message:
         failed.length === 0
           ? "Missing nodes added"
           : "Missing nodes added with warnings",
-      description: [
-        added.length > 0 ? `Added (${added.length}): ${formatPreview(added)}` : "",
-        failed.length > 0
-          ? `Failed (${failed.length}): ${formatPreview(failed)}`
-          : "",
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      description: buildListResultDescription({
+        successLabel: "Added",
+        successItems: added,
+        failureItems: failed,
+        maxItems: 12,
+      }),
       type: failed.length === 0 ? "success" : "warning",
       pauseOnHover: true,
       duration: 5,
@@ -153,16 +157,20 @@ const SyncPanel = () => {
 
   const handleRemoveExtraNodes = useCallback(async () => {
     if (extraAttributeNodes.length === 0) {
-      publish("notification", {
+      notifyInfo({
         message: "No removable extra nodes",
         description:
           "There are no extra attribute nodes. Aggregations are not removed automatically.",
-        type: "info",
       });
       return;
     }
 
     setActionLoading("remove");
+    setActionProgress({
+      mode: "remove",
+      completed: 0,
+      total: extraAttributeNodes.length,
+    });
     const removed = [];
     const failed = [];
 
@@ -178,25 +186,26 @@ const SyncPanel = () => {
       } catch {
         failed.push(node.name);
       }
+      setActionProgress((prev) => ({
+        ...prev,
+        completed: prev.completed + 1,
+      }));
     }
 
     setActionLoading(null);
+    setActionProgress({ mode: null, completed: 0, total: 0 });
 
-    publish("notification", {
+    notify({
       message:
         failed.length === 0
           ? "Extra attribute nodes removed"
           : "Extra node cleanup completed with warnings",
-      description: [
-        removed.length > 0
-          ? `Removed (${removed.length}): ${formatPreview(removed)}`
-          : "",
-        failed.length > 0
-          ? `Failed (${failed.length}): ${formatPreview(failed)}`
-          : "",
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      description: buildListResultDescription({
+        successLabel: "Removed",
+        successItems: removed,
+        failureItems: failed,
+        maxItems: 12,
+      }),
       type: failed.length === 0 ? "success" : "warning",
       pauseOnHover: true,
       duration: 5,
@@ -236,21 +245,29 @@ const SyncPanel = () => {
 
           {missingVars.length > 0 ? (
             <Text type="secondary">
-              Missing nodes: {formatPreview(missingVars)}
+              Missing nodes: {formatListPreview(missingVars, 12, "—")}
             </Text>
           ) : null}
 
           {extraAttributeNodes.length > 0 ? (
             <Text type="secondary">
               Extra attributes:{" "}
-              {formatPreview(extraAttributeNodes.map((node) => node.name))}
+              {formatListPreview(
+                extraAttributeNodes.map((node) => node.name),
+                12,
+                "—",
+              )}
             </Text>
           ) : null}
 
           {extraAggregationNodes.length > 0 ? (
             <Text type="secondary">
               Extra aggregations:{" "}
-              {formatPreview(extraAggregationNodes.map((node) => node.name))}
+              {formatListPreview(
+                extraAggregationNodes.map((node) => node.name),
+                12,
+                "—",
+              )}
             </Text>
           ) : null}
 
@@ -274,6 +291,14 @@ const SyncPanel = () => {
               Remove Extra Nodes
             </Button>
           </Space>
+          {actionLoading && actionProgress.total > 0 ? (
+            <Text type="secondary">
+              {actionProgress.mode === "add"
+                ? "Adding nodes"
+                : "Removing nodes"}
+              : {actionProgress.completed}/{actionProgress.total}
+            </Text>
+          ) : null}
         </>
       )}
     </div>
@@ -291,18 +316,7 @@ const Info = () => {
   );
 
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "50%",
-        flexDirection: "column",
-        gap: "1rem",
-        padding: "20px",
-        boxSizing: "border-box",
-        borderRadius: "4px",
-        overflow: "auto",
-      }}
-    >
+    <div className={`${styles.tabColumn} ${styles.tabColumnScrollable}`}>
       <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
         Metadata
       </Title>
@@ -382,17 +396,7 @@ const Info = () => {
 const UploadPanel = () => {
   return (
     <div
-      style={{
-        width: "50%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        gap: "1rem",
-        borderLeft: "1px solid #eee",
-        padding: "20px",
-        boxSizing: "border-box",
-        overflow: "auto",
-      }}
+      className={`${styles.tabColumn} ${styles.tabColumnWithDivider} ${styles.tabColumnScrollable}`}
     >
       <Title
         level={4}
@@ -417,15 +421,7 @@ const UploadPanel = () => {
 
 export default function TabHierarchy() {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        width: "100%",
-        gap: "1rem",
-        overflow: "auto",
-      }}
-    >
+    <div className={`${styles.tabSplit} ${styles.tabColumnScrollable}`}>
       <Info />
       <UploadPanel />
     </div>

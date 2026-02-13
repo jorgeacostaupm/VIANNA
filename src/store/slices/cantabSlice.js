@@ -14,16 +14,15 @@ import {
   generateColumnBatch,
 } from "../async/dataAsyncReducers";
 
-import { pubsub } from "@/utils/pubsub";
 import { getVariableTypes } from "@/utils/functions";
 import { HIDDEN_VARIABLES, VariableTypes } from "@/utils/Constants";
+import { notifyError, notifyInfo, notifySuccess } from "@/utils/notifications";
 import {
   applyOperation,
   updateAttribute,
   updateDescriptions,
 } from "../async/metaAsyncReducers";
 import { nullsToQuarantine } from "../async/cantabAsyncReducers";
-const { publish } = pubsub;
 
 export const setTimeVar = createAsyncThunk(
   "cantab/setTimeVar",
@@ -104,6 +103,13 @@ const initialState = {
   },
 };
 
+const isUserCanceledAction = (payload, error) => {
+  const message = String(
+    payload?.error || payload?.message || payload || error?.message || "",
+  ).toLowerCase();
+  return message.includes("canceled by user");
+};
+
 const cantabSlice = createSlice({
   name: "cantab",
   initialState,
@@ -177,7 +183,6 @@ const cantabSlice = createSlice({
     builder
       .addCase(nullsToQuarantine.fulfilled, (state, action) => {
         const quarantineData = action.payload.quarantineData;
-        console.log(quarantineData);
         state.quarantineData = [...state.quarantineData, ...quarantineData];
         state.quarantineSelection = [
           ...state.quarantineData,
@@ -185,12 +190,11 @@ const cantabSlice = createSlice({
         ];
       })
       .addCase(nullsToQuarantine.rejected, (_, action) => {
-        const configuration = {
-          message: "Error setting Quarantine data",
-          description: action.payload,
-          type: "error",
-        };
-        publish("notification", configuration);
+        notifyError({
+          message: "Could not update quarantine data",
+          error: action.payload || action.error,
+          fallback: "Failed to move null values into quarantine.",
+        });
       });
 
     builder
@@ -207,95 +211,88 @@ const cantabSlice = createSlice({
         state.selectionGroups = [];
         state.selectionTimestamps = [];
 
-        const configuration = {
+        notifySuccess({
           message: "Data updated",
-          type: "success",
-        };
-        publish("notification", configuration);
+        });
       })
-      .addCase(updateData.rejected, (state, action) => {
-        const configuration = {
-          message: "Error loading data",
-          description: action.payload,
-          type: "error",
-        };
-        publish("notification", configuration);
+      .addCase(updateData.rejected, (_, action) => {
+        notifyError({
+          message: "Could not update dataset",
+          error: action.payload || action.error,
+          fallback: "The dataset could not be processed.",
+        });
       });
 
-    builder.addCase(updateDescriptions.fulfilled, (state, action) => {
-      const configuration = {
-        message: "Descriptions Updated",
-        type: "success",
-      };
-      publish("notification", configuration);
+    builder.addCase(updateDescriptions.fulfilled, () => {
+      notifySuccess({
+        message: "Descriptions updated",
+      });
     });
-    builder.addCase(updateDescriptions.rejected, (state, action) => {
-      const configuration = {
-        message: "Error updating descriptions",
-        description: action.payload,
-        type: "error",
+    builder.addCase(updateDescriptions.rejected, (_, action) => {
+      notifyError({
+        message: "Could not update descriptions",
+        error: action.payload || action.error,
+        fallback: "Description update failed.",
         pauseOnHover: true,
-      };
-      publish("notification", configuration);
+      });
     });
 
     builder
       .addCase(generateColumn.fulfilled, (state, action) => {
-        const { data, quarantineData, filteredData } = action.payload;
+        const { data, quarantineData } = action.payload;
         state.quarantineData = quarantineData;
         state.varTypes = getVariableTypes(data);
-        const configuration = {
-          message: "Aggregation computed",
-          type: "success",
-        };
-        publish("notification", configuration);
+        notifySuccess({
+          message: "Aggregation created",
+        });
       })
-      .addCase(generateColumn.rejected, (state, action) => {
-        const configuration = {
-          message: "Error computing aggregation",
-          type: "error",
-        };
-        publish("notification", configuration);
+      .addCase(generateColumn.rejected, (_, action) => {
+        if (isUserCanceledAction(action.payload, action.error)) {
+          notifyInfo({
+            message: "Aggregation update canceled",
+          });
+          return;
+        }
+        notifyError({
+          message: "Could not compute aggregation",
+          error: action.payload || action.error,
+          fallback: "Aggregation column generation failed.",
+        });
       });
 
     builder
       .addCase(generateColumnBatch.fulfilled, (state, action) => {
-        const { data, quarantineData, filteredData } = action.payload;
+        const { data, quarantineData } = action.payload;
         state.quarantineData = quarantineData;
         state.varTypes = getVariableTypes(data);
-        const configuration = {
-          message: "Aggregations computed",
-          type: "success",
-        };
-        publish("notification", configuration);
+        notifySuccess({
+          message: "Aggregations created",
+        });
       })
-      .addCase(generateColumnBatch.rejected, (state, action) => {
-        const configuration = {
-          message: "Error computing aggregations",
-          description: action.payload,
-          type: "error",
-        };
-        publish("notification", configuration);
+      .addCase(generateColumnBatch.rejected, (_, action) => {
+        notifyError({
+          message: "Could not compute aggregations",
+          error: action.payload || action.error,
+          fallback: "Batch aggregation failed.",
+        });
       });
 
     builder
-      .addCase(applyOperation.fulfilled, (state, action) => {})
-      .addCase(applyOperation.rejected, (state, action) => {
-        const configuration = {
-          message: "Error applying operations",
-          description: action.payload,
-          type: "error",
-        };
-        publish("notification", configuration);
+      .addCase(applyOperation.fulfilled, () => {})
+      .addCase(applyOperation.rejected, (_, action) => {
+        notifyError({
+          message: "Could not apply operations",
+          error: action.payload || action.error,
+          fallback: "Operation execution failed.",
+        });
       });
 
-    builder.addCase(replaceValuesWithNull.rejected, (state, action) => {
-      const configuration = {
-        message: "Error nullifying values",
-        description: action.payload,
-        type: "error",
-      };
-      publish("notification", configuration);
+    builder.addCase(replaceValuesWithNull.rejected, (_, action) => {
+      notifyError({
+        message: "Could not nullify values",
+        error: action.payload || action.error,
+        fallback: "Failed to replace selected values with null.",
+      });
     });
 
     builder.addCase(convertColumnType.fulfilled, (state, action) => {
@@ -304,19 +301,24 @@ const cantabSlice = createSlice({
 
     builder
       .addCase(updateAttribute.fulfilled, (state, action) => {
-        const configuration = {
+        notifySuccess({
           message: `Attribute ${action.payload.node.name} updated`,
-          type: "success",
-        };
-        publish("notification", configuration);
+        });
       })
-      .addCase(updateAttribute.rejected, (state, action) => {
-        const configuration = {
-          message: `Error updating ${action.payload.node.name}`,
-          description: action.payload.error,
-          type: "error",
-        };
-        publish("notification", configuration);
+      .addCase(updateAttribute.rejected, (_, action) => {
+        if (isUserCanceledAction(action.payload, action.error)) {
+          notifyInfo({
+            message: "Attribute update canceled",
+          });
+          return;
+        }
+        const nodeName = action.payload?.node?.name || "attribute";
+
+        notifyError({
+          message: `Could not update ${nodeName}`,
+          error: action.payload?.error || action.payload || action.error,
+          fallback: `Update failed for ${nodeName}.`,
+        });
       });
   },
 });
@@ -349,13 +351,20 @@ export const selectVarTypes = (state) => state.cantab.present.varTypes;
 export const selectNavioColumns = (state) =>
   state.dataframe.present.navioColumns;
 
+const isSelectableColumn = (key, navioColumns) =>
+  typeof key === "string" &&
+  key.trim().length > 0 &&
+  navioColumns?.includes(key) &&
+  !HIDDEN_VARIABLES.includes(key);
+
 export const selectNumericVars = createSelector(
   [selectVarTypes, selectNavioColumns],
   (varTypes, navioColumns) => {
     return Object.entries(varTypes)
       .filter(
         ([key, type]) =>
-          type === VariableTypes.NUMERICAL && navioColumns?.includes(key)
+          type === VariableTypes.NUMERICAL &&
+          isSelectableColumn(key, navioColumns)
       )
       .map(([key]) => key);
   }
@@ -367,7 +376,8 @@ export const selectCategoricalVars = createSelector(
     Object.entries(varTypes)
       .filter(
         ([key, type]) =>
-          type === VariableTypes.CATEGORICAL && navioColumns?.includes(key)
+          type === VariableTypes.CATEGORICAL &&
+          isSelectableColumn(key, navioColumns)
       )
       .map(([key]) => key)
 );
@@ -378,7 +388,8 @@ export const selectUnkownVars = createSelector(
     Object.entries(varTypes)
       .filter(
         ([key, type]) =>
-          type === VariableTypes.UNKNOWN && navioColumns?.includes(key)
+          type === VariableTypes.UNKNOWN &&
+          isSelectableColumn(key, navioColumns)
       )
       .map(([key]) => key)
 );
@@ -391,8 +402,7 @@ export const selectVars = createSelector(
         ([key, type]) =>
           (type === VariableTypes.CATEGORICAL ||
             type === VariableTypes.NUMERICAL) &&
-          navioColumns?.includes(key) &&
-          !HIDDEN_VARIABLES.includes(key)
+          isSelectableColumn(key, navioColumns)
       )
       .map(([key]) => key)
 );
@@ -402,8 +412,7 @@ export const selectNavioVars = createSelector(
   (varTypes, navioColumns) =>
     Object.entries(varTypes)
       .filter(
-        ([key]) =>
-          navioColumns?.includes(key) && !HIDDEN_VARIABLES.includes(key)
+        ([key]) => isSelectableColumn(key, navioColumns)
       )
       .map(([key]) => key)
 );

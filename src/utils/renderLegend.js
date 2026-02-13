@@ -1,5 +1,4 @@
 import * as d3 from "d3";
-import { deepCopy } from "@/utils/functions";
 
 export default function renderLegend(
   legend,
@@ -21,9 +20,9 @@ export default function renderLegend(
     .attr("class", "legend-group")
     .style("cursor", "pointer");
 
-  let tmpGroups = deepCopy(groups).sort();
+  const orderedGroups = Array.isArray(groups) ? [...groups] : [];
 
-  tmpGroups.forEach((group, i) => {
+  orderedGroups.forEach((group, i) => {
     const y = i * lineHeight + circleSize * 2;
 
     const legendItem = legendGroup
@@ -82,7 +81,7 @@ export default function renderLegend(
 
       legendItem
         .on("mouseover", () => {
-          let hideGroups = tmpGroups.filter((d) => d !== group);
+          const hideGroups = orderedGroups.filter((d) => d !== group);
           setHide(hideGroups);
           if (showStats) showStats(group);
         })

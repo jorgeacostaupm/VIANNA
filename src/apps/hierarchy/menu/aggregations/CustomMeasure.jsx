@@ -46,7 +46,6 @@ const CustomMeasure = ({ formula }) => {
 
     try {
       const executable_code = buildAggregation(parsed);
-      console.log("FORMULA:", executable_code.formula);
       setFieldValue("info.exec", executable_code.formula, false);
       setTouched("info.exec", false);
 

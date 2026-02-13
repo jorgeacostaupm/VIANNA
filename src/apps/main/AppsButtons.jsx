@@ -11,12 +11,18 @@ import {
 import LinkButton from "@/components/ui/ButtonLink";
 import DataManagementButton from "@/components/Data/Buttons/DataManagementButton";
 
-export default function AppsButtons() {
+export default function AppsButtons({
+  dataManagementOpen,
+  onDataManagementOpenChange,
+}) {
   const dt = useSelector((state) => state.dataframe.present.dataframe);
 
   return (
     <div style={{ display: "flex", gap: "10px" }}>
-      <DataManagementButton></DataManagementButton>
+      <DataManagementButton
+        open={dataManagementOpen}
+        onOpenChange={onDataManagementOpenChange}
+      />
       <LinkButton to="metadata" icon={<PartitionOutlined />} />
       {dt && (
         <>

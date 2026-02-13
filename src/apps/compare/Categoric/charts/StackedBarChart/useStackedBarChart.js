@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { useLayoutEffect } from "react";
 import { deepCopy, moveTooltip } from "@/utils/functions";
 import useResizeObserver from "@/hooks/useResizeObserver";
+import { paintLayersInOrder } from "@/utils/gridInteractions";
 import {
   catMargins,
   renderLegend,
@@ -214,9 +215,10 @@ export default function useStackedBarChart({
       });
 
     if (yGridG) {
-      yGridG.raise();
-      xAxisG.raise();
-      yAxisG.raise();
+      paintLayersInOrder({
+        chartGroup: chart,
+        layers: [xAxisG, yAxisG, yGridG],
+      });
     }
 
     if (showLegend !== false) {

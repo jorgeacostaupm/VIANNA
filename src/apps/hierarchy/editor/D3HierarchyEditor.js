@@ -13,6 +13,14 @@ import store from "@/store/store";
 import { pubsub } from "@/utils/pubsub";
 import { DataType } from "@/utils/Constants";
 import { fixTooltipToNode, getRandomInt } from "@/utils/functions";
+import {
+  extractErrorMessage,
+  formatListPreview,
+  notify,
+  notifyError,
+  notifyInfo,
+  notifyWarning,
+} from "@/utils/notifications";
 
 let { publish, subscribe } = pubsub;
 
@@ -57,25 +65,8 @@ const clampNumber = (value, min, max, fallback) => {
 const getNodeLabel = (node) =>
   node?.data?.name || node?.name || `Node #${node?.id ?? "unknown"}`;
 
-const formatPreview = (items, max = 8) => {
-  if (!Array.isArray(items) || items.length === 0) return "-";
-  const preview = items.slice(0, max);
-  const remaining = items.length - preview.length;
-  return remaining > 0
-    ? `${preview.join(", ")} (+${remaining} more)`
-    : preview.join(", ");
-};
-
-const getErrorMessage = (error, fallback = "Unknown error") => {
-  if (typeof error === "string" && error.trim().length > 0) return error;
-  if (error?.message && String(error.message).trim().length > 0) {
-    return error.message;
-  }
-  return fallback;
-};
-
 export default class D3HierarchyEditor {
-  orientation = "horizontal";
+  orientation = "vertical";
   linkStyle = "smooth";
   viewConfig = defaultViewConfig;
   targetNode = null;
@@ -228,7 +219,7 @@ export default class D3HierarchyEditor {
     }
 
     return d3.zoomIdentity
-      .translate(this.width / 2, this.height / 8)
+      .translate(this.width / 2, this.height / 3)
       .scale(scale);
   }
 
@@ -329,6 +320,12 @@ export default class D3HierarchyEditor {
     if (this.orientation === nextOrientation) return;
 
     this.orientation = nextOrientation;
+    const baseTransform = this.getBaseTransform();
+
+    if (this.main && this.zoomBehaviour && this.svg) {
+      this.main.attr("transform", baseTransform);
+      this.svg.call(this.zoomBehaviour.transform, baseTransform);
+    }
 
     if (!this.root) return;
 
@@ -398,7 +395,6 @@ export default class D3HierarchyEditor {
   }
 
   update(newData) {
-    console.log("updateData", newData);
     this.setSize();
     this.data = newData;
     this.root = d3.hierarchy(newData);
@@ -408,7 +404,6 @@ export default class D3HierarchyEditor {
   }
 
   drawHierarchy(source, instant = false) {
-    console.log("drawHierarchy");
     const { root } = this;
     const siblingSpacing = this.viewConfig.nodeSize;
     const treeLayout = d3.tree().nodeSize([siblingSpacing, siblingSpacing]);
@@ -1148,7 +1143,6 @@ export default class D3HierarchyEditor {
   }
 
   setNavioNodes() {
-    console.log("setNavioNodes");
     let attributes = [];
     const addAttribute = (n, hasInactiveAncestor = false) => {
       const isActive = n?.data?.isActive !== false;
@@ -1237,17 +1231,17 @@ export default class D3HierarchyEditor {
           }),
         ).unwrap();
       } catch (error) {
-        failed.push(`${nodeName}: ${getErrorMessage(error)}`);
+        failed.push(`${nodeName}: ${extractErrorMessage(error, "Unknown error")}`);
       }
     }
 
     if (failed.length > 0) {
-      publish("notification", {
+      notify({
         message:
           failed.length === mods.length
             ? "Cannot add selected nodes"
             : "Selection moved with warnings",
-        description: `Failed (${failed.length}): ${formatPreview(failed, 4)}`,
+        description: `Failed (${failed.length}): ${formatListPreview(failed, 4)}`,
         type: failed.length === mods.length ? "error" : "warning",
         pauseOnHover: true,
         duration: 6,
@@ -1268,10 +1262,9 @@ export default class D3HierarchyEditor {
       .data();
 
     if (selectedNodes.length === 0) {
-      publish("notification", {
+      notifyInfo({
         message: "No nodes selected",
         description: "Select one or more nodes to delete them.",
-        type: "info",
       });
       return;
     }
@@ -1281,10 +1274,9 @@ export default class D3HierarchyEditor {
     );
 
     if (deletableNodes.length === 0) {
-      publish("notification", {
+      notifyWarning({
         message: "Cannot delete selection",
         description: "The root node cannot be deleted.",
-        type: "warning",
       });
       return;
     }
@@ -1293,7 +1285,7 @@ export default class D3HierarchyEditor {
     const shouldDelete = window.confirm(
       `You are going to delete ${deletableNodes.length} selected node${
         deletableNodes.length === 1 ? "" : "s"
-      }.\n\n${formatPreview(nodeNames, 4)}\n\nThis action cannot be undone.`,
+      }.\n\n${formatListPreview(nodeNames, 4)}\n\nThis action cannot be undone.`,
     );
 
     if (!shouldDelete) return;
@@ -1341,30 +1333,32 @@ export default class D3HierarchyEditor {
         ).unwrap();
         deletedCount += 1;
       } catch (error) {
-        failed.push(`${getNodeLabel(node)}: ${getErrorMessage(error)}`);
+        failed.push(
+          `${getNodeLabel(node)}: ${extractErrorMessage(error, "Unknown error")}`,
+        );
       }
     }
 
     this.svg.selectAll(".showCircle").classed("selectedNode", false);
 
     if (failed.length === 0) {
-      publish("notification", {
+      notify({
         message: "Selection deleted",
-        description: `Deleted (${deletedCount}): ${formatPreview(nodeNames, 6)}`,
+        description: `Deleted (${deletedCount}): ${formatListPreview(nodeNames, 6)}`,
         type: "success",
       });
       return;
     }
 
-    publish("notification", {
+    notify({
       message:
         deletedCount === 0
           ? "Cannot delete selected nodes"
           : "Selection deleted with warnings",
       description:
         deletedCount === 0
-          ? `Failed (${failed.length}): ${formatPreview(failed, 4)}`
-          : `Deleted ${deletedCount}/${deletableNodes.length}. Failed (${failed.length}): ${formatPreview(failed, 4)}`,
+          ? `Failed (${failed.length}): ${formatListPreview(failed, 4)}`
+          : `Deleted ${deletedCount}/${deletableNodes.length}. Failed (${failed.length}): ${formatListPreview(failed, 4)}`,
       type: deletedCount === 0 ? "error" : "warning",
       pauseOnHover: true,
       duration: 6,
@@ -1545,10 +1539,9 @@ export default class D3HierarchyEditor {
 
     if (childIDs.length === 0) {
       if (failed.length > 0) {
-        publish("notification", {
+        notifyError({
           message: "Cannot aggregate selection",
-          description: `Failed (${failed.length}): ${formatPreview(failed, 4)}`,
-          type: "error",
+          description: `Failed (${failed.length}): ${formatListPreview(failed, 4)}`,
           pauseOnHover: true,
           duration: 6,
         });
@@ -1567,10 +1560,9 @@ export default class D3HierarchyEditor {
     this.svg.selectAll(".showCircle").classed("selectedNode", false);
 
     if (failed.length > 0) {
-      publish("notification", {
+      notifyWarning({
         message: "Aggregation completed with warnings",
-        description: `Failed (${failed.length}): ${formatPreview(failed, 4)}`,
-        type: "warning",
+        description: `Failed (${failed.length}): ${formatListPreview(failed, 4)}`,
         pauseOnHover: true,
         duration: 6,
       });

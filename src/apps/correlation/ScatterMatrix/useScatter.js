@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { moveTooltip } from "@/utils/functions";
 import useResizeObserver from "@/hooks/useResizeObserver";
 import { useSelector } from "react-redux";
+import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import renderLegend from "@/utils/renderLegend";
 import { CHART_HIGHLIGHT } from "@/utils/chartTheme";
 import { attachTickLabelGridHover } from "@/utils/gridInteractions";
@@ -18,6 +19,17 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
   const [hide, setHide] = useState([]);
   const [blur, setBlur] = useState([]);
   const [scatter, setScatter] = useState(null);
+  const groupVar = config?.groupVar;
+  const groupsInData =
+    Array.isArray(data) && groupVar
+      ? Array.from(new Set(data.map((d) => d[groupVar]))).filter(
+          (value) => value != null
+        )
+      : [];
+  const { colorDomain, orderedGroups: groups } = useGroupColorDomain(
+    groupVar,
+    groupsInData
+  );
 
   useEffect(() => {
     const { groupVar, pointSize, variables, pointOpacity, showLegend } = config;
@@ -38,10 +50,6 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
     d3.select(legendRef.current).selectAll("*").remove();
 
     const colorScheme = d3.schemeCategory10;
-
-    const allGroups = data.map((d) => d[groupVar]);
-    const groupSet = new Set(allGroups);
-    const groups = Array.from(groupSet);
 
     const totalWidth = dimensions.width;
     const totalHeight = dimensions.height;
@@ -68,7 +76,7 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
       .paddingInner(0.1)
       .range([0, chartSize]);
 
-    const color = d3.scaleOrdinal().domain(groups).range(colorScheme);
+    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
 
     if (showLegend !== false) {
       renderLegend(legend, groups, color, blur, setBlur, hide, setHide);
@@ -459,6 +467,8 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
     config.showLegend,
     dimensions,
     scatter,
+    colorDomain,
+    groups,
   ]);
 
   useEffect(() => {

@@ -9,12 +9,11 @@ import useNotification from "@/hooks/useNotification";
 import AppBar from "@/components/ui/AppBar";
 import AppsButtons from "./AppsButtons";
 import OverviewApp from "./old/Overview/OverviewApp";
-import { pubsub } from "@/utils/pubsub";
 import styles from "@/styles/App.module.css";
 import { setInit } from "@/store/slices/cantabSlice";
 import { APP_NAME, APP_DESC } from "@/utils/Constants";
+import { notifyError } from "@/utils/notifications";
 
-const { publish } = pubsub;
 const ResponsiveGridLayout = WidthProvider(GridLayout);
 
 const layout = [{ i: "explorer", x: 0, y: 0, w: 12, h: 7 }];
@@ -57,14 +56,9 @@ const idVar = "id";
 const groupVar = "Country";
 const timeVar = "Visit Name";
 
-const shortData = "./vis/csv/full_data.csv";
 const largeData = "./vis/csv/largeTestData.csv";
-const financial = "./vis/csv/financial.xls";
-const realData = "./vis/csv/realData.csv";
 
 const largeHierarchy = "./vis/hierarchies/largeTestDatahierarchy.json";
-const financialHierarchy = "./vis/hierarchies/financialHierarchy.json";
-const realDataHierarchy = "./vis/hierarchies/realData.json";
 
 const hierarchyFile = largeHierarchy;
 const dataFile = largeData;
@@ -91,10 +85,10 @@ async function loadTestData(dispatch) {
     dispatch(setGroupVar(groupVar));
     dispatch(setTimeVar(timeVar));
   } catch (error) {
-    publish("notification", {
-      message: "Error Loading Test Data",
-      description: error.message,
-      type: "error",
+    notifyError({
+      message: "Could not load test data",
+      error,
+      fallback: "An error occurred while loading demo files.",
     });
   }
 }

@@ -413,25 +413,12 @@ class UnexpectedInput extends LarkError {
 
   */
   get_context(text, span = 40) {
-    let after, before;
-    let pos = this.pos_in_stream;
-    let start = max(pos - span, 0);
-    let end = pos + span;
-    if (!(text instanceof bytes)) {
-      before = last_item(rsplit(text.slice(start, pos), "\n", 1));
-      after = text.slice(pos, end).split("\n", 1)[0];
-      return before + after + "\n" + " " * before.expandtabs().length + "^\n";
-    } else {
-      before = last_item(rsplit(text.slice(start, pos), "\n", 1));
-      after = text.slice(pos, end).split("\n", 1)[0];
-      return (
-        before +
-        after +
-        "\n" +
-        " " * before.expandtabs().length +
-        "^\n"
-      ).decode("ascii", "backslashreplace");
-    }
+    const pos = Number.isFinite(this.pos_in_stream) ? this.pos_in_stream : 0;
+    const start = Math.max(pos - span, 0);
+    const end = pos + span;
+    const before = last_item(text.slice(start, pos).split("\n")) || "";
+    const after = text.slice(pos, end).split("\n", 1)[0];
+    return `${before}${after}\n${" ".repeat(before.length)}^\n`;
   }
 
   /**
@@ -2825,17 +2812,6 @@ class _Parser {
         }
         throw e;
       } else if (e instanceof Error) {
-        if (this.debug) {
-          console.log("");
-          console.log("STATE STACK DUMP");
-          console.log("----------------");
-          for (const [i, s] of enumerate(state.state_stack)) {
-            console.log(format("%d)", i), s);
-          }
-
-          console.log("");
-        }
-
         throw e;
       } else {
         throw e;

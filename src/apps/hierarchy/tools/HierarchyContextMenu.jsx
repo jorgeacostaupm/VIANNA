@@ -24,6 +24,7 @@ import {
   setNodesOverviewAccess,
 } from "@/store/slices/metaSlice";
 import { getRandomInt } from "@/utils/functions";
+import { notifySuccess } from "@/utils/notifications";
 import OperationModal from "./OperationModal";
 
 const { subscribe, unsubscribe, publish } = pubsub;
@@ -129,14 +130,13 @@ export default function HierarchyContextMenu({ editor }) {
     dispatch(
       setNodeOverviewAccess({ nodeId: node.id, isActive: nextIsActive }),
     );
-    publish("notification", {
+    notifySuccess({
       message: nextIsActive
         ? "Node activated in Overview"
         : "Node deactivated in Overview",
       description: nextIsActive
         ? `${nodeLabel} is now available in Overview.`
         : `${nodeLabel} will not be accessible from Overview.`,
-      type: "success",
     });
     setActive(false);
   };
@@ -159,12 +159,11 @@ export default function HierarchyContextMenu({ editor }) {
     const nodeIds = selectableNodes.map((n) => n.id);
 
     dispatch(setNodesOverviewAccess({ nodeIds, isActive: nextIsActive }));
-    publish("notification", {
+    notifySuccess({
       message: nextIsActive
         ? "Selection activated in Overview"
         : "Selection hidden in Overview",
       description: `${nodeIds.length} node${nodeIds.length === 1 ? "" : "s"} updated.`,
-      type: "success",
     });
     setActive(false);
   };

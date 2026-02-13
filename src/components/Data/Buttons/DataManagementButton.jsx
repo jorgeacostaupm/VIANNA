@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Tabs } from "antd";
+import { Button, Grid, Modal, Tabs } from "antd";
 import { DatabaseOutlined } from "@ant-design/icons";
 
 import TabData from "../Tabs/TabData";
@@ -26,35 +26,73 @@ const items = [
   },
 ];
 
-export default function DataManagementButton() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default function DataManagementButton({
+  trigger = "panel",
+  buttonLabel = "Open Data Management",
+  buttonType = "default",
+  size = "middle",
+  onOpen,
+  open: controlledOpen,
+  defaultOpen = false,
+  onOpenChange,
+}) {
+  const [internalIsModalOpen, setInternalIsModalOpen] = useState(defaultOpen);
+  const isControlled = typeof controlledOpen === "boolean";
+  const isModalOpen = isControlled ? controlledOpen : internalIsModalOpen;
+  const screens = Grid.useBreakpoint();
+  const modalWidth = screens.xl ? 1200 : screens.lg ? "94vw" : "96vw";
+  const modalTop = screens.md ? 24 : 12;
+
+  const setModalOpen = (nextOpen) => {
+    if (!isControlled) {
+      setInternalIsModalOpen(nextOpen);
+    }
+    onOpenChange?.(nextOpen);
+  };
 
   const showModal = () => {
-    setIsModalOpen(true);
+    onOpen?.();
+    setModalOpen(true);
   };
 
   const handleOk = () => {
-    setIsModalOpen(false);
+    setModalOpen(false);
   };
 
   const handleCancel = () => {
-    setIsModalOpen(false);
+    setModalOpen(false);
   };
 
   return (
     <>
-      <PanelButton
-        title={"Open Data Management"}
-        onClick={showModal}
-        icon={<DatabaseOutlined />}
-      />
+      {trigger === "panel" ? (
+        <PanelButton
+          title="Open Data Management"
+          ariaLabel="Open Data Management"
+          onClick={showModal}
+          icon={<DatabaseOutlined />}
+        />
+      ) : (
+        <Button
+          type={buttonType}
+          size={size}
+          icon={<DatabaseOutlined />}
+          onClick={showModal}
+          aria-label={buttonLabel}
+        >
+          {buttonLabel}
+        </Button>
+      )}
       <Modal
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-        width={1200}
-        style={{ top: 24 }}
+        width={modalWidth}
+        style={{ top: modalTop }}
+        bodyStyle={{ maxHeight: "calc(100vh - 180px)", overflowY: "auto" }}
         footer={null}
+        centered={!screens.md}
+        destroyOnClose
       >
         <Tabs
           className={styles.customTabs}

@@ -2,7 +2,10 @@ import * as d3 from "d3";
 import store from "@/store/store";
 import { formatDecimal, moveTooltip } from "@/utils/functions";
 import { CHART_GRID } from "@/utils/chartTheme";
-import { attachTickLabelGridHover } from "@/utils/gridInteractions";
+import {
+  attachTickLabelGridHover,
+  paintLayersInOrder,
+} from "@/utils/gridInteractions";
 
 export default class RankingPlot {
   constructor(parent) {
@@ -204,15 +207,14 @@ export default class RankingPlot {
     if (vis.config.showGrid) {
       vis.yAxisG
         .selectAll(".tick line")
-        .attr("stroke", CHART_GRID)
-        .attr("stroke-dasharray", "8 6");
+        .attr("stroke", CHART_GRID);
 
       vis.yAxisG
         .selectAll(".tick")
         .filter((_, i, nodes) => i === 0 || i === nodes.length - 1)
         .select("line")
         .classed("chart-grid-line", false)
-        .attr("stroke", "none");
+        .style("stroke", "none");
 
       attachTickLabelGridHover({
         axisGroup: vis.yAxisG,
@@ -221,7 +223,6 @@ export default class RankingPlot {
         includeTick: (_, i, nodes) => i !== 0 && i !== nodes.length - 1,
       });
 
-      vis.yAxisG.raise();
     } else {
       vis.yAxisG
         .selectAll(".tick line")
@@ -231,6 +232,11 @@ export default class RankingPlot {
         .on("mouseover.grid-line-highlight", null)
         .on("mouseout.grid-line-highlight", null);
     }
+
+    paintLayersInOrder({
+      chartGroup: vis.chart,
+      layers: [vis.xAxisG, vis.yAxisG],
+    });
   }
 }
 

@@ -13,6 +13,12 @@ import {
 } from "../async/metaAsyncReducers";
 
 import { pubsub } from "@/utils/pubsub";
+import {
+  extractErrorMessage,
+  notifyError,
+  notifyInfo,
+  notifySuccess,
+} from "@/utils/notifications";
 const { publish } = pubsub;
 
 const initialState = {
@@ -24,6 +30,13 @@ const initialState = {
   loadingStatus: "ready",
   recoverableOperations: [],
   version: -1,
+};
+
+const isUserCanceledError = (payload, error) => {
+  const message = String(
+    payload?.error || payload?.message || payload || error?.message || "",
+  ).toLowerCase();
+  return message.includes("canceled by user");
 };
 
 export const metaSlice = createSlice({
@@ -78,12 +91,9 @@ export const metaSlice = createSlice({
       });
       state.version = 0;
 
-      const configuration = {
-        message: "Descriptions Added",
-        description: "",
-        type: "success",
-      };
-      publish("notification", configuration);
+      notifySuccess({
+        message: "Descriptions imported",
+      });
     }),
 
     setNodeOverviewAccess: create.reducer((state, action) => {
@@ -231,12 +241,11 @@ export const metaSlice = createSlice({
         const isSilent = Boolean(action.meta?.arg?.silent);
         if (isSilent) return;
 
-        const configuration = {
-          message: "Cannot reassign node",
-          description: action.payload,
-          type: "error",
-        };
-        publish("notification", configuration);
+        notifyError({
+          message: "Could not reassign node",
+          error: action.payload || action.error,
+          fallback: "Unable to update parent-child relation for the node.",
+        });
         state.version += 0.5;
       });
 
@@ -261,13 +270,12 @@ export const metaSlice = createSlice({
       state.version = state.version === 0 ? 1 : 0;
     });
     builder.addCase(updateHierarchy.rejected, (state, action) => {
-      const configuration = {
-        message: "Error in updateHierarchy",
-        description: action.payload,
-        type: "error",
+      notifyError({
+        message: "Could not update hierarchy",
+        error: action.payload || action.error,
+        fallback: "Hierarchy update failed.",
         pauseOnHover: true,
-      };
-      publish("notification", configuration);
+      });
     });
 
     builder.addCase(updateDescriptions.fulfilled, (state, action) => {
@@ -396,13 +404,12 @@ export const metaSlice = createSlice({
         state.version += recover ? 0.5 : -0.5;
       })
       .addCase(removeAttribute.rejected, (state, action) => {
-        const configuration = {
-          message: "Error removing attribute",
-          description: action.payload,
-          type: "error",
+        notifyError({
+          message: "Could not remove node",
+          error: action.payload || action.error,
+          fallback: "Node removal failed.",
           pauseOnHover: true,
-        };
-        publish("notification", configuration);
+        });
       });
 
     builder
@@ -429,13 +436,22 @@ export const metaSlice = createSlice({
         state.version += recover != null || recover ? 0.5 : -0.5;
       })
       .addCase(updateAttribute.rejected, (state, action) => {
-        const configuration = {
-          message: "Error updating attribute",
-          description: action.payload,
-          type: "error",
+        if (isUserCanceledError(action.payload, action.error)) {
+          notifyInfo({
+            message: "Node update canceled",
+          });
+          return;
+        }
+        const description = extractErrorMessage(
+          action.payload || action.error,
+          "Node update failed.",
+        );
+
+        notifyError({
+          message: "Could not update node",
+          description,
           pauseOnHover: true,
-        };
-        publish("notification", configuration);
+        });
       });
 
     builder
@@ -446,13 +462,12 @@ export const metaSlice = createSlice({
         }
       })
       .addCase(applyOperation.rejected, (state, action) => {
-        const configuration = {
+        notifyError({
           message: "Operation failed",
-          description: action.payload || "Error applying operation to nodes.",
-          type: "error",
+          error: action.payload || action.error,
+          fallback: "Error applying operation to selected nodes.",
           pauseOnHover: true,
-        };
-        publish("notification", configuration);
+        });
       });
   },
 });

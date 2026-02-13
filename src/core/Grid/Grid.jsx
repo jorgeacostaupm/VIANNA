@@ -28,7 +28,7 @@ export default function Grid({
     i: PANEL_LAYOUT_ID,
     x: 0,
     y: 0,
-    w: 2,
+    w: 4,
     h: initialPanelRows,
     minW: 1,
     maxW: 6,

@@ -14,7 +14,7 @@ import { DEFAULT_HIERARCHY_VIEW_CONFIG } from "../tools/HierarchyViewSettings";
 
 export default function HierarchyEditor() {
   const attributes = useSelector((state) => state.metadata.attributes);
-  const [orientation, setOrientation] = useState("horizontal");
+  const [orientation, setOrientation] = useState("vertical");
   const [linkStyle, setLinkStyle] = useState("smooth");
   const [brushSelectionVersion, setBrushSelectionVersion] = useState(0);
   const [viewConfig, setViewConfig] = useState(DEFAULT_HIERARCHY_VIEW_CONFIG);
@@ -74,7 +74,7 @@ function Hierarchy({
         containerRef.current,
         treeData,
         dispatch,
-        { viewConfig },
+        { orientation, linkStyle, viewConfig },
       );
     } else {
       editorRef.current.update(treeData);

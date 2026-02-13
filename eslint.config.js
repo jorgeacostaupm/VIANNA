@@ -5,6 +5,9 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   {
+    ignores: ["src/apps/hierarchy/menu/logic/parser.js"],
+  },
+  {
     files: ["**/*.{js,mjs,cjs,jsx}"],
     plugins: { js },
     extends: ["js/recommended"],
@@ -16,6 +19,11 @@ export default defineConfig([
       ...pluginReact.configs.flat.recommended.rules,
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
     },
   },
 ]);

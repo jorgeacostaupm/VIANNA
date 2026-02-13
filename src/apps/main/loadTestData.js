@@ -6,12 +6,8 @@ import {
 import * as api from "@/services/cantabAppServices";
 import { setIdVar } from "@/store/slices/cantabSlice";
 import { DATASETS } from "@/utils/Constants";
+import { notifyError } from "@/utils/notifications";
 
-import { pubsub } from "@/utils/pubsub";
-const { publish } = pubsub;
-
-const env = import.meta?.env?.MODE || "dev";
-console.log(`Loading test data for environment: ${env}`);
 const { dataPath, hierarchyPath, descriptionsPath, idVar } = import.meta.env
   .PROD
   ? DATASETS.prod
@@ -42,10 +38,10 @@ export default async function loadTestData(dispatch) {
     dispatch(setIdVar(idVar));
     return true;
   } catch (error) {
-    publish("notification", {
-      message: "Error Loading Test Data",
-      description: error.message,
-      type: "error",
+    notifyError({
+      message: "Could not load test data",
+      error,
+      fallback: "An error occurred while loading demo files.",
     });
     return false;
   }

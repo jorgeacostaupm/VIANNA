@@ -15,7 +15,7 @@ const AggregateComponent = ({ nodes, aggOp, save }) => {
       }}
     >
       <FieldArray name="info.usedAttributes">
-        {({ insert, remove, push, move, pop }) => (
+        {({ insert, remove, push, move }) => (
           <DropWrapper
             nodes={nodes}
             aggOp={aggOp}
@@ -23,7 +23,6 @@ const AggregateComponent = ({ nodes, aggOp, save }) => {
             remove={remove}
             push={push}
             move={move}
-            pop={pop}
             save={save}
           />
         )}
@@ -39,7 +38,6 @@ const DropWrapper = ({
   remove,
   push,
   move,
-  pop,
   save,
 }) => {
   const {

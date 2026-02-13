@@ -6,9 +6,7 @@ import { UMAP } from "umap-js";
 import tests from "@/utils/tests";
 
 import { VariableTypes, ORDER_VARIABLE } from "./Constants";
-import { pubsub } from "./pubsub";
-
-const { publish } = pubsub;
+import { extractErrorMessage, notifyWarning } from "@/utils/notifications";
 
 export function generateId() {
   return "id-" + Date.now().toString(36);
@@ -261,10 +259,7 @@ function getRankingVariableValidationReason(groups, variableType) {
 }
 
 function normalizeErrorMessage(error) {
-  if (!error) return "Unknown error while running test.";
-  if (typeof error === "string") return error;
-  if (error instanceof Error) return error.message || "Unknown test error.";
-  return "Unknown test error.";
+  return extractErrorMessage(error, "Unknown error while running test.");
 }
 
 export function computeEvolutionObservationData(
@@ -370,14 +365,13 @@ export function getPCAData(data, params) {
   const validVars = variables.filter((v) => {
     const badCount = data.reduce((count, row) => {
       const n = parseFloat(row[v]);
-      return count + (+row[v] == null || isNaN(n) || !isFinite(n));
+      return count + (row[v] == null || isNaN(n) || !isFinite(n));
     }, 0);
     if (badCount) {
-      publish("notification", {
+      notifyWarning({
         message: "Skipped variable",
         description: `Column "${v}" has ${badCount} invalid values and was excluded.`,
         placement: "bottomRight",
-        type: "warning",
       });
       return false;
     }
@@ -780,7 +774,7 @@ export const getVariableTypes = (data, options = {}) => {
     if (typeof attrib === "function") {
       try {
         return attrib(item);
-      } catch (e) {
+      } catch {
         return undefined;
       }
     } else {
@@ -914,22 +908,24 @@ export function moveTooltip(e, tooltip, chart, yOffset = 20, xOffset = 0) {
     .style("opacity", 1);
 }
 
-export function renderContextTooltip(tooltip, d, idVar) {}
+export function renderContextTooltip() {}
 
 // add functions to arquero :)
 import { addFunction } from "arquero";
 
 const tryParseDate = (date, format) => {
   try {
-    return parse(date, format, new Date());
-  } catch (err) {
+    const parser = d3.timeParse(format);
+    if (!parser) return null;
+    return parser(date);
+  } catch {
     return null;
   }
 };
 const fromUnix = (date) => {
   try {
     return new Date(date * 1000);
-  } catch (err) {
+  } catch {
     return null;
   }
 };

@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { getPCAData } from "@/utils/functions";
-import { pubsub } from "@/utils/pubsub";
-
-const { publish } = pubsub;
+import { notifyError } from "@/utils/notifications";
 
 export default function usePCAData(isSync = true, params, setInfo) {
   const [data, setData] = useState([]);
@@ -18,10 +16,10 @@ export default function usePCAData(isSync = true, params, setInfo) {
       setData(res.points);
       setInfo(res.info);
     } catch (error) {
-      publish("notification", {
-        message: "Error computing data",
-        description: error.message,
-        type: "error",
+      notifyError({
+        message: "Could not compute PCA data",
+        error,
+        fallback: "Failed to compute principal component analysis.",
       });
       setData(null);
     }

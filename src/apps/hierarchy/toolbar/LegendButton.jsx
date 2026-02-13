@@ -5,7 +5,7 @@ import { NodeColors } from "@/utils/Constants";
 import appStyles from "@/styles/App.module.css";
 import PopoverButton from "@/components/ui/PopoverButton";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 const renderShapeSVG = (shape, color) => {
   switch (shape) {

@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { moveTooltip } from "@/utils/functions";
 import renderLegend from "@/utils/renderLegend";
 import useResizeObserver from "@/hooks/useResizeObserver";
+import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { CHART_HIGHLIGHT } from "@/utils/chartTheme";
 
 const margin = { top: 30, right: 20, bottom: 40, left: 60 };
@@ -13,6 +14,16 @@ export default function usePCAPlot({ chartRef, legendRef, data, config }) {
   const idVar = useSelector((s) => s.cantab.present.idVar);
   const [hide, setHide] = useState([]);
   const { groupVar, pointSize, pointOpacity, showLegend } = config;
+  const groupsInData =
+    Array.isArray(data) && groupVar
+      ? Array.from(new Set(data.map((d) => d[groupVar]))).filter(
+          (value) => value != null
+        )
+      : [];
+  const { colorDomain, orderedGroups: groups } = useGroupColorDomain(
+    groupVar,
+    groupsInData
+  );
 
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
@@ -61,10 +72,7 @@ export default function usePCAPlot({ chartRef, legendRef, data, config }) {
       .nice()
       .range([chartSize, 0]);
 
-    const allGroups = data.map((d) => d[groupVar]);
-    const groups = Array.from(new Set(allGroups));
-
-    const color = d3.scaleOrdinal().domain(groups).range(colorScheme);
+    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
 
     chart
       .append("g")
@@ -102,7 +110,7 @@ export default function usePCAPlot({ chartRef, legendRef, data, config }) {
     if (showLegend !== false) {
       renderLegend(legend, groups, color, null, null, hide, setHide);
     }
-  }, [data, config, dimensions]);
+  }, [data, config, dimensions, colorDomain, groups]);
 
   useEffect(() => {
     if (!chartRef.current) return;

@@ -6,7 +6,6 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 
-import HierarchyManagementButtons from "@/components/Data/Buttons/HierarchyManagementButton";
 import LegendButton from "./LegendButton";
 import { Bar } from "@/components/charts/ChartBar";
 import { hierarchySelector } from "@/store/selectors/metaSelectors";

@@ -27,12 +27,12 @@ const testMeta = {
     applicability: "Numerical variable, 2 or more independent groups.",
     reportedMeasures: [
       "Welch F statistic and p-value",
-      "Effect size epsilon squared (ε²)",
-      "Group means with 95% CI",
-      "Pairwise Cohen's d with 95% CI and pairwise Welch t-test p-values",
+      "Global effect size omega squared (ω²), SS-based",
+      "Group means with t-based 95% CI",
+      "Pairwise Hedges' g with 95% CI and pairwise Welch t-test p-values",
     ],
     postHoc:
-      "Pairwise Welch t-tests are computed across groups with unadjusted p-values (no multiple-comparison correction).",
+      "Pairwise Welch t-tests are computed across groups with Holm-adjusted p-values (family-wise error control).",
     referenceUrl:
       "https://poc.vl-e.nl/distribution/manual/R-2.2.0/library/stats/html/oneway.test.html",
   },

@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-import { pubsub } from "@/utils/pubsub";
-
-const { publish } = pubsub;
+import { notifyError } from "@/utils/notifications";
 
 export default function useScatterData(isSync = true, params) {
   const [data, setData] = useState([]);
@@ -17,10 +15,10 @@ export default function useScatterData(isSync = true, params) {
       const res = variables.length >= 2 ? selection : null;
       setData(res);
     } catch (error) {
-      publish("notification", {
-        message: "Error computing data",
-        description: error.message,
-        type: "error",
+      notifyError({
+        message: "Could not prepare scatter matrix data",
+        error,
+        fallback: "Failed to prepare data for the scatter matrix.",
       });
       setData(null);
     }

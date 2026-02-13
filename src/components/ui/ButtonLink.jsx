@@ -36,6 +36,7 @@ export default function LinkButton({ to, icon }) {
   const handleOpenTab = () => {
     if (!route) return;
 
+    window.dispatchEvent(new Event("app:close-tooltips"));
     const appWindow = window.open(buildAppUrl(routePath), targetName);
     if (appWindow && typeof appWindow.focus === "function") {
       appWindow.focus();
@@ -43,6 +44,11 @@ export default function LinkButton({ to, icon }) {
   };
 
   return (
-    <PanelButton title={tooltipTitle} onClick={handleOpenTab} icon={icon} />
+    <PanelButton
+      title={tooltipTitle}
+      ariaLabel={tooltipTitle}
+      onClick={handleOpenTab}
+      icon={icon}
+    />
   );
 }

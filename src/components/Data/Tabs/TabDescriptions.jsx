@@ -4,6 +4,7 @@ import { Typography, Divider } from "antd";
 
 import DragDropDesc from "../DragDrop/DragDropDesc";
 import { selectDescribedNodes } from "@/store/selectors/metaSelectors";
+import styles from "../Data.module.css";
 
 const { Title, Text } = Typography;
 const formatPreview = (arr, max = 12) => {
@@ -29,19 +30,7 @@ const Info = () => {
   ).filter((name) => !describedSet.has(name));
 
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "50%",
-        flexDirection: "column",
-        gap: "1rem",
-        padding: "20px",
-        boxSizing: "border-box",
-        borderRadius: "4px",
-
-        overflow: "auto",
-      }}
-    >
+    <div className={`${styles.tabColumn} ${styles.tabColumnScrollable}`}>
       <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
         Metadata
       </Title>
@@ -107,18 +96,7 @@ const Info = () => {
 
 const UploadDesc = () => {
   return (
-    <div
-      style={{
-        width: "50%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        gap: "1rem",
-        borderLeft: "1px solid #eee",
-        padding: "20px",
-        boxSizing: "border-box",
-      }}
-    >
+    <div className={`${styles.tabColumn} ${styles.tabColumnWithDivider}`}>
       <Title
         level={4}
         style={{ marginBottom: 4, color: "var(--primary-color)" }}
@@ -135,15 +113,7 @@ const UploadDesc = () => {
 
 export default function TabDescriptions() {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        width: "100%",
-        gap: "1rem",
-        overflow: "auto",
-      }}
-    >
+    <div className={`${styles.tabSplit} ${styles.tabColumnScrollable}`}>
       <Info />
       <UploadDesc />
     </div>

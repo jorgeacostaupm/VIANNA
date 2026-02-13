@@ -7,7 +7,7 @@ export const NodeSchema = yup.object({
   desc: yup.string().default(""),
   related: yup.array(yup.number()).min(0),
   type: yup.mixed().oneOf(["attribute", "root", "aggregation"]).required(),
-  info: yup.object().when("type", (val, schema) => {
+  info: yup.object().when("type", (val) => {
     if (val == "aggregation") {
       return yup
         .object({
@@ -24,7 +24,7 @@ export const NodeSchema = yup.object({
             yup.object({
               id: yup.number().required("All nodes require ID"),
               name: yup.string().required("All nodes require a name"),
-              weight: yup.number().when("info.operation", (val, schema) => {
+              weight: yup.number().when("info.operation", (val) => {
                 if (val == "mean") {
                   return yup
                     .number()

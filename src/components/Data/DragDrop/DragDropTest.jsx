@@ -8,6 +8,7 @@ import { FileProcessorFactory } from "./drag";
 import buttonStyles from "@/styles/Buttons.module.css";
 import styles from "../Data.module.css";
 import tests from "@/utils/tests";
+import { notifyError, notifyWarning } from "@/utils/notifications";
 
 const ACCEPTED_FORMATS = ".json";
 
@@ -25,7 +26,10 @@ export default function DragAndDropTest() {
     const file = acceptedFiles?.[0];
 
     if (!file || !(file instanceof File)) {
-      console.warn("Dropped item is not a valid file:", file);
+      notifyWarning({
+        message: "Invalid file",
+        description: "Select a valid JSON file to continue.",
+      });
       return;
     }
 
@@ -35,10 +39,20 @@ export default function DragAndDropTest() {
     reader.onload = () => {
       try {
         const processor = FileProcessorFactory.getProcessor(extension);
-        processor.process(reader.result, setParsedData);
+        processor.process(reader.result, setParsedData, (error) => {
+          notifyError({
+            message: "Could not process file",
+            error,
+            fallback: "File parsing failed.",
+          });
+        });
         setFilename(file.name);
       } catch (error) {
-        console.error("Processing error:", error);
+        notifyError({
+          message: "Could not process file",
+          error,
+          fallback: "File processing failed.",
+        });
       }
     };
 

@@ -13,6 +13,7 @@ import { FileProcessorFactory } from "./drag";
 import { updateData } from "@/store/async/dataAsyncReducers";
 import styles from "../Data.module.css";
 import ColoredButton from "@/components/ui/ColoredButton";
+import { notifyError, notifyWarning } from "@/utils/notifications";
 
 const { Text } = Typography;
 
@@ -29,16 +30,29 @@ export default function DragDropData() {
   const [filename, setFilename] = useState(null);
   const [parsedData, setParsedData] = useState(null);
   const [generateHierarchy, setGenerateHierarchy] = useState(true);
+  const [isReadingFile, setIsReadingFile] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleUpload = () => {
-    if (parsedData) {
-      dispatch(
+  const handleUpload = async () => {
+    if (!parsedData) return;
+
+    setIsUploading(true);
+    try {
+      await dispatch(
         updateData({
           filename,
           data: parsedData,
           isGenerateHierarchy: generateHierarchy,
         }),
-      );
+      ).unwrap();
+    } catch (error) {
+      notifyError({
+        message: "Could not upload data",
+        error,
+        fallback: "Data upload failed. Verify file format and content.",
+      });
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -46,29 +60,62 @@ export default function DragDropData() {
     const file = acceptedFiles?.[0];
 
     if (!file || !(file instanceof File)) {
-      console.warn("Dropped item is not a valid file:", file);
+      notifyWarning({
+        message: "Invalid file",
+        description: "Select a valid file to continue.",
+      });
       return;
     }
 
     const extension = file.name.split(".").pop().toLowerCase();
 
-    // Validación extra por extensión
     const allowedExtensions = ["csv", "tsv", "txt", "json"];
     if (!allowedExtensions.includes(extension)) {
-      console.error("File type not allowed:", extension);
+      notifyWarning({
+        message: "File type not allowed",
+        description: "Accepted formats: .csv, .tsv, .txt, .json",
+      });
       return;
     }
 
     const reader = new FileReader();
+    setIsReadingFile(true);
 
     reader.onload = () => {
       try {
         const processor = FileProcessorFactory.getProcessor(extension);
-        processor.process(reader.result, setParsedData);
-        setFilename(file.name);
+        processor.process(
+          reader.result,
+          (rows) => {
+            setParsedData(rows);
+            setFilename(file.name);
+            setIsReadingFile(false);
+          },
+          (error) => {
+            notifyError({
+              message: "Could not read file",
+              error,
+              fallback: "The file content could not be parsed.",
+            });
+            setIsReadingFile(false);
+          },
+        );
       } catch (error) {
-        console.error("Processing error:", error);
+        notifyError({
+          message: "Could not process file",
+          error,
+          fallback: "File processing failed.",
+        });
+        setIsReadingFile(false);
       }
+    };
+
+    reader.onerror = () => {
+      notifyError({
+        message: "Could not read file",
+        fallback: "The file could not be read.",
+      });
+      setIsReadingFile(false);
     };
 
     reader.readAsText(file);
@@ -79,6 +126,12 @@ export default function DragDropData() {
     maxFiles: 1,
     accept: ACCEPTED_FORMATS,
     multiple: false,
+    onDropRejected: () => {
+      notifyWarning({
+        message: "Unsupported file",
+        description: "Accepted formats: .csv, .tsv, .txt, .json",
+      });
+    },
   });
 
   return (
@@ -89,7 +142,7 @@ export default function DragDropData() {
           <div className={styles.dropContent}>
             {!filename && <PlusOutlined />}
             <span className={styles.text}>
-              {filename || "Click or drop a file"}
+              {isReadingFile ? "Reading file..." : filename || "Click or drop a file"}
             </span>
             {!filename && (
               <span className={styles.subtitle}>
@@ -107,6 +160,7 @@ export default function DragDropData() {
             <Switch
               checked={generateHierarchy}
               onChange={setGenerateHierarchy}
+              disabled={isUploading}
               checkedChildren={<CheckOutlined />}
               unCheckedChildren={<CloseOutlined />}
             />
@@ -115,7 +169,8 @@ export default function DragDropData() {
 
         <ColoredButton
           onClick={handleUpload}
-          disabled={!parsedData}
+          disabled={!parsedData || isUploading || isReadingFile}
+          loading={isUploading}
           icon={<UploadOutlined />}
           shape="default"
         >

@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { useEffect } from "react";
 import { moveTooltip } from "@/utils/functions";
 import useResizeObserver from "@/hooks/useResizeObserver";
+import { paintLayersInOrder } from "@/utils/gridInteractions";
 
 export const catMargins = { top: 30, right: 40, bottom: 50, left: 50 };
 
@@ -160,9 +161,10 @@ export default function useGroupedBarChart({
       });
 
     if (yGridG) {
-      yGridG.raise();
-      xAxisG.raise();
-      yAxisG.raise();
+      paintLayersInOrder({
+        chartGroup: chart,
+        layers: [xAxisG, yAxisG, yGridG],
+      });
     }
 
     if (showLegend !== false) {

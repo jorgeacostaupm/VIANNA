@@ -1,7 +1,8 @@
 import * as d3 from "d3";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
-import { deepCopy, moveTooltip } from "@/utils/functions";
+import { moveTooltip } from "@/utils/functions";
 import {
   numMargin,
   renderLegend,
@@ -11,16 +12,24 @@ import {
   getNumericDomain,
 } from "../Density/useDensity";
 import useResizeObserver from "@/hooks/useResizeObserver";
+import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { CHART_OUTLINE_MUTED } from "@/utils/chartTheme";
-import { attachTickLabelGridHover } from "@/utils/gridInteractions";
+import {
+  attachTickLabelGridHover,
+  paintLayersInOrder,
+} from "@/utils/gridInteractions";
 
 export default function useViolinplot({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
+  const groupVar = useSelector((s) => s.compare.groupVar);
   const groups = Array.from(new Set((data || []).map((d) => d.type))).filter(
-    (value) => value != null,
+    (value) => value != null
   );
-  const selectionGroups = groups;
-  const groupsKey = groups.join("|");
+  const { colorDomain, orderedGroups: selectionGroups } = useGroupColorDomain(
+    groupVar,
+    groups
+  );
+  const groupsKey = selectionGroups.join("|");
 
   useEffect(() => {
     if (!dimensions || !data || !chartRef.current || !legendRef.current) return;
@@ -48,11 +57,14 @@ export default function useViolinplot({ chartRef, legendRef, data, config }) {
       .append("g")
       .attr("transform", `translate(${numMargin.left},${numMargin.top})`);
 
-    const color = d3.scaleOrdinal().domain(groups).range(colorScheme);
+    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
 
     // X for groups
-    let tmp = deepCopy(selectionGroups).sort();
-    const x = d3.scaleBand().domain(tmp).range([0, chartWidth]).padding(0.4);
+    const x = d3
+      .scaleBand()
+      .domain(selectionGroups)
+      .range([0, chartWidth])
+      .padding(0.4);
 
     const [xMin, xMax] = getNumericDomain(data, {
       margin,
@@ -156,8 +168,10 @@ export default function useViolinplot({ chartRef, legendRef, data, config }) {
     }
 
     if (showGrid && yGridG) {
-      yGridG.raise();
-      yAxisG.raise();
+      paintLayersInOrder({
+        chartGroup: chart,
+        layers: [xAxisG, yAxisG, yGridG],
+      });
     }
-  }, [data, dimensions, groupsKey, config]);
+  }, [data, dimensions, groupsKey, config, colorDomain]);
 }

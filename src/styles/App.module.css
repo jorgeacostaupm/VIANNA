@@ -8,6 +8,8 @@
   width: 100vw;
   background: transparent;
   overflow: hidden;
+  display: flex;
+  flex-direction: row;
 }
 
 .appBar {
@@ -42,13 +44,12 @@
 }
 
 .mainSidebarContainer {
-  position: fixed;
-  top: 50px;
-  left: var(--space-4);
+  position: relative;
+  left: 0;
   z-index: 40;
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  width: fit-content;
+  margin-top: 10px;
 }
 
 .mainSidebar {
@@ -65,31 +66,32 @@
   height: calc(70vh - 32px);
   max-height: calc(100vh - 32px);
   overflow: hidden;
+
   transition:
     width var(--transition-base),
     opacity var(--transition-base),
     transform var(--transition-base),
     padding var(--transition-base),
     border-color var(--transition-base),
-    box-shadow var(--transition-base);
+    box-shadow var(--transition-base),
+    margin-left var(--transition-base),
+    margin-right var(--transition-base);
 }
 
 .mainSidebarOpen {
+  margin-left: 10px;
   width: 84px;
   opacity: 1;
-  transform: translateX(0);
   pointer-events: auto;
 }
 
 .mainSidebarClosed {
   width: 0;
   opacity: 0;
-  transform: translateX(-24px);
   padding-left: 0;
   padding-right: 0;
   border-color: transparent;
   box-shadow: none;
-  pointer-events: none;
 }
 
 .mainSidebarLogo {
@@ -111,8 +113,8 @@
 }
 
 .mainSidebarHideButton {
-  width: 24px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -157,11 +159,6 @@
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition:
-    background var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast),
-    transform var(--transition-fast);
 }
 
 .mainSidebarShowButton:hover {
@@ -182,28 +179,23 @@
 }
 
 .mainAppContent {
+  flex: 1;
   min-height: 100vh;
-  padding: var(--space-4) var(--space-4) var(--space-3);
   transition:
     margin-left var(--transition-base),
     width var(--transition-base);
 }
 
-.mainAppContentWithSidebar {
-  margin-left: 112px;
-  width: calc(100% - 112px);
-}
-
-.mainAppContentWithoutSidebar {
-  margin-left: 48px;
-  width: calc(100% - 48px);
-}
-
 .mainLoadDemoData {
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 8px 16px 12px;
-  margin-bottom: 16px;
+  height: 100%;
+  padding: 24px;
+}
+
+.initialDataChoiceCard {
+  width: min(760px, 100%);
 }
 
 .gridWrapper {
@@ -406,66 +398,17 @@
   margin-inline-end: 0;
 }
 
+.applicabilityYes {
+  color: #1f8a39;
+  font-weight: 700;
+}
+
+.applicabilityNo {
+  color: #c7372f;
+  font-weight: 700;
+}
+
 .popoverMenu {
   max-width: 420px;
   padding: var(--space-3);
-}
-
-@media (max-width: 1280px) {
-  .fullScreenLayout {
-    --analysis-sidebar-width: 336px;
-  }
-
-  .gridWrapperWithSidebar {
-    padding: var(--space-3) var(--space-3) var(--space-3) 0;
-  }
-}
-
-@media (max-width: 1024px) {
-  .fullScreenLayout {
-    --analysis-sidebar-left: var(--space-3);
-    --analysis-sidebar-gap: var(--space-3);
-    --analysis-sidebar-width: 300px;
-  }
-
-  .gridWrapperWithSidebar {
-    padding: var(--space-2);
-  }
-}
-
-@media (max-width: 768px) {
-  .fullScreenLayout {
-    --analysis-sidebar-top: calc(var(--nav-height) + var(--space-2));
-    --analysis-sidebar-left: var(--space-3);
-    --analysis-sidebar-gap: var(--space-3);
-  }
-
-  .analysisSidebar {
-    right: var(--analysis-sidebar-left);
-    width: auto;
-    max-height: var(--analysis-sidebar-mobile-height);
-  }
-
-  .gridWrapperWithSidebar {
-    margin-left: 0;
-    width: 100%;
-    padding: calc(
-        var(--analysis-sidebar-top) + var(--analysis-sidebar-mobile-height) +
-          var(--space-3)
-      )
-      var(--space-2) var(--space-2);
-  }
-}
-
-@media (max-width: 900px) {
-  .mainSidebarContainer {
-    top: 50%;
-    left: var(--space-3);
-  }
-
-  .mainAppContent {
-    width: 100%;
-    margin-left: 0;
-    padding-top: 72px;
-  }
 }

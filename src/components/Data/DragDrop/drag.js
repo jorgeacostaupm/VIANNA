@@ -2,13 +2,21 @@ import Papa from "papaparse";
 
 // File processor for CSV/TSV/TXT files
 const CsvProcessor = {
-  process(fileContent, onFileParsed) {
+  process(fileContent, onFileParsed, onError = () => {}) {
     Papa.parse(fileContent, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
       complete: (result) => {
+        if (Array.isArray(result.errors) && result.errors.length > 0) {
+          const firstError = result.errors[0];
+          onError(new Error(firstError?.message || "CSV parsing failed"));
+          return;
+        }
         onFileParsed(result.data);
+      },
+      error: (error) => {
+        onError(error);
       },
     });
   },
@@ -16,13 +24,12 @@ const CsvProcessor = {
 
 // File processor for JSON files
 const JsonProcessor = {
-  process(fileContent, onFileParsed) {
+  process(fileContent, onFileParsed, onError = () => {}) {
     try {
       const jsonData = JSON.parse(fileContent);
       onFileParsed(jsonData);
-    } catch (error) {
-      console.error("Error parsing JSON file:", error);
-      onFileParsed([]);
+    } catch {
+      onError(new Error("Invalid JSON file format"));
     }
   },
 };
@@ -38,7 +45,7 @@ export const FileProcessorFactory = {
       case "json":
         return JsonProcessor;
       default:
-        console.error("Data Format Not Supported");
+        throw new Error("Data format not supported");
     }
   },
 };

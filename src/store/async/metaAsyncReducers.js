@@ -18,6 +18,7 @@ import { convertColumnType } from "./dataAsyncReducers";
 import { get_parser } from "@/apps/hierarchy/menu/logic/parser";
 import buildAggregation from "@/apps/hierarchy/menu/logic/formulaGenerator";
 import { ALL_FUNCTIONS } from "@/apps/hierarchy/menu/logic/formulaConstants";
+import { extractErrorMessage } from "@/utils/notifications";
 
 let parser = get_parser();
 
@@ -74,16 +75,8 @@ const getNodeLabel = (node) => {
   return "Unknown node";
 };
 
-const formatErrorMessage = (error, fallback = "Unknown error") => {
-  if (typeof error === "string" && error.trim().length > 0) return error;
-  if (error?.message && String(error.message).trim().length > 0) {
-    return error.message;
-  }
-  if (error?.error && String(error.error).trim().length > 0) {
-    return error.error;
-  }
-  return fallback;
-};
+const formatErrorMessage = (error, fallback = "Unknown error") =>
+  extractErrorMessage(error, fallback);
 
 function getAggregation(operation, params, node) {
   const colName = getNodeName(node);
@@ -259,7 +252,7 @@ function createNodeInfo(objectTypes) {
   let id = 1;
   const fieldInfo = [];
   for (const key in objectTypes) {
-    if (objectTypes.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(objectTypes, key)) {
       fieldInfo.push({
         id: id++,
         name: key,
@@ -374,33 +367,37 @@ export const updateAttribute = createAsyncThunk(
   async (payload, { dispatch, rejectWithValue }) => {
     try {
       const { name, type, info, recover, dtype } = payload;
+      const shouldEnforceNumberOnAggregation =
+        type === "aggregation" && Boolean(info?.exec) && dtype === "number";
 
       if (type === "aggregation") {
         if (!info?.exec) {
-          await dispatch(generateEmpty({ colName: name }));
+          await dispatch(generateEmpty({ colName: name })).unwrap();
         } else {
           await dispatch(
             generateColumn({
               colName: name,
               formula: info.exec,
+              enforceNumber: shouldEnforceNumberOnAggregation,
             })
-          );
+          ).unwrap();
         }
       }
 
-      if (dtype !== "determine") {
-        dispatch(convertColumnType({ column: name, dtype }));
+      if (dtype !== "determine" && !shouldEnforceNumberOnAggregation) {
+        await dispatch(convertColumnType({ column: name, dtype })).unwrap();
       }
 
       if (recover == null || recover) {
         return { node: { ...payload }, recover: null };
       } else {
-        const { recover: _, ...newNode } = payload;
+        const newNode = { ...payload };
+        delete newNode.recover;
         return { node: { ...newNode }, recover: false };
       }
     } catch (error) {
-      console.error("Error en updateAttribute:", error);
-      return rejectWithValue({ node: { ...payload }, error: error?.message });
+      const message = formatErrorMessage(error, "Error updating attribute.");
+      return rejectWithValue({ node: { ...payload }, error: message });
     }
   }
 );

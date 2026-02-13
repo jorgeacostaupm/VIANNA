@@ -7,6 +7,7 @@ export default function BarButton({
   icon,
   onClick,
   disabled,
+  ariaLabel,
   className,
   type,
   shape,
@@ -25,6 +26,7 @@ export default function BarButton({
         className={classes}
         type={type}
         shape={shape}
+        aria-label={ariaLabel || title}
       />
     </AutoCloseTooltip>
   );

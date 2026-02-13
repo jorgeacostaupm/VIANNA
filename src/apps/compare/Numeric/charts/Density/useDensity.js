@@ -1,23 +1,30 @@
 import * as d3 from "d3";
 import jstat from "jstat";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import useResizeObserver from "@/hooks/useResizeObserver";
-import { pubsub } from "@/utils/pubsub";
-import { deepCopy } from "@/utils/functions";
+import useGroupColorDomain from "@/hooks/useGroupColorDomain";
+import { notifyInfo } from "@/utils/notifications";
 import { CHART_OUTLINE } from "@/utils/chartTheme";
-import { attachTickLabelGridHover } from "@/utils/gridInteractions";
-const { publish } = pubsub;
+import {
+  attachTickLabelGridHover,
+  paintLayersInOrder,
+} from "@/utils/gridInteractions";
 
 export const numMargin = { top: 50, right: 50, bottom: 50, left: 90 };
 
 export default function useDensity({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
+  const groupVar = useSelector((s) => s.compare.groupVar);
   const groups = Array.from(new Set((data || []).map((d) => d.type))).filter(
-    (value) => value != null,
+    (value) => value != null
   );
-  const selectionGroups = groups;
-  const groupsKey = groups.join("|");
+  const { colorDomain, orderedGroups: selectionGroups } = useGroupColorDomain(
+    groupVar,
+    groups
+  );
+  const groupsKey = selectionGroups.join("|");
   const [hide, setHide] = useState([]);
   const [blur, setBlur] = useState(selectionGroups);
 
@@ -55,7 +62,7 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
       .append("g")
       .attr("transform", `translate(${numMargin.left},${numMargin.top})`);
 
-    const color = d3.scaleOrdinal().domain(groups).range(colorScheme);
+    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
     const x = d3.scaleLinear().domain([xMin, xMax]).range([0, chartWidth]);
     const y = d3.scaleLinear().range([chartHeight, 0]).domain([0, yMax]);
 
@@ -112,8 +119,10 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
         showStats(d.group);
 
         if (showGrid && yGridG) {
-          yGridG.raise();
-          yAxisG.raise();
+          paintLayersInOrder({
+            chartGroup: chart,
+            layers: [xAxisG, yAxisG, yGridG],
+          });
         }
       })
       .on("mouseout", function () {
@@ -139,8 +148,10 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
     }
 
     if (showGrid && yGridG) {
-      yGridG.raise();
-      yAxisG.raise();
+      paintLayersInOrder({
+        chartGroup: chart,
+        layers: [xAxisG, yAxisG, yGridG],
+      });
     }
 
     function hideStats() {
@@ -203,7 +214,7 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
         }
       });
     }
-  }, [data, config, dimensions, groupsKey]);
+  }, [data, config, dimensions, groupsKey, colorDomain]);
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -260,13 +271,11 @@ export function computeEstimator(numPoints, min, max) {
 
     if (std === 0) {
       const uniformValue = data[0];
-      let configuration = {
+      notifyInfo({
         message: `Group ${group} has a Uniform Distribution`,
         description: `Uniform Value: ${uniformValue}`,
-        type: "info",
         pauseOnHover: true,
-      };
-      publish("notification", configuration);
+      });
 
       return Array.from({ length: numPoints }, () => [uniformValue, 1]);
     }
@@ -337,9 +346,9 @@ export function renderLegend(
     .attr("class", "legend-group")
     .style("cursor", "pointer");
 
-  let tmpGroups = deepCopy(groups).sort();
+  const orderedGroups = Array.isArray(groups) ? [...groups] : [];
 
-  tmpGroups.forEach((group, i) => {
+  orderedGroups.forEach((group, i) => {
     const y = i * lineHeight + circleSize * 2;
 
     const legendItem = legendGroup
@@ -398,7 +407,7 @@ export function renderLegend(
 
       legendItem
         .on("mouseover", () => {
-          let hideGroups = tmpGroups.filter((d) => d !== group);
+          const hideGroups = orderedGroups.filter((d) => d !== group);
           setHide(hideGroups);
           if (showStats) showStats(group);
         })

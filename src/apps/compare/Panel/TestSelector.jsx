@@ -4,15 +4,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { Select } from "antd";
 import { ExperimentOutlined, BarChartOutlined } from "@ant-design/icons";
 
-import { pubsub } from "@/utils/pubsub";
 import tests from "@/utils/tests";
 import { VariableTypes } from "@/utils/Constants";
 import { setSelectedTest } from "@/store/slices/compareSlice";
 import ColoredButton from "@/components/ui/ColoredButton";
 import styles from "@/styles/App.module.css";
+import { notifyError } from "@/utils/notifications";
 
 const { Option, OptGroup } = Select;
-const { publish } = pubsub;
 
 function getVariableTypeLabel(type) {
   if (type === VariableTypes.NUMERICAL) return "Numerical";
@@ -110,12 +109,11 @@ export default function TestSelector({ generateTest, generateRanking }) {
     if (testType === variableType && testObj.isApplicable(groups.length))
       generateTest(selectedTest, selectedVar);
     else {
-      const configuration = {
-        message: "Test not applicable",
-        type: "error",
+      notifyError({
+        message: "Selected test is not applicable",
+        description: "Review variable type and number of groups for this test.",
         source: "test",
-      };
-      publish("notification", configuration);
+      });
     }
   }
 
@@ -169,7 +167,15 @@ export default function TestSelector({ generateTest, generateRanking }) {
             </div>
             <div>
               <strong>Current applicability:</strong>{" "}
-              {isApplicableNow ? "Applicable" : "Not applicable"}
+              <span
+                className={
+                  isApplicableNow
+                    ? styles.applicabilityYes
+                    : styles.applicabilityNo
+                }
+              >
+                {isApplicableNow ? "Applicable" : "Not applicable"}
+              </span>
             </div>
             <div>
               <strong>Reported measures:</strong>

@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-import { pubsub } from "@/utils/pubsub";
+import { notifyError } from "@/utils/notifications";
 import { selectVars } from "@/store/slices/cantabSlice";
-const { publish } = pubsub;
 
 export default function useDistributionData(
   getData,
@@ -23,10 +22,10 @@ export default function useDistributionData(
       const result = getData(selection, variable, groupVar, timeVar, idVar);
       setData(result);
     } catch (error) {
-      publish("notification", {
-        message: "Error computing data",
-        description: error.message,
-        type: "error",
+      notifyError({
+        message: "Could not compute distribution data",
+        error,
+        fallback: "Distribution calculation failed.",
       });
       setData(null);
     }

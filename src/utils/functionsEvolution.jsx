@@ -1,27 +1,6 @@
 import * as aq from "arquero";
 import { jStat } from "jstat";
-
-function extractNumber(str) {
-  const match = String(str).match(/(\d+(\.\d+)?)/);
-  return match ? parseFloat(match[1]) : null;
-}
-
-function compareTimestamps(a, b) {
-  const na = extractNumber(a);
-  const nb = extractNumber(b);
-
-  const aIsNum = typeof a === "number";
-  const bIsNum = typeof b === "number";
-
-  if (aIsNum && bIsNum) return a - b;
-
-  if (na !== null && nb !== null) return na - nb;
-
-  if (na !== null && nb === null) return -1;
-  if (na === null && nb !== null) return 1;
-
-  return String(a).localeCompare(String(b), undefined, { numeric: true });
-}
+import { sortTimeValues } from "@/utils/evolutionTimeOrder";
 
 export function getCompleteSubjects(participantData, times) {
   const timeKeys = (times || []).map((t) => String(t));
@@ -30,7 +9,7 @@ export function getCompleteSubjects(participantData, times) {
       const entry = p.values.find((v) => String(v.timestamp) === t);
       const value = entry?.value;
       return value !== null && value !== undefined && !Number.isNaN(+value);
-    })
+    }),
   );
 
   return {
@@ -40,14 +19,12 @@ export function getCompleteSubjects(participantData, times) {
 }
 
 export function runRMAnova(participantData, times) {
-  const alpha = 0.05;
-
   // ----------------------------------------
   // 1. Filtrar sujetos con datos completos
   // ----------------------------------------
   const { completeSubjects, excluded } = getCompleteSubjects(
     participantData,
-    times
+    times,
   );
 
   const subjects = completeSubjects.length;
@@ -66,7 +43,7 @@ export function runRMAnova(participantData, times) {
   // 2. Construir matrices
   // ----------------------------------------
   const Y = completeSubjects.map((p) =>
-    times.map((t) => +p.values.find((v) => v.timestamp === t).value)
+    times.map((t) => +p.values.find((v) => v.timestamp === t).value),
   );
 
   // ----------------------------------------
@@ -80,7 +57,7 @@ export function runRMAnova(participantData, times) {
     const vals = completeSubjects
       .filter((p) => p.group === g)
       .flatMap((p) =>
-        times.map((t) => +p.values.find((v) => v.timestamp === t).value)
+        times.map((t) => +p.values.find((v) => v.timestamp === t).value),
       );
     return jStat.mean(vals);
   });
@@ -91,7 +68,7 @@ export function runRMAnova(participantData, times) {
         .filter((p) => p.group === g)
         .map((p) => +p.values.find((v) => v.timestamp === t).value);
       return jStat.mean(vals);
-    })
+    }),
   );
 
   // ----------------------------------------
@@ -117,7 +94,7 @@ export function runRMAnova(participantData, times) {
     const subjMean =
       times.reduce(
         (a, t) => a + +p.values.find((v) => v.timestamp === t).value,
-        0
+        0,
       ) / T;
 
     times.forEach((t) => {
@@ -320,55 +297,111 @@ export function getLineChartData(
   idVar,
   showComplete,
   tests = [],
-  timeRange = null
+  timeRange = null,
+  timeOrderConfig = null,
 ) {
   if (!raw || !Array.isArray(raw)) {
     return { meanData: [], participantData: [], tests: [], rmAnova: null };
   }
 
   if (!valueVar || !groupVar || !timeVar || !idVar) {
+    console.error("[getLineChartData] missing required variable", {
+      valueVar,
+      groupVar,
+      timeVar,
+      idVar,
+    });
     throw new Error("Must set valueVar, groupVar, timeVar and idVar");
   }
 
+  const isValidColumnName = (name) =>
+    typeof name === "string" && name.trim().length > 0;
+  const columns = raw.length > 0 ? Object.keys(raw[0]) : [];
+
+  const requiredColumns = [
+    { name: valueVar, role: "value" },
+    { name: groupVar, role: "group" },
+    { name: timeVar, role: "time" },
+    { name: idVar, role: "id" },
+  ];
+
+  requiredColumns.forEach(({ name, role }) => {
+    if (!isValidColumnName(name)) {
+      console.error("[getLineChartData] invalid column name", { role, name });
+      throw new Error(`Invalid ${role} variable: empty column name.`);
+    }
+    if (columns.length > 0 && !columns.includes(name)) {
+      console.error("[getLineChartData] column not found in raw", {
+        role,
+        name,
+        columns,
+      });
+      throw new Error(`Invalid ${role} variable: "${name}" is not a column.`);
+    }
+  });
+
   let table = aq.from(raw);
+  const allTimes = sortTimeValues(
+    raw.map((row) => row?.[timeVar]),
+    timeOrderConfig,
+  );
+  const rankByTime = new Map(
+    allTimes.map((time, index) => [String(time), index]),
+  );
+  const compareByTimeRank = (a, b) => {
+    const timeA = String(a);
+    const timeB = String(b);
+    const rankA = rankByTime.has(timeA)
+      ? rankByTime.get(timeA)
+      : Number.MAX_SAFE_INTEGER;
+    const rankB = rankByTime.has(timeB)
+      ? rankByTime.get(timeB)
+      : Number.MAX_SAFE_INTEGER;
+
+    if (rankA !== rankB) return rankA - rankB;
+    return timeA.localeCompare(timeB, undefined, { numeric: true });
+  };
 
   // Agrupar por participante
   const groupedById = table
     .groupby(idVar)
     .select(idVar, groupVar, timeVar, valueVar)
     .objects({ grouped: "entries" });
-
   let participantData = groupedById.map(([id, rows]) => {
     const values = rows
       .map((r) => ({
         timestamp: String(r[timeVar]),
         value: r[valueVar],
       }))
-      .sort((a, b) => compareTimestamps(a.timestamp, b.timestamp));
+      .sort((a, b) => compareByTimeRank(a.timestamp, b.timestamp));
 
     const group = rows.length > 0 ? rows[0][groupVar] : null;
 
     return { id, group, values };
   });
 
-  const allTimes = [
-    ...new Set(participantData.flatMap((p) => p.values.map((v) => v.timestamp))),
-  ].sort(compareTimestamps);
-
   let completeIds = null;
   if (showComplete) {
+    const beforeCount = participantData.length;
     const completeParticipants = participantData.filter((p) =>
       allTimes.every((t) =>
         p.values.some(
-          (v) => v.timestamp === t && v.value !== null && !isNaN(v.value)
-        )
-      )
+          (v) => v.timestamp === t && v.value !== null && !isNaN(v.value),
+        ),
+      ),
     );
     completeIds = new Set(completeParticipants.map((p) => p.id));
     participantData = completeParticipants;
 
     let tmp = raw.filter((r) => completeIds.has(r[idVar]));
     table = aq.from(tmp);
+
+    console.log("[Evolution] Relevant data selection applied", {
+      participantsBefore: beforeCount,
+      participantsAfter: participantData.length,
+      excludedParticipants: beforeCount - participantData.length,
+      filteredRows: tmp.length,
+    });
   }
 
   // Agregar medias, desviaciones y conteo
@@ -402,7 +435,7 @@ export function getLineChartData(
 
   const meanData = [...groupsMap.entries()].map(([group, values]) => ({
     group,
-    values: values.sort((a, b) => compareTimestamps(a.time, b.time)),
+    values: values.sort((a, b) => compareByTimeRank(a.time, b.time)),
   }));
 
   const testResults = Array.isArray(tests)
@@ -441,6 +474,10 @@ export function getLineChartData(
           const error = result?.error;
           return { ...meta, result, error };
         } catch (error) {
+          console.error("[getLineChartData] test failed", {
+            id,
+            error,
+          });
           return {
             ...meta,
             error: error?.message || "Error running test.",

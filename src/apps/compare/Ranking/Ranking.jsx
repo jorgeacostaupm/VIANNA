@@ -10,12 +10,11 @@ import useResizeObserver from "@/hooks/useResizeObserver";
 import RankingPlot from "./RankingPlot";
 import ChartBar from "@/components/charts/ChartBar";
 import styles from "@/styles/Charts.module.css";
-import { pubsub } from "@/utils/pubsub";
 import NoDataPlaceholder from "@/components/charts/NoDataPlaceholder";
 import { computeRankingData } from "@/utils/functions";
 import panelStyles from "@/styles/SettingsPanel.module.css";
+import { notifyError, notifyWarning } from "@/utils/notifications";
 
-const { publish } = pubsub;
 const { Text } = Typography;
 
 export default function Ranking({ test, remove, id, onVariableClick }) {
@@ -97,20 +96,19 @@ export default function Ranking({ test, remove, id, onVariableClick }) {
           ? `\n...and ${skipped.length - maxItems} more.`
           : "";
 
-      publish("notification", {
+      notifyWarning({
         message: "Ranking generated with skipped variables",
         description: `${skipped.length} variable(s) were excluded:\n${details}${extra}`,
         placement: "bottomRight",
-        type: "warning",
         source: "test",
       });
     } catch (error) {
       console.error(error);
-      publish("notification", {
-        message: "Error computing data",
-        description: error.message || String(error),
+      notifyError({
+        message: "Could not compute ranking data",
+        error: error.message || String(error),
+        fallback: "Ranking calculation failed.",
         placement: "bottomRight",
-        type: "error",
         source: "test",
       });
       setData(null);

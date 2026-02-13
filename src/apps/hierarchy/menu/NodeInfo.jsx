@@ -18,7 +18,7 @@ const dtypeColor = {
 };
 
 const NodeInfo = ({ nChildren, nodeType }) => {
-  const [field, meta, helpers] = useField("dtype");
+  const [field, , helpers] = useField("dtype");
   const { errors } = useFormikContext();
   const { setValue } = helpers;
   const selectRef = useRef();

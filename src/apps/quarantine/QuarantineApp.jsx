@@ -1,8 +1,4 @@
 import React from "react";
-import { Layout } from "antd";
-import GridLayout, { WidthProvider } from "react-grid-layout";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
 
 import { setInitQuarantine } from "@/store/slices/cantabSlice";
 import Quarantine from "./Quarantine";
@@ -10,17 +6,12 @@ import Quarantine from "./Quarantine";
 import useNotification from "@/hooks/useNotification";
 import useRootStyles from "@/hooks/useRootStyles";
 import { APP_NAME, Apps } from "@/utils/Constants";
+import MainSidebar from "@/apps/main/MainSidebar";
+import SingleViewAppLayout from "@/components/ui/SingleViewAppLayout";
+import AppsButtons from "./AppsButtons";
 
-const ResponsiveGridLayout = WidthProvider(GridLayout);
-const layout = [
-  {
-    i: "quarantine",
-    x: 0,
-    y: 0,
-    w: 12,
-    h: 12,
-  },
-];
+const QUARANTINE_DESC =
+  "The Quarantine view isolates selected records for focused inspection and recovery workflows without affecting the active exploration context.";
 
 export default function QuarantineApp() {
   useRootStyles(setInitQuarantine, APP_NAME + " · " + Apps.QUARANTINE);
@@ -29,27 +20,20 @@ export default function QuarantineApp() {
   return (
     <>
       {holder}
-      <Layout
-        style={{
-          height: "100vh",
-          width: "100vw",
-          background: "#f0f2f5",
-          overflow: "auto",
-        }}
+      <SingleViewAppLayout
+        sidebar={
+          <MainSidebar
+            description={QUARANTINE_DESC}
+            hideAriaLabel="Hide quarantine sidebar"
+            showAriaLabel="Show quarantine sidebar"
+          >
+            <AppsButtons />
+          </MainSidebar>
+        }
+        viewKey="quarantine"
       >
-        <ResponsiveGridLayout
-          className="layout"
-          layout={layout}
-          cols={12}
-          rowHeight={95}
-          draggableHandle=".drag-handle"
-          containerPadding={[10, 10]}
-        >
-          <div key="quarantine">
-            <Quarantine />
-          </div>
-        </ResponsiveGridLayout>
-      </Layout>
+        <Quarantine />
+      </SingleViewAppLayout>
     </>
   );
 }

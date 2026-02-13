@@ -15,6 +15,7 @@ import {
   DEFAULT_TIMESTAMP_VARIABLE,
 } from "@/utils/Constants";
 import styles from "@/styles/App.module.css";
+import TimeOrderModal from "./TimeOrderModal";
 
 const { Option } = Select;
 
@@ -87,6 +88,7 @@ export default function ContextSelector() {
             </Option>
           ))}
         </Select>
+        <TimeOrderModal timeVar={timeVar} />
       </div>
     </>
   );

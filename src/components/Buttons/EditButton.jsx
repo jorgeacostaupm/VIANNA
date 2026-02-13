@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Select, Input, Typography } from "antd";
+import { Select, Input } from "antd";
 import { EditOutlined, FormOutlined } from "@ant-design/icons";
 import { selectNavioVars } from "@/store/slices/cantabSlice";
 import { setDataframe } from "@/store/slices/dataSlice";
@@ -8,8 +8,6 @@ import { ORDER_VARIABLE } from "@/utils/Constants";
 import PopoverButton from "@/components/ui/PopoverButton";
 import BarButton from "@/components/ui/BarButton";
 import { generateColumnBatch } from "@/store/async/dataAsyncReducers";
-
-const { Text } = Typography;
 
 function EditColumn() {
   const dispatch = useDispatch();

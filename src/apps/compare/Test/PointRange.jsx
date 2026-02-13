@@ -7,15 +7,17 @@ import { Typography, Slider, Radio, Switch, Select } from "antd";
 import panelStyles from "@/styles/SettingsPanel.module.css";
 
 import useResizeObserver from "@/hooks/useResizeObserver";
+import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import styles from "@/styles/Charts.module.css";
 import { moveTooltip } from "@/utils/functions";
 import ChartBar from "@/components/charts/ChartBar";
 import tests from "@/utils/tests";
-import { pubsub } from "@/utils/pubsub";
+import { notifyError } from "@/utils/notifications";
 import { CHART_GRID, CHART_OUTLINE, CHART_ZERO_LINE } from "@/utils/chartTheme";
-import { attachTickLabelGridHover } from "@/utils/gridInteractions";
-
-const { publish } = pubsub;
+import {
+  attachTickLabelGridHover,
+  paintLayersInOrder,
+} from "@/utils/gridInteractions";
 
 export default function PointRange({ id, variable, test, remove }) {
   const containerRef = useRef();
@@ -25,6 +27,8 @@ export default function PointRange({ id, variable, test, remove }) {
   const groupVar = useSelector((s) => s.compare.groupVar);
 
   const [result, setResult] = useState(null);
+  const summaryGroups = result?.summaries?.map((entry) => entry.name) || [];
+  const { colorDomain } = useGroupColorDomain(groupVar, summaryGroups);
   const [config, setConfig] = useState({
     isSync: true,
     showCaps: true,
@@ -88,11 +92,11 @@ export default function PointRange({ id, variable, test, remove }) {
         referenceUrl: testObj.referenceUrl || "",
       });
     } catch (error) {
-      publish("notification", {
-        message: "Error computing data",
-        description: error.message,
+      notifyError({
+        message: "Could not compute test summaries",
+        error,
+        fallback: "Summary calculation failed for the selected variable.",
         placement: "bottomRight",
-        type: "error",
         source: "test",
       });
     }
@@ -135,7 +139,7 @@ export default function PointRange({ id, variable, test, remove }) {
     const colorScheme = d3.schemeCategory10;
     const pointColorScale = d3
       .scaleOrdinal()
-      .domain(sortedData.map((d) => d.name))
+      .domain(colorDomain)
       .range(colorScheme);
 
     const x = d3
@@ -163,8 +167,7 @@ export default function PointRange({ id, variable, test, remove }) {
     yGridG.select(".domain").remove();
     yGridG
       .selectAll(".tick line")
-      .attr("stroke", CHART_GRID)
-      .attr("stroke-dasharray", "8 6");
+      .attr("stroke", CHART_GRID);
 
     const yAxisG = chart.append("g").call(d3.axisLeft(y).ticks(yTickCount));
     yAxisG.select(".domain").remove();
@@ -288,9 +291,11 @@ export default function PointRange({ id, variable, test, remove }) {
       gridGroup: yGridG,
     });
 
-    yGridG.raise();
-    yAxisG.raise();
-  }, [result, dims, config, id]);
+    paintLayersInOrder({
+      chartGroup: chart,
+      layers: [xAxisG, yAxisG, yGridG],
+    });
+  }, [result, dims, config, id, colorDomain]);
 
   const infoContent =
     result?.descriptionJSX ||

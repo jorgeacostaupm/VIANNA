@@ -124,7 +124,7 @@ export const anova = {
         <div>
           One-way ANOVA of {k} groups (N={N})
         </div>
-        <div>Effect measure: Cohen's d</div>
+        <div>Effect measure: Cohen&apos;s d</div>
         <div>
           F({dfBetween},{dfWithin}) = {FValue.toFixed(2)} <br />p ={" "}
           {pValue.toFixed(3)} η² = {etaSquared.toFixed(3)}

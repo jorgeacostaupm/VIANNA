@@ -134,9 +134,11 @@ export default function useCorrelationMatrix({ chartRef, data, config, params })
     }
 
     function renderCorrelationCell(x, y) {
-      const value = data.find(
+      const pair = data.find(
         (d) => (d.x === x && d.y === y) || (d.x === y && d.y === x)
-      ).value;
+      );
+      if (!pair || !Number.isFinite(pair.value)) return;
+      const value = pair.value;
 
       if (Math.abs(value) < range[0] || Math.abs(value) > range[1]) return;
 
@@ -153,7 +155,7 @@ export default function useCorrelationMatrix({ chartRef, data, config, params })
         .attr("rx", 3)
         .attr("ry", 3)
         .style("fill", color(value))
-        .on("mouseover", function (e, d) {
+        .on("mouseover", function (e) {
           const target = e.target;
           d3.select(target).style("stroke", CHART_HIGHLIGHT).raise();
           tooltip.style("opacity", 1);
@@ -163,10 +165,10 @@ export default function useCorrelationMatrix({ chartRef, data, config, params })
           )}`;
           tooltip.style("opacity", 1).html(html);
         })
-        .on("mousemove", function (e, d) {
+        .on("mousemove", function (e) {
           moveTooltip(e, tooltip, chart);
         })
-        .on("mouseout", function (e, d) {
+        .on("mouseout", function (e) {
           const target = e.target;
           d3.select(target).style("stroke", null);
           tooltip.style("opacity", 0);

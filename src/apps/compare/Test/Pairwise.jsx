@@ -10,15 +10,13 @@ import {
   formatDecimal,
 } from "@/utils/functions";
 import useResizeObserver from "@/hooks/useResizeObserver";
-import { pubsub } from "@/utils/pubsub";
+import { notifyError, notifyInfo } from "@/utils/notifications";
 import { Settings } from "./PointRange";
 import {
   CHART_GRID,
   CHART_OUTLINE,
 } from "@/utils/chartTheme";
-import { attachTickLabelGridHover } from "@/utils/gridInteractions";
-
-const { publish } = pubsub;
+import { attachTickLabelGridHover, paintLayersInOrder } from "@/utils/gridInteractions";
 
 export default function Pairwise({ id, variable, test, remove }) {
   const ref = useRef();
@@ -48,11 +46,10 @@ export default function Pairwise({ id, variable, test, remove }) {
     try {
       const tmp = computePairwiseData(selection, groupVar, variable, test);
       if (!tmp?.pairwiseEffects || tmp.pairwiseEffects.length === 0) {
-        publish("notification", {
-          message: "No pairwise results",
-          description: "This test does not provide pairwise effects.",
+        notifyInfo({
+          message: "No pairwise effects available",
+          description: "The selected test does not provide pairwise effects.",
           placement: "bottomRight",
-          type: "info",
           source: "test",
         });
         setData(null);
@@ -60,11 +57,11 @@ export default function Pairwise({ id, variable, test, remove }) {
       }
       setData(tmp);
     } catch (error) {
-      publish("notification", {
-        message: "Error computing data",
-        description: error.message,
+      notifyError({
+        message: "Could not compute pairwise effects",
+        error,
+        fallback: "Pairwise effect calculation failed.",
         placement: "bottomRight",
-        type: "error",
         source: "test",
       });
     }
@@ -260,14 +257,13 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
   xGridG.select(".domain").remove();
   xGridG
     .selectAll(".tick line")
-    .attr("stroke", CHART_GRID)
-    .attr("stroke-dasharray", "8 6");
+    .attr("stroke", CHART_GRID);
   xGridG
     .selectAll(".tick")
     .filter((_, i, nodes) => i === 0 || i === nodes.length - 1)
     .select("line")
     .classed("chart-grid-line", false)
-    .attr("stroke", "none");
+    .style("stroke", "none");
   const zeroX = x(0);
   const isZeroGridTick = (tickValue) => {
     const tickNum = Number(+tickValue);
@@ -279,7 +275,18 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
     .filter((tickValue) => isZeroGridTick(tickValue))
     .select("line")
     .classed("chart-grid-line", false)
-    .attr("stroke", "none");
+    .style("stroke", "none");
+
+  const formatPValueLines = (d) => {
+    const adjustedLabel = d?.pAdjustMethod
+      ? `p-value (${d.pAdjustMethod}): ${formatDecimal(d.pValue)}`
+      : `p-value: ${formatDecimal(d.pValue)}`;
+    const rawLine =
+      d?.pAdjustMethod && Number.isFinite(d?.pValueRaw)
+        ? `<br/>raw p-value: ${formatDecimal(d.pValueRaw)}`
+        : "";
+    return `${adjustedLabel}${rawLine}`;
+  };
 
   chart
     .selectAll(".effect-bar")
@@ -298,7 +305,7 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
           `<strong>${d.groups.join(" vs ")}</strong><br/>
            ${d.measure}: ${d.value.toFixed(2)}<br/>
            CI: [${d.ci95.lower.toFixed(2)}, ${d.ci95.upper.toFixed(2)}]<br/>
-           p-value: ${formatDecimal(d.pValue)}`,
+           ${formatPValueLines(d)}`,
         )
         .style("visibility", "visible");
     })
@@ -369,7 +376,7 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
           `<strong>${d.groups.join(" vs ")}</strong><br/>
            ${d.measure}: ${d.value.toFixed(2)}<br/>
            CI: [${d.ci95.lower.toFixed(2)}, ${d.ci95.upper.toFixed(2)}]<br/>
-           p-value: ${formatDecimal(d.pValue)}`,
+           ${formatPValueLines(d)}`,
         )
         .style("visibility", "visible");
     })
@@ -386,6 +393,8 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
     },
   });
 
-  xGridG.raise();
-  xAxisG.raise();
+  paintLayersInOrder({
+    chartGroup: chart,
+    layers: [yAxisG, xAxisG, xGridG],
+  });
 }

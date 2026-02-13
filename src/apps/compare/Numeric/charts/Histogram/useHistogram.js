@@ -1,19 +1,28 @@
 import * as d3 from "d3";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import { moveTooltip } from "@/utils/functions";
 import { numMargin, renderLegend } from "../Density/useDensity";
 import useResizeObserver from "@/hooks/useResizeObserver";
+import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { CHART_OUTLINE_MUTED } from "@/utils/chartTheme";
-import { attachTickLabelGridHover } from "@/utils/gridInteractions";
+import {
+  attachTickLabelGridHover,
+  paintLayersInOrder,
+} from "@/utils/gridInteractions";
 
 export default function useHistogram({ chartRef, legendRef, data, config }) {
   const dimensions = useResizeObserver(chartRef);
+  const groupVar = useSelector((s) => s.compare.groupVar);
   const groups = Array.from(new Set((data || []).map((d) => d.type))).filter(
-    (value) => value != null,
+    (value) => value != null
   );
-  const selectionGroups = groups;
-  const groupsKey = groups.join("|");
+  const { colorDomain, orderedGroups: selectionGroups } = useGroupColorDomain(
+    groupVar,
+    groups
+  );
+  const groupsKey = selectionGroups.join("|");
   const [hide, setHide] = useState([]);
   const [blur, setBlur] = useState(selectionGroups);
 
@@ -51,7 +60,7 @@ export default function useHistogram({ chartRef, legendRef, data, config }) {
       .append("g")
       .attr("transform", `translate(${numMargin.left},${numMargin.top})`);
 
-    const color = d3.scaleOrdinal().domain(groups).range(colorScheme);
+    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
     const x = d3
       .scaleLinear()
       .domain([xMin, xMax])
@@ -127,10 +136,12 @@ export default function useHistogram({ chartRef, legendRef, data, config }) {
     }
 
     if (showGrid && yGridG) {
-      yGridG.raise();
-      yAxisG.raise();
+      paintLayersInOrder({
+        chartGroup: chart,
+        layers: [xAxisG, yAxisG, yGridG],
+      });
     }
-  }, [data, config, dimensions, groupsKey]);
+  }, [data, config, dimensions, groupsKey, colorDomain]);
 
   useEffect(() => {
     if (!chartRef.current) return;

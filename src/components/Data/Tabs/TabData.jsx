@@ -10,6 +10,7 @@ import {
   selectNumericVars,
   selectUnkownVars,
 } from "@/store/slices/cantabSlice";
+import styles from "../Data.module.css";
 
 const { Title, Text } = Typography;
 const formatPreview = (arr, max = 12) => {
@@ -30,17 +31,7 @@ const Info = () => {
   const unknownVars = useSelector(selectUnkownVars);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "50%",
-        flexDirection: "column",
-        gap: "1rem",
-        padding: "20px",
-        boxSizing: "border-box",
-        borderRadius: "4px",
-      }}
-    >
+    <div className={styles.tabColumn}>
       <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
         Metadata
       </Title>
@@ -119,17 +110,7 @@ const UploadPanel = () => {
 
   return (
     <div
-      style={{
-        width: "50%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        gap: "1rem",
-        borderLeft: "1px solid #eee",
-        padding: "20px",
-        boxSizing: "border-box",
-        overflow: "scroll",
-      }}
+      className={`${styles.tabColumn} ${styles.tabColumnWithDivider} ${styles.tabColumnScrollable}`}
     >
       <Title
         level={4}
@@ -194,13 +175,7 @@ const UploadPanel = () => {
 
 export default function TabData() {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        width: "100%",
-      }}
-    >
+    <div className={styles.tabSplit}>
       <Info />
       <UploadPanel />
     </div>

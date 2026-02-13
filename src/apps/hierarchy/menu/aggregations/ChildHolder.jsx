@@ -11,9 +11,9 @@ import styles from "./DropArea.module.css";
 
 const { Text } = Typography;
 
-const ChildHolder = ({ aggOp, allNodes, nodes, moveNode, removeNodeField }) => {
+const ChildHolder = ({ allNodes, nodes, moveNode, removeNodeField }) => {
   const [active, setActive] = useState(false);
-  const [searchText, updateSearch] = useState("");
+  const [searchText] = useState("");
 
   const handleDragStart = (e, attribute) => {
     e.dataTransfer.setData("attributeId", attribute.id);
