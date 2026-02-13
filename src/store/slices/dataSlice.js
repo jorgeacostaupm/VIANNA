@@ -44,6 +44,19 @@ const initialState = {
   nullifiedValues: [],
 };
 
+const areColumnsEqual = (previousColumns = [], nextColumns = []) => {
+  if (previousColumns === nextColumns) return true;
+  if (!Array.isArray(previousColumns) || !Array.isArray(nextColumns)) {
+    return false;
+  }
+
+  if (previousColumns.length !== nextColumns.length) return false;
+
+  return previousColumns.every(
+    (columnName, index) => columnName === nextColumns[index],
+  );
+};
+
 export const dataSlice = createSlice({
   name: "dataframe",
   initialState: initialState,
@@ -58,7 +71,11 @@ export const dataSlice = createSlice({
     },
 
     setNavioColumns: (state, action) => {
-      state.navioColumns = action.payload;
+      const nextColumns = Array.isArray(action.payload) ? action.payload : [];
+      if (!areColumnsEqual(state.navioColumns, nextColumns)) {
+        state.navioColumns = nextColumns;
+      }
+
       const selection = pickColumns(state.dataframe, state.navioColumns);
       state.selection = selection;
       hasEmptyValues(selection, state);

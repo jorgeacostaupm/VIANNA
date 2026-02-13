@@ -22,7 +22,7 @@ import {
   notifyWarning,
 } from "@/utils/notifications";
 
-let { publish, subscribe } = pubsub;
+let { publish, subscribe, unsubscribe } = pubsub;
 
 const dtypeColors = {
   [DataType.NUMERICAL.dtype]: DataType.NUMERICAL.color,
@@ -71,6 +71,8 @@ export default class D3HierarchyEditor {
   viewConfig = defaultViewConfig;
   targetNode = null;
   nodesDragged = [];
+  navioSyncTimeout = null;
+  subscriptionHandlers = {};
 
   constructor(container, data, dispatcher, options = {}) {
     this.containerRef = container;
@@ -1066,7 +1068,18 @@ export default class D3HierarchyEditor {
       toggleAttribute({ attributeID: node.data.id, fromFocus: false }),
     );
     this.drawHierarchy(node);
-    this.setNavioNodes();
+    this.scheduleNavioSync(transitionDuration + 16);
+  }
+
+  scheduleNavioSync(delay = 0) {
+    if (this.navioSyncTimeout) {
+      clearTimeout(this.navioSyncTimeout);
+    }
+
+    this.navioSyncTimeout = setTimeout(() => {
+      this.navioSyncTimeout = null;
+      this.setNavioNodes();
+    }, Math.max(0, delay));
   }
 
   initNodeDrag(node) {
@@ -1143,31 +1156,43 @@ export default class D3HierarchyEditor {
   }
 
   setNavioNodes() {
-    let attributes = [];
-    const addAttribute = (n, hasInactiveAncestor = false) => {
-      const isActive = n?.data?.isActive !== false;
-      const isAvailable = !hasInactiveAncestor && isActive;
+    const attributes = [];
+    const queue = [];
+    this.root?.children?.forEach((child) => queue.push(child));
 
-      if (isAvailable && n.data.id !== 0 && n.children == null) {
-        attributes.push(n.data.name);
+    for (let idx = 0; idx < queue.length; idx += 1) {
+      const node = queue[idx];
+      if (!node || node?.data?.isActive === false) continue;
+
+      const isCollapsed = node._children != null;
+      const hasVisibleChildren =
+        Array.isArray(node.children) && node.children.length > 0;
+
+      if (node.data.id !== 0 && (isCollapsed || !hasVisibleChildren)) {
+        attributes.push(node.data.name);
+        continue;
       }
 
-      if (n._children != null) return;
-      if (n.children != null) {
-        n.children.forEach((child) => addAttribute(child, !isAvailable));
+      if (hasVisibleChildren) {
+        queue.push(...node.children.filter((child) => child?.data?.isActive !== false));
       }
-    };
+    }
 
-    this.root.children?.forEach((child) => addAttribute(child, false));
     const attrs = store.getState().metadata.attributes;
+    const attrsByName = new Map(attrs.map((attr) => [attr.name, attr]));
     const columns = attributes.filter((attr) => {
-      const complete_attr = attrs.find((a) => a.name === attr);
-      if (!complete_attr || complete_attr.isActive === false) return false;
-      if (complete_attr.type != "aggregation") return true;
-      else if (complete_attr.info?.exec && complete_attr.info?.formula !== "")
-        return true;
-      else return false;
+      const completeAttr = attrsByName.get(attr);
+      if (!completeAttr || completeAttr.isActive === false) return false;
+      if (completeAttr.type !== "aggregation") return true;
+      return Boolean(completeAttr.info?.exec && completeAttr.info?.formula !== "");
     });
+
+    const currentColumns = store.getState().dataframe.present.navioColumns || [];
+    const hasSameColumns =
+      columns.length === currentColumns.length &&
+      columns.every((columnName, index) => columnName === currentColumns[index]);
+
+    if (hasSameColumns) return;
 
     this.dispatcher(setNavioColumns(columns));
   }
@@ -1624,10 +1649,28 @@ export default class D3HierarchyEditor {
   }
 
   addSubscriptions() {
-    subscribe("addSelectedNodes", this.addSelectedNodes.bind(this));
-    subscribe("aggregateSelectedNodes", this.aggregateSelectedNodes.bind(this));
-    subscribe("removeSelectedNodes", this.removeSelectedNodes.bind(this));
-    subscribe("focusNode", this.focusNode.bind(this));
-    subscribe("inspectNode", this.inspectNode.bind(this));
+    this.subscriptionHandlers = {
+      addSelectedNodes: this.addSelectedNodes.bind(this),
+      aggregateSelectedNodes: this.aggregateSelectedNodes.bind(this),
+      removeSelectedNodes: this.removeSelectedNodes.bind(this),
+      focusNode: this.focusNode.bind(this),
+      inspectNode: this.inspectNode.bind(this),
+    };
+
+    Object.entries(this.subscriptionHandlers).forEach(([eventName, handler]) => {
+      subscribe(eventName, handler);
+    });
+  }
+
+  destroy() {
+    if (this.navioSyncTimeout) {
+      clearTimeout(this.navioSyncTimeout);
+      this.navioSyncTimeout = null;
+    }
+
+    Object.entries(this.subscriptionHandlers).forEach(([eventName, handler]) => {
+      unsubscribe(eventName, handler);
+    });
+    this.subscriptionHandlers = {};
   }
 }
