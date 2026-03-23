@@ -89,7 +89,7 @@ export default function DataManagementButton({
         onCancel={handleCancel}
         width={modalWidth}
         style={{ top: modalTop }}
-        bodyStyle={{ maxHeight: "calc(100vh - 180px)", overflowY: "auto" }}
+        bodyStyle={{ height: "calc(100vh - 180px)", overflow: "hidden" }}
         footer={null}
         centered={!screens.md}
         destroyOnClose

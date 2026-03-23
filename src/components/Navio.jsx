@@ -1,8 +1,15 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import navio from "navio";
+import * as d3 from "d3";
 
 import { selectNavioColumns } from "@/store/slices/cantabSlice";
+
+const TABLEAU_YELLOW = "#edc949";
+const NAVIO_PASTEL_CATEGORICAL = [
+  ...d3.schemeTableau10.filter((color) => color !== TABLEAU_YELLOW),
+  TABLEAU_YELLOW,
+];
 
 export default function Navio({ data, config, setSelection }) {
   const dispatch = useDispatch();
@@ -29,6 +36,7 @@ export default function Navio({ data, config, setSelection }) {
     nv.tooltipFontSize = 14;
     nv.tooltipBgColor = "#fff";
     nv.nullColor = "#f5dd07";
+    nv.defaultColorCategorical = NAVIO_PASTEL_CATEGORICAL;
     nv.margin = 50;
     nv.tooltipMargin = 25;
     nv.data(JSON.parse(JSON.stringify(data)));

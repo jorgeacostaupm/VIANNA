@@ -15,8 +15,8 @@ import AutoCloseTooltip from "@/components/ui/AutoCloseTooltip";
 import styles from "@/styles/App.module.css";
 
 const grayStyle = {
-  backgroundColor: "#f0f0f0",
-  color: "#888",
+  backgroundColor: "var(--color-surface-muted)",
+  color: "var(--color-ink-tertiary)",
 };
 
 const tagStyle = {

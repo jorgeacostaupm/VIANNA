@@ -22,7 +22,7 @@ const FilteredVariables = () => {
           padding: "5px",
           gap: "2px",
           minHeight: "20px",
-          border: "1px solid lightgray",
+          border: "1px solid var(--color-border)",
           borderRadius: "5px",
         }}
       >
@@ -39,7 +39,7 @@ const FilteredVariables = () => {
                 alignItems: "center",
                 width: "100%",
                 color: "white",
-                background: "#1677ff",
+                background: "var(--color-brand)",
               }}
               key={tag}
               closable

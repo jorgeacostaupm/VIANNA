@@ -280,7 +280,7 @@ export function SaveButton() {
             style={{
               maxHeight: 280,
               overflow: "auto",
-              border: "1px solid #f0f0f0",
+              border: "1px solid var(--color-border)",
               borderRadius: 6,
             }}
           >
@@ -299,10 +299,10 @@ export function SaveButton() {
                       style={{
                         position: "sticky",
                         top: 0,
-                        background: "#fafafa",
+                        background: "var(--color-surface-muted)",
                         textAlign: "left",
                         padding: "6px 8px",
-                        borderBottom: "1px solid #f0f0f0",
+                        borderBottom: "1px solid var(--color-border)",
                         whiteSpace: "nowrap",
                       }}
                     >
@@ -319,7 +319,7 @@ export function SaveButton() {
                         key={`${column}-${rowIndex}`}
                         style={{
                           padding: "6px 8px",
-                          borderBottom: "1px solid #f5f5f5",
+                          borderBottom: "1px solid var(--color-border)",
                           whiteSpace: "nowrap",
                         }}
                       >

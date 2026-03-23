@@ -27,7 +27,7 @@ const DataInfoPanel = () => {
         <div
           key={t.id}
           style={{
-            border: "1px solid #e6e6e6",
+            border: "1px solid var(--color-border)",
             borderRadius: "8px",
             padding: "10px",
             display: "flex",
@@ -70,7 +70,7 @@ const UploadPanel = () => {
         flexDirection: "column",
         justifyContent: "center",
         gap: "1rem",
-        borderLeft: "1px solid #eee",
+        borderLeft: "1px solid var(--color-border)",
         padding: "20px",
         boxSizing: "border-box",
       }}

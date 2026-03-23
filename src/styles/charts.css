@@ -311,14 +311,14 @@ svg line.chart-grid-line,
 
 .hiddenDot {
   r: 1px;
-  fill: #000;
+  fill: var(--color-ink);
   fill-opacity: 1;
 }
 
 .selected {
   display: block;
   opacity: 1;
-  stroke: #000;
+  stroke: var(--color-ink);
   stroke-width: 2.5;
 }
 

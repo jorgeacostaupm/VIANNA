@@ -166,10 +166,10 @@ export default function TestSelector({ generateTest, generateRanking }) {
         <div
           style={{
             marginTop: "8px",
-            border: "1px solid #d9d9d9",
+            border: "1px solid var(--color-border)",
             borderRadius: "8px",
             padding: "10px",
-            background: "#fafafa",
+            background: "var(--color-surface-muted)",
             display: "flex",
             flexDirection: "column",
             gap: "6px",

@@ -15,7 +15,7 @@ const renderShapeSVG = (shape, color) => {
           <path
             d="M 0 -14.4 L 12.5 7.2 L -12.5 7.2 Z"
             fill={color}
-            stroke="#000"
+            stroke="var(--color-ink)"
             strokeWidth="1"
           />
         </svg>
@@ -30,7 +30,7 @@ const renderShapeSVG = (shape, color) => {
             height="25"
             rx="4"
             fill={color}
-            stroke="#000"
+            stroke="var(--color-ink)"
             strokeWidth="1"
           />
         </svg>
@@ -38,7 +38,12 @@ const renderShapeSVG = (shape, color) => {
     case "circle":
       return (
         <svg width="25" height="25" viewBox="-15 -15 30 30">
-          <circle r="12.5" fill={color} stroke="#000" strokeWidth="1" />
+          <circle
+            r="12.5"
+            fill={color}
+            stroke="var(--color-ink)"
+            strokeWidth="1"
+          />
         </svg>
       );
     case "rect":
@@ -51,7 +56,7 @@ const renderShapeSVG = (shape, color) => {
             height="15"
             rx="3"
             fill={color}
-            stroke="#000"
+            stroke="var(--color-ink)"
             strokeWidth="1"
           />
         </svg>

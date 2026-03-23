@@ -209,18 +209,11 @@ export default class RankingPlot {
         .selectAll(".tick line")
         .attr("stroke", CHART_GRID);
 
-      vis.yAxisG
-        .selectAll(".tick")
-        .filter((_, i, nodes) => i === 0 || i === nodes.length - 1)
-        .select("line")
-        .classed("chart-grid-line", false)
-        .style("stroke", "none");
-
       attachTickLabelGridHover({
         axisGroup: vis.yAxisG,
         gridGroup: vis.yAxisG,
         lineSelector: "line",
-        includeTick: (_, i, nodes) => i !== 0 && i !== nodes.length - 1,
+        includeTick: () => true,
       });
 
     } else {

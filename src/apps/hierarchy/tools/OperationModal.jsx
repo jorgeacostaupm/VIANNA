@@ -337,7 +337,7 @@ export default function OperationModal({
             style={{
               padding: 12,
               marginBottom: 12,
-              border: "1px solid #eee",
+              border: "1px solid var(--color-border)",
               borderRadius: 6,
             }}
           >

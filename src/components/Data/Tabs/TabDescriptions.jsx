@@ -30,7 +30,7 @@ const Info = () => {
   ).filter((name) => !describedSet.has(name));
 
   return (
-    <div className={`${styles.tabColumn} ${styles.tabColumnScrollable}`}>
+    <div className={styles.tabColumn}>
       <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
         Metadata
       </Title>
@@ -39,14 +39,14 @@ const Info = () => {
         <Text strong style={{ color: "var(--primary-color)" }}>
           File Name:
         </Text>{" "}
-        <Text>{filename ? filename : "—"}</Text>
+        <Text type="secondary">{filename ? filename : "—"}</Text>
       </div>
 
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
           Nº Descriptions:
         </Text>{" "}
-        <Text>{attributes.length}</Text>
+        <Text type="secondary">{attributes.length}</Text>
       </div>
 
       <Divider style={{ margin: "1rem 0" }} />
@@ -59,15 +59,33 @@ const Info = () => {
         <Text strong style={{ color: "var(--primary-color)" }}>
           Measurements with description:
         </Text>{" "}
-        <Text>{formatPreview([...attributes].sort())}</Text>
+        <Text type="secondary">{formatPreview([...attributes].sort())}</Text>
       </div>
 
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
           Missing descriptions:
         </Text>{" "}
-        <Text>{formatPreview(missing.sort())}</Text>
+        <Text type="secondary">{formatPreview(missing.sort())}</Text>
       </div>
+
+    </div>
+  );
+};
+
+const UploadDesc = () => {
+  return (
+    <div className={`${styles.tabColumn} ${styles.tabColumnWithDivider}`}>
+      <Title
+        level={4}
+        style={{ marginBottom: 4, color: "var(--primary-color)" }}
+      >
+        Upload Descriptions
+      </Title>
+      <Text type="secondary">
+        Each row maps a measurement name to its description.
+      </Text>
+      <DragDropDesc />
 
       <Divider style={{ margin: "1rem 0" }} />
 
@@ -94,28 +112,13 @@ const Info = () => {
   );
 };
 
-const UploadDesc = () => {
-  return (
-    <div className={`${styles.tabColumn} ${styles.tabColumnWithDivider}`}>
-      <Title
-        level={4}
-        style={{ marginBottom: 4, color: "var(--primary-color)" }}
-      >
-        Upload Descriptions
-      </Title>
-      <Text type="secondary">
-        Each row maps a measurement name to its description.
-      </Text>
-      <DragDropDesc />
-    </div>
-  );
-};
-
 export default function TabDescriptions() {
   return (
-    <div className={`${styles.tabSplit} ${styles.tabColumnScrollable}`}>
-      <Info />
-      <UploadDesc />
+    <div className={styles.tabPaneBody}>
+      <div className={styles.tabSplit}>
+        <Info />
+        <UploadDesc />
+      </div>
     </div>
   );
 }

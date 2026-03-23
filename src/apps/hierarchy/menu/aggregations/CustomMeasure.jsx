@@ -104,7 +104,7 @@ const CustomMeasure = ({ formula }) => {
           style={{
             width: "100%",
             minHeight: "50px",
-            border: "1px solid #d1d5db",
+            border: "1px solid var(--color-border-strong)",
             borderRadius: "0.375rem",
             padding: "0.5rem",
             resize: "vertical",
@@ -114,7 +114,9 @@ const CustomMeasure = ({ formula }) => {
       </div>
 
       {errors?.info?.formula && (
-        <div style={{ color: "red", marginTop: 4 }}>{errors.info.formula}</div>
+        <div style={{ color: "var(--color-error)", marginTop: 4 }}>
+          {errors.info.formula}
+        </div>
       )}
 
       <SaveButton />
@@ -134,7 +136,7 @@ const CustomMeasure = ({ formula }) => {
               left: 10,
               top: "50%",
               transform: "translateY(-50%)",
-              color: "rgba(0,0,0,0.45)",
+              color: "var(--color-ink-tertiary)",
               fontSize: 16,
             }}
           />

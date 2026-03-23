@@ -258,24 +258,6 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
   xGridG
     .selectAll(".tick line")
     .attr("stroke", CHART_GRID);
-  xGridG
-    .selectAll(".tick")
-    .filter((_, i, nodes) => i === 0 || i === nodes.length - 1)
-    .select("line")
-    .classed("chart-grid-line", false)
-    .style("stroke", "none");
-  const zeroX = x(0);
-  const isZeroGridTick = (tickValue) => {
-    const tickNum = Number(+tickValue);
-    if (!Number.isFinite(tickNum) || !Number.isFinite(zeroX)) return false;
-    return Math.abs(x(tickNum) - zeroX) < 0.5;
-  };
-  xGridG
-    .selectAll(".tick")
-    .filter((tickValue) => isZeroGridTick(tickValue))
-    .select("line")
-    .classed("chart-grid-line", false)
-    .style("stroke", "none");
 
   const formatPValueLines = (d) => {
     const adjustedLabel = d?.pAdjustMethod
@@ -386,11 +368,6 @@ function renderPairwisePlot(container, result, config, dimensions, id) {
   attachTickLabelGridHover({
     axisGroup: xAxisG,
     gridGroup: xGridG,
-    includeTick: (tickValue, i, nodes) => {
-      if (i === 0 || i === nodes.length - 1) return false;
-      if (isZeroGridTick(tickValue)) return false;
-      return true;
-    },
   });
 
   paintLayersInOrder({

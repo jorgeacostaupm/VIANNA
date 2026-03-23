@@ -210,7 +210,7 @@ function renderRMAnovaHTML({
       <b>Repeated Measures ANOVA</b>
 
       {excluded > 0 && (
-        <div style={{ color: "#a00" }}>
+        <div style={{ color: "var(--color-error)" }}>
           {excluded} subject(s) excluded due to incomplete data. The visualized
           data differs with these results.
         </div>

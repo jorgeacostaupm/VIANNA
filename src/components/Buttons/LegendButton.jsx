@@ -5,13 +5,19 @@ import { BgColorsOutlined } from "@ant-design/icons";
 
 import PopoverButton from "@/components/ui/PopoverButton";
 
+const TABLEAU_YELLOW = "#edc949";
+const NAVIO_CATEGORIES = [
+  ...d3.schemeTableau10.filter((color) => color !== TABLEAU_YELLOW),
+  TABLEAU_YELLOW,
+];
+
 const colorScales = {
   "Numbers (from lowest to highest)": d3.scaleSequential(d3.interpolateBlues),
   Dates: d3.scaleSequential(d3.interpolatePurples),
   "Diverging numbers (from - to +)": d3.scaleSequential(d3.interpolateBrBG),
   Ordered: d3.scaleSequential(d3.interpolateOranges),
   Text: d3.scaleSequential(d3.interpolateGreys),
-  Categories: d3.schemeCategory10,
+  Categories: NAVIO_CATEGORIES,
 };
 
 const generateGradient = (scale, steps = 12) => {

@@ -56,11 +56,21 @@ const SyncPanel = () => {
     missingVars,
     extraAttributeNodes,
     extraAggregationNodes,
-    hierarchyNodeNames,
+    hierarchyNodes,
+    aggregationNodesWithoutFormula,
     hasRootNode,
   } = useMemo(() => {
-    const datasetVars = getDataframeVariables(dataframe);
     const hierarchyNodes = (hierarchy || []).filter((n) => n.type !== "root");
+    const aggregationNodeNames = [
+      ...new Set(
+        hierarchyNodes
+          .filter((node) => node.type === "aggregation")
+          .map((node) => node.name),
+      ),
+    ];
+    const datasetVars = getDataframeVariables(dataframe).filter(
+      (varName) => !aggregationNodeNames.includes(varName),
+    );
     const hasRootNode = (hierarchy || []).some(
       (n) => n.type === "root" && n.id === 0,
     );
@@ -71,9 +81,15 @@ const SyncPanel = () => {
 
     return {
       datasetVars,
-      hierarchyNodeNames,
       hasRootNode,
       missingVars,
+      hierarchyNodes,
+      aggregationNodesWithoutFormula: hierarchyNodes.filter(
+        (node) =>
+          node.type === "aggregation" &&
+          (typeof node?.info?.exec !== "string" ||
+            node.info.exec.trim() === ""),
+      ),
       extraAttributeNodes: hierarchyNodes.filter(
         (node) => node.type === "attribute" && !datasetVars.includes(node.name),
       ),
@@ -229,48 +245,70 @@ const SyncPanel = () => {
         </Text>
       ) : (
         <>
-          <Text type="secondary">
-            Dataset vars: {datasetVars.length} | Hierarchy nodes:{" "}
-            {hierarchyNodeNames.length}
-          </Text>
-          <Text type="secondary">
-            Missing in hierarchy: {missingVars.length}
-          </Text>
-          <Text type="secondary">
-            Extra attributes: {extraAttributeNodes.length}
-          </Text>
-          <Text type="secondary">
-            Extra aggregations: {extraAggregationNodes.length}
-          </Text>
-
+          <div>
+            <Text strong style={{ color: "var(--primary-color)" }}>
+              Original Attributes:
+            </Text>{" "}
+            <Text type="secondary">{datasetVars.length}</Text>
+          </div>
+          <div>
+            <Text strong style={{ color: "var(--primary-color)" }}>
+              Hierarchy Attributes:
+            </Text>{" "}
+            <Text type="secondary">{hierarchyNodes.length}</Text>
+          </div>
+          <div>
+            <Text strong style={{ color: "var(--primary-color)" }}>
+              Nodes in Data not Hierarchy:
+            </Text>{" "}
+            <Text type="secondary">{missingVars.length}</Text>
+          </div>
+          <div>
+            <Text strong style={{ color: "var(--primary-color)" }}>
+              Nodes without formula:
+            </Text>{" "}
+            <Text type="secondary">
+              {aggregationNodesWithoutFormula.length}
+            </Text>
+          </div>
           {missingVars.length > 0 ? (
-            <Text type="secondary">
-              Missing nodes: {formatListPreview(missingVars, 12, "—")}
-            </Text>
+            <div>
+              <Text strong style={{ color: "var(--primary-color)" }}>
+                Missing Attributes in Hierarchy:
+              </Text>{" "}
+              <Text type="secondary">
+                {formatListPreview(missingVars, 12, "—")}
+              </Text>
+            </div>
           ) : null}
-
           {extraAttributeNodes.length > 0 ? (
-            <Text type="secondary">
-              Extra attributes:{" "}
-              {formatListPreview(
-                extraAttributeNodes.map((node) => node.name),
-                12,
-                "—",
-              )}
-            </Text>
+            <div>
+              <Text strong style={{ color: "var(--primary-color)" }}>
+                Extra attributes:
+              </Text>{" "}
+              <Text type="secondary">
+                {formatListPreview(
+                  extraAttributeNodes.map((node) => node.name),
+                  12,
+                  "—",
+                )}
+              </Text>
+            </div>
           ) : null}
-
-          {extraAggregationNodes.length > 0 ? (
-            <Text type="secondary">
-              Extra aggregations:{" "}
-              {formatListPreview(
-                extraAggregationNodes.map((node) => node.name),
-                12,
-                "—",
-              )}
-            </Text>
+          {aggregationNodesWithoutFormula.length > 0 ? (
+            <div>
+              <Text strong style={{ color: "var(--primary-color)" }}>
+                Nodes without formula:
+              </Text>{" "}
+              <Text type="secondary">
+                {formatListPreview(
+                  aggregationNodesWithoutFormula.map((node) => node.name),
+                  12,
+                  "—",
+                )}
+              </Text>
+            </div>
           ) : null}
-
           <Space wrap>
             <Button
               icon={<DiffOutlined />}
@@ -316,7 +354,7 @@ const Info = () => {
   );
 
   return (
-    <div className={`${styles.tabColumn} ${styles.tabColumnScrollable}`}>
+    <div className={styles.tabColumn}>
       <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
         Metadata
       </Title>
@@ -325,14 +363,14 @@ const Info = () => {
         <Text strong style={{ color: "var(--primary-color)" }}>
           File Name:
         </Text>{" "}
-        <Text>{filename ? filename : "—"}</Text>
+        <Text type="secondary">{filename ? filename : "—"}</Text>
       </div>
 
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
           Nº Nodes:
         </Text>{" "}
-        <Text>
+        <Text type="secondary">
           {dt?.length - aggregationNodes?.length || 0} original,{" "}
           {aggregationNodes?.length || 0} new
         </Text>
@@ -346,24 +384,49 @@ const Info = () => {
 
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
-          Nº Numeric Measurements:
+          Numeric Attributes:
         </Text>{" "}
-        <Text>{numericNodes?.length || 0}</Text>
+        <Text type="secondary">{numericNodes?.length || 0}</Text>
       </div>
 
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
-          Nº Text Measurements:
+          Text Attributes:
         </Text>{" "}
-        <Text>{textNodes?.length || 0}</Text>
+        <Text type="secondary">{textNodes?.length || 0}</Text>
       </div>
 
       <div>
         <Text strong style={{ color: "var(--primary-color)" }}>
-          Nº Unknown Measurements:
+          Unknown Attributes:
         </Text>{" "}
-        <Text>{determineNodes?.length || 0}</Text>
+        <Text type="secondary">{determineNodes?.length || 0}</Text>
       </div>
+
+      <Divider style={{ margin: "1rem 0" }} />
+
+      <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
+        Hierarchy/Data Sync
+      </Title>
+      <SyncPanel />
+    </div>
+  );
+};
+
+const UploadPanel = () => {
+  return (
+    <div className={`${styles.tabColumn} ${styles.tabColumnWithDivider}`}>
+      <Title
+        level={4}
+        style={{ marginBottom: 0, color: "var(--primary-color)" }}
+      >
+        Upload Hierarchy
+      </Title>
+      <Text type="secondary">
+        This replaces the current hierarchy and updates the visible
+        measurements.
+      </Text>
+      <DragDropHierarchy />
 
       <Divider style={{ margin: "1rem 0" }} />
 
@@ -393,37 +456,13 @@ const Info = () => {
   );
 };
 
-const UploadPanel = () => {
-  return (
-    <div
-      className={`${styles.tabColumn} ${styles.tabColumnWithDivider} ${styles.tabColumnScrollable}`}
-    >
-      <Title
-        level={4}
-        style={{ marginBottom: 0, color: "var(--primary-color)" }}
-      >
-        Upload Hierarchy
-      </Title>
-      <Text type="secondary">
-        This replaces the current hierarchy and updates the visible measurements.
-      </Text>
-      <DragDropHierarchy />
-
-      <Divider style={{ margin: "1rem 0" }} />
-
-      <Title level={4} style={{ marginTop: 0, color: "var(--primary-color)" }}>
-        Hierarchy/Data Sync
-      </Title>
-      <SyncPanel />
-    </div>
-  );
-};
-
 export default function TabHierarchy() {
   return (
-    <div className={`${styles.tabSplit} ${styles.tabColumnScrollable}`}>
-      <Info />
-      <UploadPanel />
+    <div className={styles.tabPaneBody}>
+      <div className={styles.tabSplit}>
+        <Info />
+        <UploadPanel />
+      </div>
     </div>
   );
 }

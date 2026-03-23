@@ -5,11 +5,11 @@
   align-items: center;
   padding: 0 var(--space-3);
   height: 52px;
-  background: linear-gradient(90deg, #0b1220 0%, #111827 100%);
+  background: linear-gradient(90deg, #3f5484 0%, #4e6698 100%);
   width: 100%;
   color: #fff;
   box-shadow: var(--shadow-xs);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  border-bottom: 1px solid rgba(188, 200, 222, 0.35);
   border-top-left-radius: var(--radius-lg);
   border-top-right-radius: var(--radius-lg);
 }
@@ -62,6 +62,6 @@
 
 .separator {
   height: 80%; /* altura de la barra */
-  border-left: 2px solid rgba(255, 255, 255, 0.4);
+  border-left: 2px solid rgba(230, 232, 241, 0.55);
   margin: 0 var(--space-2); /* espacio a los lados de la barra */
 }

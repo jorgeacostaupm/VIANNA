@@ -109,7 +109,7 @@ const CustomAggregate = ({ nodes, formula, save }) => {
           style={{
             width: "100%",
             minHeight: "120px",
-            border: "1px solid #d1d5db",
+            border: "1px solid var(--color-border-strong)",
             borderRadius: "0.375rem",
             padding: "0.5rem",
             resize: "vertical",
@@ -125,7 +125,7 @@ const CustomAggregate = ({ nodes, formula, save }) => {
         style={{
           display: "flex",
           justifyContent: "space-evenly",
-          color: "red",
+          color: "var(--color-error)",
           whiteSpace: "pre-wrap",
         }}
       >

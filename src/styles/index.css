@@ -21,29 +21,29 @@
   --line-height-base: 1.5;
   --line-height-relaxed: 1.65;
 
-  --color-brand: #1e70c2;
-  --color-brand-hover: #195fa8;
-  --color-brand-active: #144f8c;
-  --color-brand-soft: rgba(30, 112, 194, 0.12);
+  --color-brand: #4e6698;
+  --color-brand-hover: #435985;
+  --color-brand-active: #374a73;
+  --color-brand-soft: rgba(78, 102, 152, 0.16);
 
-  --color-ink: #0f172a;
-  --color-ink-secondary: #334155;
-  --color-ink-tertiary: #64748b;
+  --color-ink: #25324a;
+  --color-ink-secondary: #4c5d7e;
+  --color-ink-tertiary: #7483a3;
 
-  --color-bg: #f5f7fb;
+  --color-bg: #f3f5fb;
   --color-surface: #ffffff;
-  --color-surface-muted: #f8fafc;
+  --color-surface-muted: #f7f8fc;
 
-  --color-border: #e2e8f0;
-  --color-border-strong: #cbd5e1;
+  --color-border: #d6ddea;
+  --color-border-strong: #bcc8de;
 
-  --color-success: #16a34a;
-  --color-warning: #d97706;
-  --color-error: #dc2626;
+  --color-success: #2f7f6f;
+  --color-warning: #b07a2a;
+  --color-error: #b2545a;
 
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.08);
-  --shadow-sm: 0 4px 10px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 12px 26px rgba(15, 23, 42, 0.12);
+  --shadow-xs: 0 1px 3px rgba(37, 50, 74, 0.12);
+  --shadow-sm: 0 4px 12px rgba(37, 50, 74, 0.14);
+  --shadow-md: 0 12px 26px rgba(37, 50, 74, 0.18);
 
   --radius-xs: 6px;
   --radius-sm: 8px;
@@ -64,15 +64,15 @@
   --control-height-md: 40px;
   --control-height-lg: 48px;
 
-  --focus-ring: 0 0 0 3px rgba(30, 112, 194, 0.25);
+  --focus-ring: 0 0 0 3px rgba(78, 102, 152, 0.25);
   --transition-fast: 140ms ease;
   --transition-base: 220ms ease;
 
   --nav-height: 64px;
 
   /* Legacy aliases used across the app */
-  --primary-color: var(--color-ink);
-  --secondary-color: var(--color-brand);
+  --primary-color: var(--color-brand);
+  --secondary-color: #e6e8f1;
   --warning-color: var(--color-warning);
   --axis-color: var(--color-ink-secondary);
 
@@ -82,23 +82,23 @@
   --chart-border-strong: var(--color-border-strong);
   --chart-axis: var(--color-ink-secondary);
   --chart-axis-muted: var(--color-ink-tertiary);
-  --chart-grid: #e2e8f0;
-  --chart-grid-strong: #595d61;
+  --chart-grid: #d6ddea;
+  --chart-grid-strong: #aebad2;
   --chart-outline: var(--color-ink-secondary);
   --chart-outline-muted: var(--color-ink-tertiary);
-  --chart-zero-line: #94a3b8;
+  --chart-zero-line: #8c9bb8;
   --chart-focus: var(--color-brand);
 
-  --chart-series-1: #2563eb;
-  --chart-series-2: #0ea5e9;
-  --chart-series-3: #14b8a6;
-  --chart-series-4: #22c55e;
-  --chart-series-5: #84cc16;
-  --chart-series-6: #f59e0b;
-  --chart-series-7: #f97316;
-  --chart-series-8: #ef4444;
-  --chart-series-9: #ec4899;
-  --chart-series-10: #8b5cf6;
+  --chart-series-1: #4e6698;
+  --chart-series-2: #5f78ad;
+  --chart-series-3: #7091c2;
+  --chart-series-4: #82aadb;
+  --chart-series-5: #4b8fb8;
+  --chart-series-6: #5aa6c8;
+  --chart-series-7: #6cbbd6;
+  --chart-series-8: #7c9fe0;
+  --chart-series-9: #3f5a8a;
+  --chart-series-10: #93b9e8;
 }
 
 *,
@@ -122,7 +122,7 @@ body {
   background:
     radial-gradient(
       1200px 900px at 12% -10%,
-      rgba(30, 112, 194, 0.08),
+      rgba(78, 102, 152, 0.12),
       transparent 60%
     ),
     var(--color-bg);
@@ -284,9 +284,9 @@ a {
 }
 
 :where(.ant-btn[disabled], .ant-btn-disabled) {
-  background: #e2e8f0;
-  border-color: #e2e8f0;
-  color: #94a3b8;
+  background: #d6ddea;
+  border-color: #d6ddea;
+  color: #8c9bb8;
   box-shadow: none;
 }
 
