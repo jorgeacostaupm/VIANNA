@@ -399,9 +399,43 @@ export const updateHierarchy = createAsyncThunk(
   "metadata/updateHierarchy",
   async ({ hierarchy, filename }, { dispatch, rejectWithValue }) => {
     try {
+      const normalizedInput = Array.isArray(hierarchy)
+        ? hierarchy
+        : Array.isArray(hierarchy?.hierarchy)
+          ? hierarchy.hierarchy
+          : hierarchy;
+
+      if (!Array.isArray(normalizedInput)) {
+        throw new Error(
+          "Invalid hierarchy file. Expected a JSON array of hierarchy nodes."
+        );
+      }
+
+      if (normalizedInput.length === 0) {
+        throw new Error("Hierarchy file is empty.");
+      }
+
+      const hasRoot = normalizedInput.some(
+        (node) => node?.id === 0 && node?.type === "root"
+      );
+      if (!hasRoot) {
+        throw new Error(
+          "Invalid hierarchy: missing root node (id: 0, type: root)."
+        );
+      }
+
+      const safeHierarchy = normalizedInput.map((node) => ({
+        ...node,
+        related: Array.isArray(node?.related) ? node.related : [],
+      }));
+
       const normalizedFilename = getFileName(filename);
-      const normalizedHierarchy = setHierarchyRootName(hierarchy);
+      const normalizedHierarchy = setHierarchyRootName(safeHierarchy);
       const tree = generateTree(normalizedHierarchy, 0);
+      if (!tree) {
+        throw new Error("Invalid hierarchy: root node could not be generated.");
+      }
+
       const navioColumns = getVisibleNodes(tree);
       dispatch(generateColumnBatch({ cols: normalizedHierarchy }));
       return {

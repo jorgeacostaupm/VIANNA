@@ -1,3 +1,12 @@
+import * as d3 from "d3";
+
+const TABLEAU_YELLOW = "#edc949";
+
+export const GROUP_CATEGORICAL_PALETTE = [
+  ...d3.schemeTableau10.filter((color) => color !== TABLEAU_YELLOW),
+  TABLEAU_YELLOW,
+];
+
 const dataframeGroupCache = new WeakMap();
 
 export function normalizeGroupList(groups) {
@@ -44,4 +53,3 @@ export function getOrderedGroupsFromDataframe(dataframe, groupVar) {
   cacheByColumn.set(groupVar, ordered);
   return ordered;
 }
-

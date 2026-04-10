@@ -7,6 +7,7 @@ import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import renderLegend from "@/utils/renderLegend";
 import { CHART_HIGHLIGHT } from "@/utils/chartTheme";
 import { attachTickLabelGridHover } from "@/utils/gridInteractions";
+import { GROUP_CATEGORICAL_PALETTE } from "@/utils/groupColors";
 
 const margin = { top: 60, right: 60, bottom: 60, left: 85 };
 
@@ -67,8 +68,6 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
     clearChart();
     clearLegend();
 
-    const colorScheme = d3.schemeCategory10;
-
     const totalWidth = dimensions.width;
     const totalHeight = dimensions.height;
     const chartAreaWidth = totalWidth;
@@ -94,7 +93,10 @@ export default function useScatter({ chartRef, legendRef, data, config }) {
       .paddingInner(0.1)
       .range([0, chartSize]);
 
-    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
+    const color = d3
+      .scaleOrdinal()
+      .domain(colorDomain)
+      .range(GROUP_CATEGORICAL_PALETTE);
 
     if (showLegend !== false) {
       renderLegend(legend, groups, color, blur, setBlur, hide, setHide, null, null, {

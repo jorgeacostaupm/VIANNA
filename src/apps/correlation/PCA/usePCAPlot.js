@@ -7,6 +7,7 @@ import useResizeObserver from "@/hooks/useResizeObserver";
 import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { CHART_HIGHLIGHT } from "@/utils/chartTheme";
 import { ORDER_VARIABLE } from "@/utils/Constants";
+import { GROUP_CATEGORICAL_PALETTE } from "@/utils/groupColors";
 
 const margin = { top: 30, right: 20, bottom: 40, left: 60 };
 
@@ -62,8 +63,6 @@ export default function usePCAPlot({ chartRef, legendRef, data, config, grouping
     clearChart();
     clearLegend();
 
-    const colorScheme = d3.schemeCategory10;
-
     const totalWidth = dimensions.width;
     const totalHeight = dimensions.height;
     const chartAreaWidth = totalWidth;
@@ -97,7 +96,10 @@ export default function usePCAPlot({ chartRef, legendRef, data, config, grouping
       .nice()
       .range([chartSize, 0]);
 
-    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
+    const color = d3
+      .scaleOrdinal()
+      .domain(colorDomain)
+      .range(GROUP_CATEGORICAL_PALETTE);
 
     const xAxisGroup = chart
       .append("g")

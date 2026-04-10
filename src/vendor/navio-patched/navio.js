@@ -29,6 +29,7 @@ import {
   getAttribsFromObjectRecursive,
   getAttribsFromObjectAsFn,
 } from "./utils.js";
+import { GROUP_CATEGORICAL_PALETTE } from "../../utils/groupColors.js";
 
 let DEBUG = false;
 
@@ -103,6 +104,7 @@ function navio(selection, _h) {
   nv.addAllAttribsRecursionLevel = Infinity; // How many levels depth do we keep on adding nested attributes
   nv.addAllAttribsIncludeObjects = false; // Should addAllAttribs include objects
   nv.addAllAttribsIncludeArrays = false; // Should addAllAttribs include arrays
+  nv.enableAddAllAttribLogs = true; // Should addAllAttribs print inferred attribute type logs
 
   nv.digitsForText = 2; // How many digits to use for text attributes
 
@@ -114,7 +116,7 @@ function navio(selection, _h) {
 
   nv.defaultColorRangeBoolean = ["#a1d76a", "#e9a3c9", "white"]; //true false null
   nv.defaultColorRangeSelected = ["white", "#b5cf6b"];
-  nv.defaultColorCategorical = d3.schemeCategory10;
+  nv.defaultColorCategorical = [...GROUP_CATEGORICAL_PALETTE];
 
   nv.showSelectedAttrib = true; // Display the attribute that shows if a row is selected
   nv.showSequenceIDAttrib = true; // Display the attribute with the sequence ID
@@ -447,6 +449,11 @@ function navio(selection, _h) {
         hideLoading(this);
       });
     };
+  }
+
+  function logAddAllAttribs(...args) {
+    if (!nv.enableAddAllAttribLogs) return;
+    console.log(...args);
   }
 
   function invertOrdinalScale(scale, x) {
@@ -2173,7 +2180,7 @@ function navio(selection, _h) {
 
   nv.addAttrib = function (attr, scale) {
     if (scale === undefined) {
-      scale = d3.scaleOrdinal(d3.schemeCategory10);
+      scale = d3.scaleOrdinal(nv.defaultColorCategorical);
     }
     if (dAttribs.has(getAttribName(attr))) {
       console.log(`navio.addAttrib attribute ${attr} already added`);
@@ -2310,17 +2317,17 @@ function navio(selection, _h) {
 
         // How many different elements are there
         if (numDistictValues < nv.maxNumDistictForCategorical) {
-          console.log(
+          logAddAllAttribs(
             `Navio: Adding attr ${attrName} as categorical with ${numDistictValues} categories`
           );
           nv.addCategoricalAttrib(attr);
         } else if (numDistictValues < nv.maxNumDistictForOrdered) {
           nv.addOrderedAttrib(attr);
-          console.log(
+          logAddAllAttribs(
             `Navio: Attr ${attrName} has more than ${nv.maxNumDistictForCategorical} distinct values (${numDistictValues}) using orderedAttrib`
           );
         } else {
-          console.log(
+          logAddAllAttribs(
             `Navio: Attr ${attrName} has more than ${nv.maxNumDistictForOrdered} distinct values (${numDistictValues}) using textAttrib`
           );
           nv.addTextAttrib(attr);
@@ -2328,40 +2335,40 @@ function navio(selection, _h) {
       } else if (typeof firstNotNull === typeof 0) {
         // Numbers
         if (d3.min(data, (d) => getAttrib(d, attr)) < 0) {
-          console.log(`Navio: Adding attr ${attrName} as diverging`);
+          logAddAllAttribs(`Navio: Adding attr ${attrName} as diverging`);
           nv.addDivergingAttrib(attr);
         } else {
-          console.log(`Navio: Adding attr ${attrName} as sequential`);
+          logAddAllAttribs(`Navio: Adding attr ${attrName} as sequential`);
           nv.addSequentialAttrib(attr);
         }
       } else if (firstNotNull instanceof Date) {
-        console.log(`Navio: Adding attr ${attrName} as date`);
+        logAddAllAttribs(`Navio: Adding attr ${attrName} as date`);
         nv.addDateAttrib(attr);
       } else if (typeof firstNotNull === typeof true) {
-        console.log(`Navio: Adding attr ${attrName} as boolean`);
+        logAddAllAttribs(`Navio: Adding attr ${attrName} as boolean`);
         nv.addBooleanAttrib(attr);
       } else {
         // Default categories
 
         if (Array.isArray(firstNotNull)) {
           if (nv.addAllAttribsIncludeArrays) {
-            console.log(
+            logAddAllAttribs(
               `Navio: Adding ${attrName} adding as categorical (type=array)`
             );
             nv.addCategoricalAttrib(attr);
           } else {
-            console.log(
+            logAddAllAttribs(
               `Navio: AddAllAttribs detected array ${attrName}, but ignoring it. To include it set nv.addAllAttribsIncludeArrays=true`
             );
           }
         } else {
           if (nv.addAllAttribsIncludeObjects) {
-            console.log(
+            logAddAllAttribs(
               `Navio: Adding object ${attrName} adding as categorical (type=object)`
             );
             nv.addCategoricalAttrib(attr);
           } else {
-            console.log(
+            logAddAllAttribs(
               `Navio: AddAllAttribs detected object ${attrName}, but ignoring it. To include it set nv.addAllAttribsIncludeObjects=true`
             );
           }

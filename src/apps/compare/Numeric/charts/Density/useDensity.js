@@ -8,6 +8,7 @@ import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { notifyInfo } from "@/notifications";
 import { moveTooltip } from "@/utils/functions";
 import { CHART_OUTLINE } from "@/utils/chartTheme";
+import { GROUP_CATEGORICAL_PALETTE } from "@/utils/groupColors";
 import {
   attachTickLabelGridHover,
   paintLayersInOrder,
@@ -72,7 +73,6 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
     d3.select(chartRef.current).selectAll("*").remove();
     d3.select(legendRef.current).selectAll("*").remove();
 
-    const colorScheme = d3.schemeCategory10;
     const chartWidth = width - numMargin.left - numMargin.right;
     const chartHeight = height - numMargin.top - numMargin.bottom;
 
@@ -87,7 +87,10 @@ export default function useDensity({ chartRef, legendRef, data, config }) {
       .append("g")
       .attr("transform", `translate(${numMargin.left},${numMargin.top})`);
 
-    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
+    const color = d3
+      .scaleOrdinal()
+      .domain(colorDomain)
+      .range(GROUP_CATEGORICAL_PALETTE);
     const x = d3.scaleLinear().domain([xMin, xMax]).range([0, chartWidth]);
     const y = d3.scaleLinear().range([chartHeight, 0]).domain([0, yMax]);
 

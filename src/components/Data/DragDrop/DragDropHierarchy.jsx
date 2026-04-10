@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDropzone } from "react-dropzone";
-import { Modal } from "antd";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 
 import { FileProcessorFactory } from "./drag";
@@ -16,11 +15,11 @@ const ACCEPTED_FORMATS = {
 
 export default function DragAndDropHierarchy() {
   const dispatch = useDispatch();
-  const hierarchy = useSelector((state) => state.metadata.attributes) || [];
   const [filename, setFilename] = useState(null);
   const [parsedData, setParsedData] = useState(null);
   const [isReadingFile, setIsReadingFile] = useState(false);
   const loading = useSelector((state) => state.metadata.loadingHierarchy);
+  const uploadDisabled = !parsedData || loading || isReadingFile;
 
   const executeUpload = () => {
     dispatch(
@@ -33,19 +32,7 @@ export default function DragAndDropHierarchy() {
 
   const handleUpload = () => {
     if (!parsedData) return;
-
-    const existingNodes = hierarchy.filter((node) => node?.type !== "root");
-    Modal.confirm({
-      title: "Replace current hierarchy?",
-      content:
-        existingNodes.length > 0
-          ? `This action will replace the current hierarchy (${existingNodes.length} existing nodes).`
-          : "This action will set the hierarchy from the uploaded file.",
-      okText: "Replace hierarchy",
-      cancelText: "Cancel",
-      okButtonProps: { danger: true },
-      onOk: executeUpload,
-    });
+    executeUpload();
   };
 
   const handleFileDrop = useCallback((acceptedFiles) => {
@@ -143,7 +130,7 @@ export default function DragAndDropHierarchy() {
       <div className={styles.controls}>
         <ColoredButton
           onClick={handleUpload}
-          disabled={!parsedData || loading || isReadingFile}
+          disabled={uploadDisabled}
           loading={loading}
           icon={<UploadOutlined />}
           shape="default"

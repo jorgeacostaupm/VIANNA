@@ -17,6 +17,7 @@ import tests from "@/utils/tests";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
 import { notifyError } from "@/notifications";
 import { CHART_GRID, CHART_OUTLINE, CHART_ZERO_LINE } from "@/utils/chartTheme";
+import { GROUP_CATEGORICAL_PALETTE } from "@/utils/groupColors";
 import {
   attachTickLabelGridHover,
   paintLayersInOrder,
@@ -174,11 +175,10 @@ export default function PointRange({
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const colorScheme = d3.schemeCategory10;
     const pointColorScale = d3
       .scaleOrdinal()
       .domain(colorDomain)
-      .range(colorScheme);
+      .range(GROUP_CATEGORICAL_PALETTE);
 
     const x = d3
       .scaleBand()

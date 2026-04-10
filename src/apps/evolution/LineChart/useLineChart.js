@@ -7,6 +7,7 @@ import useResizeObserver from "@/hooks/useResizeObserver";
 import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { numMargin } from "@/apps/compare/Numeric/charts/Density/useDensity";
 import { CHART_OUTLINE } from "@/utils/chartTheme";
+import { GROUP_CATEGORICAL_PALETTE } from "@/utils/groupColors";
 import {
   attachTickLabelGridHover,
   paintLayersInOrder,
@@ -232,7 +233,7 @@ export default function useLineChart({ chartRef, legendRef, data, config }) {
     const color = d3
       .scaleOrdinal()
       .domain(colorDomain)
-      .range(d3.schemeCategory10);
+      .range(GROUP_CATEGORICAL_PALETTE);
 
     const x = d3
       .scaleBand()

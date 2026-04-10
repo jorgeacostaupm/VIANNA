@@ -16,6 +16,7 @@ import {
 import useResizeObserver from "@/hooks/useResizeObserver";
 import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { CHART_OUTLINE_MUTED } from "@/utils/chartTheme";
+import { GROUP_CATEGORICAL_PALETTE } from "@/utils/groupColors";
 import {
   attachTickLabelGridHover,
   paintLayersInOrder,
@@ -51,7 +52,6 @@ export default function useViolinplot({ chartRef, legendRef, data, config }) {
     d3.select(chartRef.current).selectAll("*").remove();
     d3.select(legendRef.current).selectAll("*").remove();
 
-    const colorScheme = d3.schemeCategory10;
     const chartWidth = width - numMargin.left - numMargin.right;
     const chartHeight = height - numMargin.top - numMargin.bottom;
 
@@ -67,7 +67,10 @@ export default function useViolinplot({ chartRef, legendRef, data, config }) {
       .append("g")
       .attr("transform", `translate(${numMargin.left},${numMargin.top})`);
 
-    const color = d3.scaleOrdinal().domain(colorDomain).range(colorScheme);
+    const color = d3
+      .scaleOrdinal()
+      .domain(colorDomain)
+      .range(GROUP_CATEGORICAL_PALETTE);
 
     // X for groups
     const x = d3

@@ -1,16 +1,10 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import navio from "@/vendor/navio";
-import * as d3 from "d3";
 
 import { selectNavioColumns } from "@/store/features/main";
 import { ORDER_VARIABLE } from "@/utils/Constants";
-
-const TABLEAU_YELLOW = "#edc949";
-const NAVIO_PASTEL_CATEGORICAL = [
-  ...d3.schemeTableau10.filter((color) => color !== TABLEAU_YELLOW),
-  TABLEAU_YELLOW,
-];
+import { GROUP_CATEGORICAL_PALETTE } from "@/utils/groupColors";
 
 const areColumnsEqual = (left, right) => {
   if (!Array.isArray(left) || !Array.isArray(right)) return false;
@@ -38,7 +32,9 @@ export default function Navio({
     if (typeof setNavioUiState !== "function") return;
 
     const uiState = navioInstanceRef.current?.exportUiState?.() ?? null;
-    dispatch(setNavioUiState(uiState ? JSON.parse(JSON.stringify(uiState)) : null));
+    dispatch(
+      setNavioUiState(uiState ? JSON.parse(JSON.stringify(uiState)) : null),
+    );
   }, [dispatch, setNavioUiState]);
 
   const handleSelection = useCallback(
@@ -63,7 +59,10 @@ export default function Navio({
     resetTokenRef.current = resetToken;
     const previousUiState = shouldResetState ? null : navioUiStateRef.current;
     const previousColumns = columnsRef.current;
-    const hasExternalColumnOrderChange = !areColumnsEqual(previousColumns, columns);
+    const hasExternalColumnOrderChange = !areColumnsEqual(
+      previousColumns,
+      columns,
+    );
     columnsRef.current = columns;
 
     const nv = navio(navioRef.current, config.navioHeight);
@@ -76,7 +75,7 @@ export default function Navio({
     nv.tooltipFontSize = 14;
     nv.tooltipBgColor = "#fff";
     nv.nullColor = "#f5dd07";
-    nv.defaultColorCategorical = NAVIO_PASTEL_CATEGORICAL;
+    nv.defaultColorCategorical = [...GROUP_CATEGORICAL_PALETTE];
     nv.margin = 50;
     nv.tooltipMargin = 25;
     nv.id(ORDER_VARIABLE);
