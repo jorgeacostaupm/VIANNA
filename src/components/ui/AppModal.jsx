@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Button, Modal, Tooltip } from "antd";
+import { Modal, Tooltip } from "antd";
 import { useSelector } from "react-redux";
-import styles from "@/styles/Buttons.module.css";
 import { selectShowInformativeTooltips } from "@/store/features/main";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 
 export default function AppModal({
   icon,
@@ -19,9 +19,9 @@ export default function AppModal({
   return (
     <>
       <Tooltip title={showInformativeTooltips ? tooltipTitle : null}>
-        <Button
+        <AppButton
+          variant={APP_BUTTON_VARIANTS.TOOLBAR}
           shape="circle"
-          className={styles.barButton}
           onClick={openModal}
           icon={icon}
         />

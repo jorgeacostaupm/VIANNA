@@ -2,7 +2,7 @@ import React from "react";
 import { Popover } from "antd";
 import { HomeOutlined, PartitionOutlined } from "@ant-design/icons";
 
-import LinkButton from "./ButtonLink";
+import GoToAppButton from "./ButtonLink";
 import styles from "@/styles/App.module.css";
 
 export default function AnalysisSidebar({ description = null, children }) {
@@ -33,8 +33,8 @@ export default function AnalysisSidebar({ description = null, children }) {
         )}
 
         <div className={styles.analysisSidebarQuickLinks}>
-          <LinkButton to="overview" icon={<HomeOutlined />} />
-          <LinkButton to="metadata" icon={<PartitionOutlined />} />
+          <GoToAppButton to="overview" icon={<HomeOutlined />} />
+          <GoToAppButton to="metadata" icon={<PartitionOutlined />} />
         </div>
       </div>
 

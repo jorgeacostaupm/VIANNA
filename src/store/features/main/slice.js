@@ -11,7 +11,6 @@ import {
 import {
   applyGeneratedColumns,
   resetMainDataContext,
-  syncSelectionContextFromItems,
 } from "./utils/sliceUtils";
 import {
   convertColumnType,
@@ -19,7 +18,6 @@ import {
   generateColumnBatch,
   updateData,
 } from "../dataframe/thunks";
-import { setDataframe, setSelection } from "../dataframe/slice";
 import { MAIN_CONFIG_DEFAULTS } from "./configDefaults";
 
 const initialState = {
@@ -46,14 +44,6 @@ const initialState = {
   idVar: null,
   groupVar: null,
   timeVar: null,
-
-  ids: null,
-  groups: null,
-  timestamps: null,
-
-  selectionIds: null,
-  selectionGroups: null,
-  selectionTimestamps: null,
 
   varTypes: {},
   demoLoadStatus: "idle",
@@ -106,29 +96,15 @@ const mainSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(setDataframe, (state, action) => {
-      syncSelectionContextFromItems(state, action.payload);
-    });
-
-    builder.addCase(setSelection, (state, action) => {
-      syncSelectionContextFromItems(state, action.payload, { selectionOnly: true });
-    });
-
     builder
       .addCase(setTimeVar.fulfilled, (state, action) => {
         state.timeVar = action.payload.timeVar;
-        state.timestamps = action.payload.timestamps;
-        state.selectionTimestamps = action.payload.timestamps;
       })
       .addCase(setGroupVar.fulfilled, (state, action) => {
         state.groupVar = action.payload.groupVar;
-        state.groups = action.payload.groups;
-        state.selectionGroups = action.payload.groups;
       })
       .addCase(setIdVar.fulfilled, (state, action) => {
         state.idVar = action.payload.idVar;
-        state.ids = action.payload.ids;
-        state.selectionIds = action.payload.ids;
       });
 
     builder.addCase(nullsToQuarantine.fulfilled, (state, action) => {

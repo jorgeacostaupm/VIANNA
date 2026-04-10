@@ -1,4 +1,4 @@
-.barButton {
+.toolbarButton {
   height: var(--control-height-sm);
   width: var(--control-height-sm);
   padding: 0;
@@ -15,43 +15,43 @@
     transform var(--transition-fast);
 }
 
-.barButton:hover {
+.toolbarButton:hover {
   background: var(--color-surface-muted);
   border-color: var(--color-border-strong);
   color: var(--color-ink);
 }
 
-.barButton:active {
+.toolbarButton:active {
   background: var(--color-surface-muted);
   border-color: var(--color-border-strong);
   color: var(--color-ink-secondary);
   transform: translateY(1px);
 }
 
-.barButton:global(.ant-btn:active),
-.barButton:global(.ant-btn-focused),
-.barButton:global(.ant-btn:focus),
-.barButton:global(.ant-btn:focus-visible) {
+.toolbarButton:global(.ant-btn:active),
+.toolbarButton:global(.ant-btn-focused),
+.toolbarButton:global(.ant-btn:focus),
+.toolbarButton:global(.ant-btn:focus-visible) {
   background: var(--color-surface-muted);
   border-color: var(--color-border-strong);
   color: var(--color-ink-secondary);
 }
 
-.barButton:global(.ant-btn-loading) {
+.toolbarButton:global(.ant-btn-loading) {
   color: var(--color-brand);
 }
 
-.barButton:global(.ant-btn-loading) :global(.ant-btn-loading-icon),
-.barButton:global(.ant-btn-loading) :global(.ant-btn-loading-icon .anticon) {
+.toolbarButton:global(.ant-btn-loading) :global(.ant-btn-loading-icon),
+.toolbarButton:global(.ant-btn-loading) :global(.ant-btn-loading-icon .anticon) {
   color: var(--color-brand);
 }
 
-.barButton:focus-visible {
-  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.35);
+.toolbarButton:focus-visible {
+  box-shadow: var(--focus-ring);
 }
 
-.barButton:disabled,
-.barButton:global(.ant-btn-disabled) {
+.toolbarButton:disabled,
+.toolbarButton:global(.ant-btn-disabled) {
   background: transparent;
   border-color: var(--color-border);
   color: var(--color-border);
@@ -59,71 +59,20 @@
   transform: none;
 }
 
-.barButton:disabled:hover,
-.barButton:global(.ant-btn-disabled):hover {
+.toolbarButton:disabled:hover,
+.toolbarButton:global(.ant-btn-disabled):hover {
   background: transparent;
   border-color: var(--color-border);
   color: var(--color-border);
 }
 
-.myButton {
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-ink-secondary);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-xs);
-  transition:
-    background var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.myButton:hover {
-  background: var(--color-surface-muted);
-  border-color: var(--color-border-strong);
-  color: var(--color-ink);
-}
-
-.myButton:active {
-  background: var(--color-surface-muted);
-  border-color: var(--color-border-strong);
-  color: var(--color-ink-secondary);
-  transform: translateY(1px);
-}
-
-.myButton:global(.ant-btn:active),
-.myButton:global(.ant-btn-focused),
-.myButton:global(.ant-btn:focus),
-.myButton:global(.ant-btn:focus-visible) {
+.toolbarButtonActive {
   background: var(--color-surface-muted);
   border-color: var(--color-border-strong);
   color: var(--color-ink-secondary);
 }
 
-.myButton:focus-visible {
-  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.35);
-}
-
-.myButton:disabled,
-.myButton:global(.ant-btn-disabled) {
-  background: transparent;
-  border-color: var(--color-border);
-  color: var(--color-border);
-  box-shadow: none;
-  transform: none;
-}
-
-.myButton:disabled:hover,
-.myButton:global(.ant-btn-disabled):hover {
-  background: transparent;
-  border-color: var(--color-border);
-  color: var(--color-border);
-}
-
-.greyBarButton {
+.toolbarButtonMuted {
   height: var(--control-height-sm);
   width: var(--control-height-sm);
   padding: 0;
@@ -140,12 +89,12 @@
     opacity var(--transition-fast);
 }
 
-.greyBarButton:hover,
-.greyBarButton:active,
-.greyBarButton:global(.ant-btn:active),
-.greyBarButton:global(.ant-btn-focused),
-.greyBarButton:global(.ant-btn:focus),
-.greyBarButton:global(.ant-btn:focus-visible) {
+.toolbarButtonMuted:hover,
+.toolbarButtonMuted:active,
+.toolbarButtonMuted:global(.ant-btn:active),
+.toolbarButtonMuted:global(.ant-btn-focused),
+.toolbarButtonMuted:global(.ant-btn:focus),
+.toolbarButtonMuted:global(.ant-btn:focus-visible) {
   background: #d9e0ed;
   border-color: #bcc8de;
   color: #7684a0;
@@ -153,8 +102,8 @@
   transform: none;
 }
 
-.greyBarButton:disabled,
-.greyBarButton:global(.ant-btn-disabled) {
+.toolbarButtonMuted:disabled,
+.toolbarButtonMuted:global(.ant-btn-disabled) {
   background: #e1e7f1;
   border-color: #c3cee1;
   color: #7f8ca6;
@@ -163,34 +112,69 @@
   transform: none;
 }
 
-.greyBarButton:disabled:hover,
-.greyBarButton:global(.ant-btn-disabled):hover {
+.toolbarButtonMuted:disabled:hover,
+.toolbarButtonMuted:global(.ant-btn-disabled):hover {
   background: #e1e7f1;
   border-color: #c3cee1;
   color: #7f8ca6;
   opacity: 0.9;
 }
 
-.borderedButton {
+.actionButton {
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
   background: var(--color-surface);
-  color: var(--color-ink);
-  border: 2px solid var(--color-border-strong);
+  color: var(--color-ink-secondary);
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-xs);
-  height: auto;
-  padding: 10px;
   transition:
-    color var(--transition-fast),
+    background var(--transition-fast),
     border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
     transform var(--transition-fast);
 }
 
-.borderedButton:hover {
-  color: var(--color-brand);
-  border-color: var(--color-brand);
+.actionButton:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
 }
 
-.borderedButton:active {
+.actionButton:active {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
   transform: translateY(1px);
+}
+
+.actionButton:global(.ant-btn:active),
+.actionButton:global(.ant-btn-focused),
+.actionButton:global(.ant-btn:focus),
+.actionButton:global(.ant-btn:focus-visible) {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink-secondary);
+}
+
+.actionButton:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.actionButton:disabled,
+.actionButton:global(.ant-btn-disabled) {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-border);
+  box-shadow: none;
+  transform: none;
+}
+
+.actionButton:disabled:hover,
+.actionButton:global(.ant-btn-disabled):hover {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-border);
 }
 
 .panelButton {
@@ -232,7 +216,7 @@
 }
 
 .panelButton:focus-visible {
-  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.35);
+  box-shadow: var(--focus-ring);
 }
 
 .panelButton:disabled,
@@ -249,6 +233,28 @@
   background: transparent;
   border-color: var(--color-border);
   color: var(--color-border);
+}
+
+.borderedButton {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border: 2px solid var(--color-border-strong);
+  box-shadow: var(--shadow-xs);
+  height: auto;
+  padding: 10px;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.borderedButton:hover {
+  color: var(--color-brand);
+  border-color: var(--color-brand);
+}
+
+.borderedButton:active {
+  transform: translateY(1px);
 }
 
 .warningButton {

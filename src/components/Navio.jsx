@@ -16,6 +16,7 @@ export default function Navio({
   data,
   config,
   setSelection,
+  selectionPayloadMode = "rows",
   navioUiState,
   setNavioUiState,
   resetToken,
@@ -39,10 +40,19 @@ export default function Navio({
 
   const handleSelection = useCallback(
     (selection) => {
-      dispatch(setSelection(JSON.parse(JSON.stringify(selection))));
+      const payload =
+        selectionPayloadMode === "orderValues"
+          ? {
+              orderValues: Array.isArray(selection)
+                ? selection.map((row) => row?.[ORDER_VARIABLE])
+                : [],
+            }
+          : JSON.parse(JSON.stringify(selection));
+
+      dispatch(setSelection(payload));
       emitNavioUiState();
     },
-    [dispatch, setSelection, emitNavioUiState],
+    [dispatch, setSelection, emitNavioUiState, selectionPayloadMode],
   );
 
   useEffect(() => {

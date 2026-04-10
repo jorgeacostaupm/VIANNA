@@ -1,6 +1,5 @@
-import { Button } from "antd";
-import buttonStyles from "@/styles/Buttons.module.css";
 import AutoCloseTooltip from "./AutoCloseTooltip";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 
 export default function PanelButton({
   title,
@@ -11,9 +10,9 @@ export default function PanelButton({
 }) {
   return (
     <AutoCloseTooltip title={title}>
-      <Button
+      <AppButton
+        variant={APP_BUTTON_VARIANTS.PANEL}
         size="large"
-        className={buttonStyles.panelButton}
         icon={icon}
         onClick={onClick}
         disabled={disabled}

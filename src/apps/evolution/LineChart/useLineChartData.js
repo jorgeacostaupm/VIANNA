@@ -5,6 +5,8 @@ import { getLineChartData } from "@/utils/functionsEvolution";
 import evolutionTests from "@/utils/evolution_tests";
 import { selectNumericVars, selectVarTypes } from "@/store/features/main";
 import { notifyError } from "@/notifications";
+import useSelectionRows from "@/hooks/useSelectionRows";
+import { uniqueColumns } from "@/utils/viewRecords";
 
 export default function useLineChartData(
   variable,
@@ -17,7 +19,6 @@ export default function useLineChartData(
 ) {
   const [data, setData] = useState([]);
   const lastErrorRef = useRef(null);
-  const selection = useSelector((s) => s.dataframe.selection);
   const groupVar = useSelector((s) => s.evolution.groupVar);
   const timeVar = useSelector((s) => s.evolution.timeVar);
   const timeOrderConfig = useSelector((s) =>
@@ -26,6 +27,28 @@ export default function useLineChartData(
   const idVar = useSelector((s) => s.main.idVar);
   const variables = useSelector(selectNumericVars);
   const varTypes = useSelector(selectVarTypes);
+  const selectionColumns = useMemo(
+    () =>
+      uniqueColumns([
+        variable,
+        groupVar,
+        timeVar,
+        idVar,
+        ...(Array.isArray(testOptions?.lmmCovariates)
+          ? testOptions.lmmCovariates
+          : []),
+      ]),
+    [
+      variable,
+      groupVar,
+      timeVar,
+      idVar,
+      Array.isArray(testOptions?.lmmCovariates)
+        ? testOptions.lmmCovariates.join("|")
+        : "",
+    ],
+  );
+  const selection = useSelectionRows(selectionColumns);
 
   const selectedTests = useMemo(() => {
     const ids = Array.isArray(testIds) ? testIds : [];
@@ -43,18 +66,6 @@ export default function useLineChartData(
     }
 
     try {
-      console.log("[Evolution] Loading line chart data", {
-        variable,
-        selectedRows: Array.isArray(selection) ? selection.length : 0,
-        groupVar,
-        timeVar,
-        idVar,
-        showComplete,
-        showIncomplete,
-        selectedTests: selectedTests.map((test) => test.id),
-        testOptions,
-      });
-
       const result = getLineChartData(
         selection,
         variable,
@@ -69,19 +80,6 @@ export default function useLineChartData(
         testOptions,
         varTypes
       );
-      console.log("[Evolution] Line chart data ready", {
-        meanGroups: Array.isArray(result?.meanData) ? result.meanData.length : null,
-        hasOverallMean: Array.isArray(result?.overallMeanData?.values)
-          ? result.overallMeanData.values.length > 0
-          : false,
-        participants: Array.isArray(result?.participantData)
-          ? result.participantData.length
-          : null,
-        tests: Array.isArray(result?.tests) ? result.tests.length : null,
-        hasRmAnova: Boolean(result?.rmAnova),
-        hasLmm: Boolean(result?.lmm),
-        times: Array.isArray(result?.times) ? result.times.length : null,
-      });
       setData(result);
       lastErrorRef.current = null;
     } catch (error) {

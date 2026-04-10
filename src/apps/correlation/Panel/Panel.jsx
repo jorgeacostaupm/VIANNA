@@ -1,29 +1,23 @@
 import React from "react";
 
 import AnalysisSidebar from "@/components/ui/AnalysisSidebar";
+import AnalysisPanelSection from "@/components/ui/AnalysisPanelSection";
 import ChartSelector from "./ChartSelector";
 import ContextSelector from "./ContextSelector";
-import styles from "@/styles/App.module.css";
 import { CORR_DESC } from "@/utils/Constants";
 
-export default function Panel(props) {
-  const { addView } = props;
+export default function Panel({ commands }) {
+  const { addChart } = commands;
 
   return (
     <AnalysisSidebar description={CORR_DESC}>
-      <div className={`${styles.panelBox} ${styles.panelBoxContext}`}>
-        <div className={styles.panelBoxTitle}>Analysis Context</div>
-        <div className={styles.panelBoxBody}>
-          <ContextSelector />
-        </div>
-      </div>
+      <AnalysisPanelSection title="Analysis Context" variant="context">
+        <ContextSelector />
+      </AnalysisPanelSection>
 
-      <div className={styles.panelBox}>
-        <div className={styles.panelBoxTitle}>Chart Selection</div>
-        <div className={styles.panelBoxBody}>
-          <ChartSelector addView={addView} />
-        </div>
-      </div>
+      <AnalysisPanelSection title="Chart Selection">
+        <ChartSelector onAddChart={addChart} />
+      </AnalysisPanelSection>
     </AnalysisSidebar>
   );
 }

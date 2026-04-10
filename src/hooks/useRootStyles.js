@@ -27,6 +27,10 @@ const useRootStyles = (
   }, [applyStyles, title]);
 
   useLayoutEffect(() => {
+    if (typeof setInit !== "function") {
+      return;
+    }
+
     const handleBeforeUnload = () => {
       dispatch(setInit(false));
     };

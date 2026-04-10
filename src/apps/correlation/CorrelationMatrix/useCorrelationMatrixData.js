@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect, useMemo } from "react";
 
 import { getCorrelationData as getData } from "@/utils/functionsCorrelation";
 import { notifyError } from "@/notifications";
+import useSelectionRows from "@/hooks/useSelectionRows";
+import { uniqueColumns } from "@/utils/viewRecords";
 
 export default function useCorrelationMatrixData(
   isSync = true,
@@ -10,7 +11,11 @@ export default function useCorrelationMatrixData(
   setInfo,
 ) {
   const [data, setData] = useState([]);
-  const selection = useSelector((s) => s.dataframe.selection);
+  const selectionColumns = useMemo(
+    () => uniqueColumns(params?.variables || []),
+    [Array.isArray(params?.variables) ? params.variables.join("|") : ""],
+  );
+  const selection = useSelectionRows(selectionColumns);
 
   useEffect(() => {
     if (!isSync) return;

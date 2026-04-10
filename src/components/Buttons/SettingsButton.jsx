@@ -58,15 +58,6 @@ function SettingsContent({ config, updateConfig }) {
           />
         </div>
       </div>
-
-      {/*       <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-        <Button icon={<RedoOutlined />} onClick={handleRedoData} type="default">
-          Redo Data
-        </Button>
-        <Button icon={<UndoOutlined />} onClick={handleUndoData} type="default">
-          Undo Data
-        </Button>
-      </div> */}
     </div>
   );
 }

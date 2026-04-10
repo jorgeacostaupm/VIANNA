@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Grid, Modal, Tabs } from "antd";
+import { Grid, Modal, Tabs } from "antd";
 import { DatabaseOutlined } from "@ant-design/icons";
 
 import TabData from "../Tabs/TabData";
@@ -8,6 +8,7 @@ import styles from "../Data.module.css";
 import PanelButton from "@/components/ui/PanelButton";
 import TabDescriptions from "../Tabs/TabDescriptions";
 import TabSettings from "../Tabs/TabSettings";
+import { AppButton } from "@/components/ui/button";
 
 const items = [
   {
@@ -79,7 +80,7 @@ export default function DataManagementButton({
           icon={<DatabaseOutlined />}
         />
       ) : (
-        <Button
+        <AppButton
           type={buttonType}
           size={size}
           icon={<DatabaseOutlined />}
@@ -87,7 +88,7 @@ export default function DataManagementButton({
           aria-label={buttonLabel}
         >
           {buttonLabel}
-        </Button>
+        </AppButton>
       )}
       <Modal
         open={isModalOpen}

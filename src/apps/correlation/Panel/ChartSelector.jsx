@@ -8,7 +8,7 @@ import registry from "../registry";
 
 const { Option } = Select;
 
-export default function ChartSelector({ addView }) {
+export default function ChartSelector({ onAddChart }) {
   const [chart, setChart] = useState(null);
 
   return (
@@ -34,7 +34,7 @@ export default function ChartSelector({ addView }) {
         title={"Add the selected correlation chart"}
         icon={<AreaChartOutlined />}
         onClick={() => {
-          if (chart) addView(chart);
+          if (chart) onAddChart(chart);
         }}
       />
     </>

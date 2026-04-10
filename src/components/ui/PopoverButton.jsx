@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Popover, Button, Tooltip } from "antd";
+import React, { useState, useEffect } from "react";
+import { Popover, Tooltip } from "antd";
 import { useSelector } from "react-redux";
 import styles from "./PopoverButton.module.css";
-import { getViewOverlayPosition } from "./popupPosition";
 import { selectShowInformativeTooltips } from "@/store/features/main";
+import useAnchoredOverlay from "./useAnchoredOverlay";
+import { AppButton, APP_BUTTON_VARIANTS, appButtonStyles } from "@/components/ui/button";
 
 export default function PopoverButton({
   content,
@@ -14,10 +15,13 @@ export default function PopoverButton({
   panelWidth,
 }) {
   const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [overlayStyle, setOverlayStyle] = useState(undefined);
-  const [isFixedOverlay, setIsFixedOverlay] = useState(false);
-  const triggerRef = useRef(null);
+  const {
+    open,
+    overlayStyle,
+    isFixedOverlay,
+    triggerRef,
+    handleOpenChange: handleOverlayOpenChange,
+  } = useAnchoredOverlay();
   const showInformativeTooltips = useSelector(selectShowInformativeTooltips);
   const hasTooltip = Boolean(title) && showInformativeTooltips;
 
@@ -41,30 +45,10 @@ export default function PopoverButton({
     return () => clearTimeout(timer);
   }, [tooltipVisible, tooltipDuration]);
 
-  const updateOverlayPosition = useCallback(() => {
-    const position = getViewOverlayPosition(triggerRef.current);
-    setOverlayStyle(position || undefined);
-    setIsFixedOverlay(Boolean(position));
-  }, []);
-
   const handleOpenChange = (nextOpen) => {
-    if (nextOpen) updateOverlayPosition();
-    setOpen(nextOpen);
+    handleOverlayOpenChange(nextOpen);
     if (nextOpen) setTooltipVisible(false);
   };
-
-  useEffect(() => {
-    if (!open || !isFixedOverlay) return undefined;
-
-    const updatePosition = () => updateOverlayPosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [open, isFixedOverlay, updateOverlayPosition]);
 
   return (
     <Popover
@@ -102,13 +86,12 @@ export default function PopoverButton({
           onMouseEnter={showTooltip}
           className={styles.tooltipTrigger}
         >
-          <Button
+          <AppButton
+            variant={APP_BUTTON_VARIANTS.TOOLBAR}
             size="small"
-            className={`${styles.menuButton} ${
-              open ? styles.menuButtonActive : ""
-            }`}
+            className={open ? appButtonStyles.toolbarButtonActive : ""}
             icon={icon}
-            aria-label={title}
+            aria-label={title || "Open menu"}
           />
         </span>
       </Tooltip>

@@ -41,12 +41,10 @@ const toOperationFailureLabel = (entry) => {
   return `${base}: ${entry.reason}`;
 };
 
-const isType = (type) => (action) => action?.type === type;
-
 const start = notificationsListenerMiddleware.startListening;
 
 start({
-  predicate: isType("metadata/setDescriptions"),
+  type: "metadata/setDescriptions",
   effect: async (_, listenerApi) => {
     notifySuccess(listenerApi, {
       message: "Descriptions imported",
@@ -55,7 +53,7 @@ start({
 });
 
 start({
-  predicate: isType("attributes/changeRelationship/rejected"),
+  type: "attributes/changeRelationship/rejected",
   effect: async (action, listenerApi) => {
     const isSilent = Boolean(action.meta?.arg?.silent);
     if (isSilent) return;
@@ -69,7 +67,7 @@ start({
 });
 
 start({
-  predicate: isType("attributes/changeRelationshipBatch/rejected"),
+  type: "attributes/changeRelationshipBatch/rejected",
   effect: async (action, listenerApi) => {
     const isSilent = Boolean(action.meta?.arg?.silent);
     if (isSilent) return;
@@ -83,7 +81,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/updateHierarchy/fulfilled"),
+  type: "metadata/updateHierarchy/fulfilled",
   effect: async (action, listenerApi) => {
     if (action.meta?.arg?.silentSuccess) return;
 
@@ -94,7 +92,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/updateHierarchy/rejected"),
+  type: "metadata/updateHierarchy/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Could not update hierarchy",
@@ -106,7 +104,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/buildMetaFromVariableTypes/rejected"),
+  type: "metadata/buildMetaFromVariableTypes/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Import Hierarchy Failure",
@@ -118,7 +116,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/createToMeta/rejected"),
+  type: "metadata/createToMeta/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Failure to Save Created Hierarchy",
@@ -130,7 +128,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/removeAttribute/rejected"),
+  type: "metadata/removeAttribute/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Could not remove node",
@@ -142,7 +140,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/applyOperation/fulfilled"),
+  type: "metadata/applyOperation/fulfilled",
   effect: async (action, listenerApi) => {
     const { total = 0, applied = [], failed = [] } = action.payload || {};
 
@@ -175,7 +173,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/applyOperation/rejected"),
+  type: "metadata/applyOperation/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Operation failed",
@@ -187,7 +185,7 @@ start({
 });
 
 start({
-  predicate: isType("main/nulls-to-quarantine/rejected"),
+  type: "main/nulls-to-quarantine/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Could not update quarantine data",
@@ -198,7 +196,7 @@ start({
 });
 
 start({
-  predicate: isType("dataframe/load-import/fulfilled"),
+  type: "dataframe/load-import/fulfilled",
   effect: async (action, listenerApi) => {
     if (action.meta?.arg?.silentSuccess) return;
 
@@ -209,7 +207,7 @@ start({
 });
 
 start({
-  predicate: isType("dataframe/load-import/rejected"),
+  type: "dataframe/load-import/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Could not update dataset",
@@ -220,7 +218,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/updateDescriptions/fulfilled"),
+  type: "metadata/updateDescriptions/fulfilled",
   effect: async (action, listenerApi) => {
     if (action.meta?.arg?.silentSuccess) return;
 
@@ -231,7 +229,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/updateDescriptions/rejected"),
+  type: "metadata/updateDescriptions/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Could not update descriptions",
@@ -243,7 +241,7 @@ start({
 });
 
 start({
-  predicate: isType("dataframe/agg-generate/fulfilled"),
+  type: "dataframe/agg-generate/fulfilled",
   effect: async (action, listenerApi) => {
     if (action.meta?.arg?.silentSuccess) return;
 
@@ -254,7 +252,7 @@ start({
 });
 
 start({
-  predicate: isType("dataframe/agg-generate/rejected"),
+  type: "dataframe/agg-generate/rejected",
   effect: async (action, listenerApi) => {
     if (isUserCanceledAction(action.payload, action.error)) {
       notifyInfo(listenerApi, {
@@ -272,7 +270,7 @@ start({
 });
 
 start({
-  predicate: isType("dataframe/agg-generate-batch/fulfilled"),
+  type: "dataframe/agg-generate-batch/fulfilled",
   effect: async (action, listenerApi) => {
     if (action.meta?.arg?.silentSuccess) return;
 
@@ -283,7 +281,7 @@ start({
 });
 
 start({
-  predicate: isType("dataframe/agg-generate-batch/rejected"),
+  type: "dataframe/agg-generate-batch/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Could not compute aggregations",
@@ -294,7 +292,7 @@ start({
 });
 
 start({
-  predicate: isType("dataframe/replaceValuesWithNull/rejected"),
+  type: "dataframe/replaceValuesWithNull/rejected",
   effect: async (action, listenerApi) => {
     notifyError(listenerApi, {
       message: "Could not nullify values",
@@ -305,7 +303,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/updateAttribute/fulfilled"),
+  type: "metadata/updateAttribute/fulfilled",
   effect: async (action, listenerApi) => {
     notifySuccess(listenerApi, {
       message: `Attribute ${action.payload?.node?.name || "attribute"} updated`,
@@ -314,7 +312,7 @@ start({
 });
 
 start({
-  predicate: isType("metadata/updateAttribute/rejected"),
+  type: "metadata/updateAttribute/rejected",
   effect: async (action, listenerApi) => {
     if (isUserCanceledAction(action.payload, action.error)) {
       notifyInfo(listenerApi, {
@@ -334,7 +332,7 @@ start({
 });
 
 start({
-  predicate: isType("main/loadDemoData/fulfilled"),
+  type: "main/loadDemoData/fulfilled",
   effect: async (_, listenerApi) => {
     notifySuccess(listenerApi, {
       message: "Demo data loaded",
@@ -343,7 +341,7 @@ start({
 });
 
 start({
-  predicate: isType("main/loadDemoData/rejected"),
+  type: "main/loadDemoData/rejected",
   effect: async (action, listenerApi) => {
     if (typeof action.payload === "string") return;
 
@@ -356,7 +354,7 @@ start({
 });
 
 start({
-  predicate: isType("compare/runAllComparisonTests/rejected"),
+  type: "compare/runAllComparisonTests/rejected",
   effect: async (action, listenerApi) => {
     const error = action.payload || action.error?.message;
 
@@ -370,7 +368,7 @@ start({
 });
 
 start({
-  predicate: isType("compare/runTest/rejected"),
+  type: "compare/runTest/rejected",
   effect: async (action, listenerApi) => {
     const error = action.payload || action.error?.message;
 

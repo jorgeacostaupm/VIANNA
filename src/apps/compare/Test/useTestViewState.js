@@ -1,0 +1,55 @@
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+
+import { ORDER_VARIABLE } from "@/utils/Constants";
+import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
+import useSelectionRows from "@/hooks/useSelectionRows";
+import { extractOrderValues, uniqueColumns } from "@/utils/viewRecords";
+
+export default function useTestViewState({
+  variable,
+  sourceOrderValues = [],
+  isSync,
+  isRowValid,
+}) {
+  const groupVar = useSelector((s) => s.compare.groupVar);
+  const attributes = useSelector((s) => s.metadata.attributes);
+
+  const requiredVariables = useMemo(
+    () => uniqueColumns([groupVar, variable, ORDER_VARIABLE]),
+    [groupVar, variable],
+  );
+
+  const selection = useSelectionRows(requiredVariables);
+
+  const liveOrderValues = useMemo(
+    () =>
+      extractOrderValues(selection, (row) =>
+        isRowValid({
+          row,
+          groupVar,
+          variable,
+        }),
+      ),
+    [selection, groupVar, variable, isRowValid],
+  );
+
+  const recordOrders = useViewRecordSnapshot({
+    isSync,
+    liveOrderValues,
+    initialOrderValues: sourceOrderValues,
+  });
+
+  const variableDescription = useMemo(() => {
+    const description = attributes?.find((attr) => attr?.name === variable)?.desc;
+    return typeof description === "string" ? description.trim() : "";
+  }, [attributes, variable]);
+
+  return {
+    groupVar,
+    selection,
+    requiredVariables,
+    recordOrders,
+    variableDescription,
+  };
+}

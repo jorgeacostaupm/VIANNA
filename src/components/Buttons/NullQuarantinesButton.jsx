@@ -6,21 +6,11 @@ import { nullsToQuarantine } from "@/store/features/main";
 
 export default function NullQuarantineButton() {
   const dispatch = useDispatch();
-  const selection =
-    useSelector((state) => state.dataframe.selection) || [];
+  const hasEmptyInSelection = useSelector((state) => state.dataframe.hasEmptyValues);
 
   const onNullQuarantine = () => {
     dispatch(nullsToQuarantine());
   };
-
-  const hasEmptyInSelection = selection.some((row) =>
-    Object.values(row).some(
-      (value) =>
-        value === null ||
-        value === undefined ||
-        (typeof value === "number" && isNaN(value))
-    )
-  );
 
   return (
     hasEmptyInSelection && (

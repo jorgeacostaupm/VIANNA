@@ -1,6 +1,7 @@
-import { Button, Select, Slider, Switch, Typography } from "antd";
+import { Select, Slider, Switch, Typography } from "antd";
 
 import panelStyles from "@/styles/SettingsPanel.module.css";
+import { AppButton } from "@/components/ui/button";
 
 const { Text } = Typography;
 
@@ -145,13 +146,13 @@ export default function HierarchyViewSettings({
         </div>
       </div>
 
-      <Button
+      <AppButton
         onClick={() =>
           onViewConfigChange?.(() => DEFAULT_HIERARCHY_VIEW_CONFIG)
         }
       >
         Restore defaults
-      </Button>
+      </AppButton>
     </div>
   );
 }

@@ -1,36 +1,108 @@
-import { useState, useCallback, useEffect } from "react";
+import { useReducer, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { ORDER_VARIABLE } from "@/utils/Constants";
-import { normalizeOrderValues } from "@/utils/viewRecords";
+import { selectSelectionOrderValues } from "@/store/features/dataframe";
 
-const wideCharts = ["ranking"];
-const squareCharts = ["Scatter Plot Matrix", "Correlation Matrix", "PCA"];
+const DEFAULT_LAYOUT = Object.freeze({
+  w: 3,
+  h: 4,
+  xBase: 0,
+  yOffset: null,
+});
+
+const initialState = Object.freeze({
+  views: [],
+  layout: [],
+});
+
+function gridViewsReducer(state, action) {
+  switch (action.type) {
+    case "ADD_VIEW": {
+      const { view, layoutItem, yOffset } = action.payload;
+      return {
+        views: [view, ...state.views],
+        layout: [
+          layoutItem,
+          ...state.layout.map((item) => ({ ...item, y: item.y + yOffset })),
+        ],
+      };
+    }
+
+    case "REMOVE_VIEW": {
+      const id = action.payload.id;
+      return {
+        views: state.views.filter((view) => view.id !== id),
+        layout: state.layout.filter((item) => item.i !== id),
+      };
+    }
+
+    case "SET_LAYOUT":
+      return {
+        ...state,
+        layout: action.payload.layout,
+      };
+
+    case "RESET":
+      return initialState;
+
+    default:
+      return state;
+  }
+}
+
+function createViewId(type) {
+  if (typeof globalThis?.crypto?.randomUUID === "function") {
+    return `${type}-${globalThis.crypto.randomUUID()}`;
+  }
+  return `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function resolveLayoutPreset(getLayoutPreset, type, defaultW, defaultH) {
+  const registryPreset =
+    typeof getLayoutPreset === "function" ? getLayoutPreset(type) : null;
+  if (!registryPreset || typeof registryPreset !== "object") {
+    return {
+      ...DEFAULT_LAYOUT,
+      w: defaultW,
+      h: defaultH,
+    };
+  }
+
+  return {
+    ...DEFAULT_LAYOUT,
+    w: defaultW,
+    h: defaultH,
+    ...registryPreset,
+  };
+}
 
 export default function useGridViews(defaultW = 3, defaultH = 4, options = {}) {
-  const { topOffsetRows = 0, leftOffsetCols = 0, totalCols = 12 } = options;
-  const [views, setViews] = useState([]);
-  const [layout, setLayout] = useState([]);
+  const {
+    topOffsetRows = 0,
+    leftOffsetCols = 0,
+    totalCols = 12,
+    getLayoutPreset,
+  } = options;
+  const [state, dispatch] = useReducer(gridViewsReducer, initialState);
   const dfFilename = useSelector((s) => s.dataframe.filename);
   const hierFilename = useSelector((s) => s.metadata.filename);
-  const selection = useSelector((s) => s.dataframe.selection);
+  const selectionOrderValues = useSelector(selectSelectionOrderValues);
 
   const addView = useCallback(
     (type, props = {}) => {
-      const id = `${type}-${Date.now()}`;
-      const sourceOrderValues = normalizeOrderValues(
-        (selection || []).map((row) => row?.[ORDER_VARIABLE]),
+      const id = createViewId(type);
+      const sourceOrderValues = selectionOrderValues;
+      const preset = resolveLayoutPreset(
+        getLayoutPreset,
+        type,
+        defaultW,
+        defaultH,
       );
-
-      setViews((prev) => [{ id, type, sourceOrderValues, ...props }, ...prev]);
-
-      console.log("type", type);
-
-      const xBase = type === "pointrange" ? defaultW : 0;
-      let yOffset = type === "pointrange" ? 0 : defaultH;
-      let w = defaultW;
-      let h = defaultH;
-      if (wideCharts.includes(type)) w = 20;
-      else if (squareCharts.includes(type)) ((w = 12), (h = 8));
+      const xBase = Number.isFinite(preset.xBase) ? preset.xBase : 0;
+      const yOffset = Number.isFinite(preset.yOffset)
+        ? preset.yOffset
+        : preset.h;
+      const w = Number.isFinite(preset.w) ? preset.w : defaultW;
+      const h = Number.isFinite(preset.h) ? preset.h : defaultH;
 
       const availableCols = Math.max(totalCols - leftOffsetCols, 1);
       const width = Math.min(w, availableCols);
@@ -38,30 +110,43 @@ export default function useGridViews(defaultW = 3, defaultH = 4, options = {}) {
       const maxX = leftOffsetCols + Math.max(availableCols - width, 0);
       const x = Math.min(desiredX, maxX);
 
-      setLayout((prev) => [
-        { i: id, x, y: topOffsetRows, w: width, h },
-        ...prev.map((l) => ({ ...l, y: l.y + yOffset })),
-      ]);
+      dispatch({
+        type: "ADD_VIEW",
+        payload: {
+          view: { id, type, sourceOrderValues, ...props },
+          layoutItem: { i: id, x, y: topOffsetRows, w: width, h },
+          yOffset,
+        },
+      });
     },
     [
       defaultH,
       defaultW,
+      getLayoutPreset,
       leftOffsetCols,
-      selection,
+      selectionOrderValues,
       topOffsetRows,
       totalCols,
     ],
   );
 
   const removeView = useCallback((id) => {
-    setViews((p) => p.filter((v) => v.id !== id));
-    setLayout((p) => p.filter((l) => l.i !== id));
+    dispatch({ type: "REMOVE_VIEW", payload: { id } });
+  }, []);
+
+  const setLayout = useCallback((layout) => {
+    dispatch({ type: "SET_LAYOUT", payload: { layout } });
   }, []);
 
   useEffect(() => {
-    setViews([]);
-    setLayout([]);
+    dispatch({ type: "RESET" });
   }, [dfFilename, hierFilename]);
 
-  return { views, layout, setLayout, addView, removeView };
+  return {
+    views: state.views,
+    layout: state.layout,
+    setLayout,
+    addView,
+    removeView,
+  };
 }

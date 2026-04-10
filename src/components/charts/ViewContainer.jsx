@@ -1,34 +1,31 @@
 import React from "react";
 import ChartBar from "@/components/charts/ChartBar";
 import styles from "@/styles/Charts.module.css";
+import { normalizeViewContainerProps } from "./view/viewContainerModel";
 
-export default function ViewContainer({
-  title,
-  hoverTitle,
-  svgIDs,
-  info,
-  settings,
-  testsSettings,
-  chart,
-  remove,
-  config,
-  setConfig,
-  recordsExport,
-}) {
-  const axisLabelFontSize = Number.isFinite(config?.axisLabelFontSize)
-    ? config.axisLabelFontSize
-    : null;
-  const containerStyle =
-    axisLabelFontSize != null
-      ? { "--axis-label-font-size": `${axisLabelFontSize}px` }
-      : undefined;
+export default function ViewContainer(props) {
+  const {
+    title,
+    hoverTitle,
+    svgIDs,
+    info,
+    settings,
+    testsSettings,
+    chart,
+    remove,
+    config,
+    setConfig,
+    recordsExport,
+    actions,
+    className,
+    style,
+  } = normalizeViewContainerProps(props);
+  const containerClassName = [styles.viewContainer, className]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div
-      className={styles.viewContainer}
-      data-view-container
-      style={containerStyle}
-    >
+    <div className={containerClassName} data-view-container style={style}>
       <ChartBar
         title={title}
         hoverTitle={hoverTitle}
@@ -40,6 +37,7 @@ export default function ViewContainer({
         config={config}
         setConfig={setConfig}
         recordsExport={recordsExport}
+        actions={actions}
       />
       {chart}
     </div>

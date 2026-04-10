@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import React, { useCallback } from "react";
 import ReactDOM from "react-dom/client";
 import { Provider, useDispatch, useSelector } from "react-redux";
-import { Button, Tooltip } from "antd";
+import { Tooltip } from "antd";
 
 import { UserDeleteOutlined, UsergroupDeleteOutlined } from "@ant-design/icons";
 import store from "@/store/store";
@@ -10,7 +10,7 @@ import { setDataframe } from "@/store/features/dataframe";
 import { setQuarantineData } from "@/store/features/main";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import styles from "@/styles/Charts.module.css";
-import buttonStyles from "@/styles/Buttons.module.css";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 
 const QuarantineObservationTooltip = ({ d, idVar }) => {
   const dispatch = useDispatch();
@@ -38,26 +38,26 @@ const QuarantineObservationTooltip = ({ d, idVar }) => {
   return (
     <div className={styles.hierarchyTooltip}>
       <Tooltip title={"Send observation to Quarantine"}>
-        <Button
+        <AppButton
+          variant={APP_BUTTON_VARIANTS.BORDERED}
           shape="circle"
-          className={buttonStyles.borderedButton}
           onClick={handleQuarantineObs}
         >
           <UserDeleteOutlined />
-        </Button>
+        </AppButton>
       </Tooltip>
 
       {idVar && (
         <Tooltip
           title={"Send observation and all coincident ids to Quarantine"}
         >
-          <Button
+          <AppButton
+            variant={APP_BUTTON_VARIANTS.BORDERED}
             shape="circle"
-            className={buttonStyles.borderedButton}
             onClick={handleQuarantineById}
           >
             <UsergroupDeleteOutlined />
-          </Button>
+          </AppButton>
         </Tooltip>
       )}
     </div>

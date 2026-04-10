@@ -8,7 +8,7 @@ import {
   BugFilled,
 } from "@ant-design/icons";
 
-import LinkButton from "@/components/ui/ButtonLink";
+import GoToAppButton from "@/components/ui/ButtonLink";
 import DataManagementButton from "@/components/Data/Buttons/DataManagementButton";
 
 export default function AppsButtons({
@@ -23,13 +23,13 @@ export default function AppsButtons({
         open={dataManagementOpen}
         onOpenChange={onDataManagementOpenChange}
       />
-      <LinkButton to="metadata" icon={<PartitionOutlined />} />
+      <GoToAppButton to="metadata" icon={<PartitionOutlined />} />
       {dt && (
         <>
-          <LinkButton to="compare" icon={<BarChartOutlined />} />
-          <LinkButton to="evolution" icon={<LineChartOutlined />} />
-          <LinkButton to="correlation" icon={<DotChartOutlined />} />
-          <LinkButton to="cantab" icon={<BugFilled />} />
+          <GoToAppButton to="compare" icon={<BarChartOutlined />} />
+          <GoToAppButton to="evolution" icon={<LineChartOutlined />} />
+          <GoToAppButton to="correlation" icon={<DotChartOutlined />} />
+          <GoToAppButton to="cantab" icon={<BugFilled />} />
         </>
       )}
     </div>

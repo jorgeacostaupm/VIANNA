@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React from "react";
 import { Dropdown } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import BarButton from "./BarButton";
 import styles from "./DownloadButton.module.css";
-import { getViewOverlayPosition } from "./popupPosition";
+import useAnchoredOverlay from "./useAnchoredOverlay";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SVG_STYLE_PROPERTIES = [
@@ -64,38 +64,13 @@ const downloadFormats = [
 
 export default function DownloadButton({ filename = "chart", svgIds = [] }) {
   const disabled = !svgIds?.length;
-  const [open, setOpen] = useState(false);
-  const [overlayStyle, setOverlayStyle] = useState(undefined);
-  const [isFixedOverlay, setIsFixedOverlay] = useState(false);
-  const triggerRef = useRef(null);
-
-  const updateOverlayPosition = useCallback(() => {
-    const position = getViewOverlayPosition(triggerRef.current);
-    setOverlayStyle(position || undefined);
-    setIsFixedOverlay(Boolean(position));
-  }, []);
-
-  useEffect(() => {
-    if (!open || !isFixedOverlay) return undefined;
-
-    const updatePosition = () => updateOverlayPosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [open, isFixedOverlay, updateOverlayPosition]);
-
-  useEffect(() => {
-    if (disabled) setOpen(false);
-  }, [disabled]);
-
-  const handleOpenChange = (nextOpen) => {
-    if (nextOpen) updateOverlayPosition();
-    setOpen(nextOpen);
-  };
+  const {
+    open,
+    overlayStyle,
+    isFixedOverlay,
+    triggerRef,
+    handleOpenChange,
+  } = useAnchoredOverlay({ disabled });
 
   const menu = {
     items: downloadFormats,

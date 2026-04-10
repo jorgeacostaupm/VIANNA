@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, Space, Typography } from "antd";
+import { Card, Space, Typography } from "antd";
 import {
   DatabaseOutlined,
   DownloadOutlined,
@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 
 import styles from "@/styles/App.module.css";
+import { AppButton } from "@/components/ui/button";
 
 const { Text, Title } = Typography;
 
@@ -37,28 +38,28 @@ export default function InitialDataChoice({
           </Text>
 
           <div className={styles.initialChoiceButtonsRow}>
-            <Button
+            <AppButton
               type="primary"
               icon={<DownloadOutlined />}
               onClick={onLoadDemo}
               loading={isLoadingDemo}
             >
               Load Demo Data
-            </Button>
-            <Button
+            </AppButton>
+            <AppButton
               type="default"
               icon={<DatabaseOutlined />}
               onClick={onLoadMyData}
             >
               Load My Data
-            </Button>
-            <Button
+            </AppButton>
+            <AppButton
               type="default"
               icon={<PlayCircleOutlined />}
               onClick={onContinueWithoutData}
             >
               Continue without data
-            </Button>
+            </AppButton>
           </div>
         </div>
       </Card>

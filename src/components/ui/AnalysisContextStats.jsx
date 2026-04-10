@@ -3,6 +3,9 @@ import { useSelector } from "react-redux";
 
 import styles from "@/styles/App.module.css";
 import { getDistinctValueCount } from "@/utils/dataSummary";
+import { selectSelectionCount } from "@/store/features/dataframe";
+import useSelectionRows from "@/hooks/useSelectionRows";
+import { uniqueColumns } from "@/utils/viewRecords";
 
 const buildLabel = (baseLabel, variable) =>
   variable ? `${baseLabel} (${variable})` : baseLabel;
@@ -23,18 +26,12 @@ export default function AnalysisContextStats({
   idVar = null,
   visibleStats = {},
 }) {
-  const selection = useSelector((state) => state.dataframe.selection);
-  const dataframe = useSelector((state) => state.dataframe.dataframe);
-  const selectedRecords = Array.isArray(selection)
-    ? selection.length
-    : Array.isArray(dataframe)
-      ? dataframe.length
-      : 0;
-  const rows = Array.isArray(selection)
-    ? selection
-    : Array.isArray(dataframe)
-      ? dataframe
-      : [];
+  const selectedRecords = useSelector(selectSelectionCount);
+  const selectionColumns = useMemo(
+    () => uniqueColumns([groupVar, timeVar, idVar]),
+    [groupVar, timeVar, idVar],
+  );
+  const rows = useSelectionRows(selectionColumns);
 
   const stats = useMemo(
     () => ({

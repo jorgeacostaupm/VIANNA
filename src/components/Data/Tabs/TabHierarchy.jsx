@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Typography, Divider, Button, Space, Tag } from "antd";
+import { Typography, Divider, Space, Tag } from "antd";
 import { DiffOutlined, SisternodeOutlined } from "@ant-design/icons";
 import * as aq from "arquero";
 import DragDropHierarchy from "../DragDrop/DragDropHierarchy";
@@ -22,6 +22,7 @@ import {
   notifyInfo,
 } from "@/notifications";
 import styles from "../Data.module.css";
+import { AppButton } from "@/components/ui/button";
 
 const { Title, Text } = Typography;
 
@@ -311,15 +312,15 @@ const SyncPanel = () => {
             </div>
           ) : null}
           <Space wrap>
-            <Button
+            <AppButton
               icon={<DiffOutlined />}
               onClick={handleAddMissingNodes}
               loading={actionLoading === "add"}
               disabled={missingVars.length === 0 || actionLoading != null}
             >
               Add Missing Nodes
-            </Button>
-            <Button
+            </AppButton>
+            <AppButton
               icon={<SisternodeOutlined />}
               onClick={handleRemoveExtraNodes}
               loading={actionLoading === "remove"}
@@ -328,7 +329,7 @@ const SyncPanel = () => {
               }
             >
               Remove Extra Nodes
-            </Button>
+            </AppButton>
           </Space>
           {actionLoading && actionProgress.total > 0 ? (
             <Text type="secondary">

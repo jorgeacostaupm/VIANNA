@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { notifyError } from "@/notifications";
 import { selectVars } from "@/store/features/main";
+import useSelectionRows from "@/hooks/useSelectionRows";
+import { uniqueColumns } from "@/utils/viewRecords";
 
 export default function useDistributionData(
   getData,
@@ -11,9 +13,13 @@ export default function useDistributionData(
   { groupVar = null, timeVar = null } = {}
 ) {
   const [data, setData] = useState([]);
-  const selection = useSelector((s) => s.dataframe.selection);
   const idVar = useSelector((s) => s.main.idVar);
   const variables = useSelector(selectVars);
+  const selectionColumns = useMemo(
+    () => uniqueColumns([groupVar, variable, timeVar, idVar]),
+    [groupVar, variable, timeVar, idVar],
+  );
+  const selection = useSelectionRows(selectionColumns);
 
   useEffect(() => {
     if (!isSync || !variables.includes(variable) || !groupVar) return;

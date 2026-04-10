@@ -1,13 +1,14 @@
 import React, { useState, useMemo, useRef } from "react";
-import { useSelector } from "react-redux";
 
 import Settings from "./Settings";
 import BasicChart from "@/components/charts/BasicChart";
 import useCorrelationMatrix from "./useCorrelationMatrix";
 import useCorrelationMatrixData from "./useCorrelationMatrixData";
-import ViewContainer from "@/components/charts/ViewContainer";
+import CorrelationView from "../view/CorrelationView";
+import { createCorrelationViewModel } from "../view/createCorrelationViewModel";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
+import useSelectionRows from "@/hooks/useSelectionRows";
 import {
   extractOrderValues,
   isFiniteNumericValue,
@@ -41,10 +42,14 @@ export default function CorrelationMatrix({
   remove,
   sourceOrderValues = [],
 }) {
-  const selection = useSelector((s) => s.dataframe.selection);
   const [config, setConfig] = useState(defaultConfig);
   const [params, setParams] = useState(defaultParams);
   const [info, setInfo] = useState(null);
+  const selectionColumns = useMemo(
+    () => uniqueColumns([...(params.variables || []), ORDER_VARIABLE]),
+    [Array.isArray(params.variables) ? params.variables.join("|") : ""],
+  );
+  const selection = useSelectionRows(selectionColumns);
   const [data] = useCorrelationMatrixData(config.isSync, params, setInfo);
 
   const liveOrderValues = useMemo(
@@ -72,29 +77,29 @@ export default function CorrelationMatrix({
     return <Chart data={data} config={config} params={params} id={id} />;
   }, [config, data, params]);
 
-  return (
-    <ViewContainer
-      title={`Correlation Matrix`}
-      svgIDs={[id, `${id}-legend`]}
-      remove={remove}
-      settings={
-        <Settings
-          info
-          config={config}
-          setConfig={setConfig}
-          params={params}
-          setParams={setParams}
-        />
-      }
-      chart={chart}
-      config={config}
-      setConfig={setConfig}
-      info={info}
-      recordsExport={{
-        filename: "correlation_matrix",
-        recordOrders,
-        requiredVariables,
-      }}
-    />
-  );
+  const viewModel = createCorrelationViewModel({
+    title: "Correlation Matrix",
+    svgIDs: [id, `${id}-legend`],
+    remove,
+    settings: (
+      <Settings
+        info
+        config={config}
+        setConfig={setConfig}
+        params={params}
+        setParams={setParams}
+      />
+    ),
+    chart,
+    config,
+    setConfig,
+    info,
+    recordsExport: {
+      filename: "correlation_matrix",
+      recordOrders,
+      requiredVariables,
+    },
+  });
+
+  return <CorrelationView view={viewModel} />;
 }

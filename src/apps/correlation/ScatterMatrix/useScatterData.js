@@ -1,11 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { notifyError } from "@/notifications";
+import useSelectionRows from "@/hooks/useSelectionRows";
+import { ORDER_VARIABLE } from "@/utils/Constants";
+import { uniqueColumns } from "@/utils/viewRecords";
 
 export default function useScatterData(isSync = true, params) {
   const [data, setData] = useState([]);
-  const selection = useSelector((s) => s.dataframe.selection);
+  const idVar = useSelector((s) => s.main.idVar);
+  const selectionColumns = useMemo(
+    () =>
+      uniqueColumns([
+        params?.groupVar,
+        ...(params?.variables || []),
+        idVar,
+        ORDER_VARIABLE,
+      ]),
+    [
+      params?.groupVar,
+      Array.isArray(params?.variables) ? params.variables.join("|") : "",
+      idVar,
+    ],
+  );
+  const selection = useSelectionRows(selectionColumns);
 
   useEffect(() => {
     if (!isSync) return;

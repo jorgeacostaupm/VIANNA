@@ -1,7 +1,7 @@
 import React from "react";
 
 import AnalysisSidebar from "@/components/ui/AnalysisSidebar";
-import styles from "@/styles/App.module.css";
+import AnalysisPanelSection from "@/components/ui/AnalysisPanelSection";
 import VariableSelector from "./VariableSelector";
 import AssumptionsTags from "./AssumptionsTags";
 import TestSelector from "./TestSelector";
@@ -15,30 +15,18 @@ export default function Panel({
 }) {
   return (
     <AnalysisSidebar description={COMP_DESC}>
-      <div className={`${styles.panelBox} ${styles.panelBoxContext}`}>
-        <div className={styles.panelBoxTitle}>Analysis Context</div>
-        <div className={styles.panelBoxBody}>
-          <ContextSelector />
-        </div>
-      </div>
+      <AnalysisPanelSection title="Analysis Context" variant="context">
+        <ContextSelector />
+      </AnalysisPanelSection>
 
-      <div className={styles.panelBox}>
-        <div className={styles.panelBoxTitle}>Distribution</div>
-        <div className={styles.panelBoxBody}>
-          <VariableSelector generateDistribution={generateDistribution} />
-          <AssumptionsTags />
-        </div>
-      </div>
+      <AnalysisPanelSection title="Distribution">
+        <VariableSelector generateDistribution={generateDistribution} />
+        <AssumptionsTags />
+      </AnalysisPanelSection>
 
-      <div className={styles.panelBox}>
-        <div className={styles.panelBoxTitle}>Statistical Tests</div>
-        <div className={styles.panelBoxBody}>
-          <TestSelector
-            generateTest={generateTest}
-            generateRanking={generateRanking}
-          />
-        </div>
-      </div>
+      <AnalysisPanelSection title="Statistical Tests">
+        <TestSelector generateTest={generateTest} generateRanking={generateRanking} />
+      </AnalysisPanelSection>
     </AnalysisSidebar>
   );
 }

@@ -1,6 +1,5 @@
-import { Button } from "antd";
-import buttonStyles from "@/styles/Buttons.module.css";
 import AutoCloseTooltip from "./AutoCloseTooltip";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 
 export default function ColoredButton({
   title = "",
@@ -11,13 +10,14 @@ export default function ColoredButton({
   loading = false,
   children,
   shape = "default",
+  variant = APP_BUTTON_VARIANTS.ACTION,
   ...buttonProps
 }) {
   return (
     <AutoCloseTooltip title={title} placement={placement}>
-      <Button
+      <AppButton
+        variant={variant}
         shape={shape}
-        className={buttonStyles.myButton}
         icon={icon}
         onClick={onClick}
         disabled={disabled}
@@ -25,7 +25,7 @@ export default function ColoredButton({
         {...buttonProps}
       >
         {children}
-      </Button>
+      </AppButton>
     </AutoCloseTooltip>
   );
 }

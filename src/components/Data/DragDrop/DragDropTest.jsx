@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Button, Tooltip } from "antd";
+import { Tooltip } from "antd";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 
 import { FileProcessorFactory } from "./drag";
 
-import buttonStyles from "@/styles/Buttons.module.css";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 import styles from "../Data.module.css";
 import tests from "@/utils/tests";
 import { notifyError, notifyWarning } from "@/notifications";
@@ -86,14 +86,14 @@ export default function DragAndDropTest() {
 
       <div className={styles.controls}>
         <Tooltip title="Upload parsed data">
-          <Button
+          <AppButton
+            variant={APP_BUTTON_VARIANTS.TOOLBAR}
             shape="circle"
-            className={buttonStyles.barButton}
             onClick={handleUpload}
             disabled={!parsedData}
           >
             <UploadOutlined />
-          </Button>
+          </AppButton>
         </Tooltip>
       </div>
     </>

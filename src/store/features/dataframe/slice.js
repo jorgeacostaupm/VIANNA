@@ -11,19 +11,18 @@ import {
 
 import { updateHierarchy } from "../metadata/thunks";
 
-import {
-  generateTree,
-  getVisibleNodes,
-  hasEmptyValues,
-  pickColumns,
-} from "@/utils/functions";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { generateTree, getVisibleNodes } from "@/utils/functions";
 
 import { replaceValuesWithNull, updateData } from "./thunks";
 import {
   areColumnsEqual,
   syncSelectionFromDataframe,
 } from "./utils/sliceUtils";
+import {
+  createSelectionRefForAllRows,
+  resolveSelectionRefPayload,
+  selectionHasEmptyValues,
+} from "./utils/selectionRef";
 
 const initialState = {
   filename: null,
@@ -33,6 +32,7 @@ const initialState = {
   original: null,
 
   selection: null,
+  selectionRef: createSelectionRefForAllRows([]),
   selectionIds: null,
 
   hasEmptyValues: false,
@@ -66,27 +66,21 @@ export const dataSlice = createSlice({
         state.navioColumns = nextColumns;
       }
 
-      const currentSelectionIds = Array.isArray(state.selection)
-        ? new Set(state.selection.map((row) => row?.[ORDER_VARIABLE]))
-        : null;
-      const rowsToKeepSelected = Array.isArray(state.dataframe)
-        ? currentSelectionIds
-          ? state.dataframe.filter((row) =>
-              currentSelectionIds.has(row?.[ORDER_VARIABLE]),
-            )
-          : state.dataframe
-        : [];
-
-      const selection = pickColumns(rowsToKeepSelected, state.navioColumns);
-      state.selection = selection;
-      hasEmptyValues(selection, state);
+      state.hasEmptyValues = selectionHasEmptyValues({
+        dataframe: state.dataframe,
+        selectionRef: state.selectionRef,
+        visibleColumns: state.navioColumns,
+      });
     },
 
     setSelection: (state, action) => {
-      const selection = pickColumns(action.payload, state.navioColumns);
-      state.selection = selection;
-
-      hasEmptyValues(selection, state);
+      state.selectionRef = resolveSelectionRefPayload(action.payload, state.dataframe);
+      state.selection = null;
+      state.hasEmptyValues = selectionHasEmptyValues({
+        dataframe: state.dataframe,
+        selectionRef: state.selectionRef,
+        visibleColumns: state.navioColumns,
+      });
     },
 
     renameColumn: (state, action) => {
@@ -117,19 +111,11 @@ export const dataSlice = createSlice({
       const filtered = getVisibleNodes(tree);
 
       state.navioColumns = filtered;
-      const currentSelectionIds = Array.isArray(state.selection)
-        ? new Set(state.selection.map((row) => row?.[ORDER_VARIABLE]))
-        : null;
-      const rowsToKeepSelected = Array.isArray(state.dataframe)
-        ? currentSelectionIds
-          ? state.dataframe.filter((row) =>
-              currentSelectionIds.has(row?.[ORDER_VARIABLE]),
-            )
-          : state.dataframe
-        : [];
-
-      const selection = pickColumns(rowsToKeepSelected, state.navioColumns);
-      state.selection = selection;
+      state.hasEmptyValues = selectionHasEmptyValues({
+        dataframe: state.dataframe,
+        selectionRef: state.selectionRef,
+        visibleColumns: state.navioColumns,
+      });
     });
 
     builder.addCase(updateData.pending, (state) => {
@@ -146,11 +132,14 @@ export const dataSlice = createSlice({
         state.original = columnNames;
       }
 
-      const selection = pickColumns(items, state.navioColumns);
-      hasEmptyValues(selection, state);
-
       state.dataframe = items;
-      state.selection = selection;
+      state.selectionRef = createSelectionRefForAllRows(items);
+      state.selection = null;
+      state.hasEmptyValues = selectionHasEmptyValues({
+        dataframe: state.dataframe,
+        selectionRef: state.selectionRef,
+        visibleColumns: state.navioColumns,
+      });
       state.navioUiState = null;
       state.version = 0;
       state.nullifiedValues = [];

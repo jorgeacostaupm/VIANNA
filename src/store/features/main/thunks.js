@@ -2,7 +2,6 @@ import { DATASETS, ORDER_VARIABLE } from "@/utils/Constants";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { setDataframe } from "../dataframe/slice";
 import { pickColumns } from "@/utils/functions";
-import { getDistinctValues } from "@/store/utils/collections";
 import { updateData } from "../dataframe/thunks";
 import { updateDescriptions, updateHierarchy } from "../metadata/thunks";
 import * as api from "@/services/mainAppServices";
@@ -14,34 +13,22 @@ const { dataPath, hierarchyPath, descriptionsPath, idVar } = import.meta.env
 
 export const setTimeVar = createAsyncThunk(
   "main/setTimeVar",
-  async (timeVar, { getState }) => {
-    const dataframe = getState().dataframe.dataframe;
-    return {
-      timeVar,
-      timestamps: getDistinctValues(dataframe, timeVar),
-    };
+  async (timeVar) => {
+    return { timeVar };
   },
 );
 
 export const setGroupVar = createAsyncThunk(
   "main/setGroupVar",
-  async (groupVar, { getState }) => {
-    const dataframe = getState().dataframe.dataframe;
-    return {
-      groupVar,
-      groups: getDistinctValues(dataframe, groupVar),
-    };
+  async (groupVar) => {
+    return { groupVar };
   },
 );
 
 export const setIdVar = createAsyncThunk(
   "main/setIdVar",
-  async (nextIdVar, { getState }) => {
-    const dataframe = getState().dataframe.dataframe;
-    return {
-      idVar: nextIdVar,
-      ids: getDistinctValues(dataframe, nextIdVar),
-    };
+  async (nextIdVar) => {
+    return { idVar: nextIdVar };
   },
 );
 

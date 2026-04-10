@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Button, Input, Radio, Typography } from "antd";
+import { Input, Radio, Typography } from "antd";
 
 import panelStyles from "@/styles/SettingsPanel.module.css";
 import styles from "./LassoDock.module.css";
+import { AppButton } from "@/components/ui/button";
 
 const { Text } = Typography;
 
@@ -113,9 +114,9 @@ export default function LassoDock({
           <div className={styles.title}>PCA Lasso Groups</div>
           <Text className={styles.helper}>Column: {targetColumn || "-"}</Text>
         </div>
-        <Button size="small" danger onClick={onStop}>
+        <AppButton size="small" danger onClick={onStop}>
           Stop
-        </Button>
+        </AppButton>
       </div>
 
       <div className={styles.section}>
@@ -140,12 +141,12 @@ export default function LassoDock({
 
       <div className={styles.section}>
         <div className={styles.row}>
-          <Button size="small" onClick={onAddGroup}>
+          <AppButton size="small" onClick={onAddGroup}>
             Add group
-          </Button>
-          <Button size="small" onClick={onClearAssignments}>
+          </AppButton>
+          <AppButton size="small" onClick={onClearAssignments}>
             Clear selection
-          </Button>
+          </AppButton>
         </div>
 
         {(groups || []).map((group) => (
@@ -184,12 +185,12 @@ export default function LassoDock({
 
       <div className={styles.section}>
         <div className={styles.row}>
-          <Button size="small" type="primary" onClick={onApplyToDataset}>
+          <AppButton size="small" type="primary" onClick={onApplyToDataset}>
             Save to dataset
-          </Button>
-          <Button size="small" onClick={onDownload}>
+          </AppButton>
+          <AppButton size="small" onClick={onDownload}>
             Download CSV
-          </Button>
+          </AppButton>
         </div>
         <Text className={styles.helper}>
           Left click a point to toggle assignment. Right click starts lasso.

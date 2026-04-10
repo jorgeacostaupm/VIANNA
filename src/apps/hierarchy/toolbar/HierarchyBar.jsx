@@ -13,7 +13,7 @@ import { hierarchySelector } from "@/store/features/metadata";
 import BarButton from "@/components/ui/BarButton";
 import PopoverButton from "@/components/ui/PopoverButton";
 import HierarchyViewSettings from "../tools/HierarchyViewSettings";
-import buttonStyles from "@/styles/Buttons.module.css";
+import { APP_BUTTON_VARIANTS } from "@/components/ui/button";
 import styles from "@/styles/ChartBar.module.css";
 import UndoRedoButtons from "@/components/Buttons/UndoRedoButtons";
 
@@ -60,10 +60,10 @@ export default function HierarchyBar({
           onClick={() => toggleSelectionMode("brush")}
           disabled={!hasNodes}
           ariaLabel="Brush selection mode"
-          className={
+          variant={
             selectionMode === "brush"
-              ? buttonStyles.barButton
-              : buttonStyles.greyBarButton
+              ? APP_BUTTON_VARIANTS.TOOLBAR
+              : APP_BUTTON_VARIANTS.TOOLBAR_MUTED
           }
         />
         <BarButton
@@ -72,10 +72,10 @@ export default function HierarchyBar({
           onClick={() => toggleSelectionMode("click")}
           disabled={!hasNodes}
           ariaLabel="Click selection mode"
-          className={
+          variant={
             selectionMode === "click"
-              ? buttonStyles.barButton
-              : buttonStyles.greyBarButton
+              ? APP_BUTTON_VARIANTS.TOOLBAR
+              : APP_BUTTON_VARIANTS.TOOLBAR_MUTED
           }
         />
 

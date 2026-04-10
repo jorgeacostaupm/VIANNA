@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { updateData } from "../dataframe/thunks";
 
 const initialState = {
-  init: false,
   groupVar: null,
   selectedChart: null,
 };
@@ -11,9 +10,6 @@ const correlationSlice = createSlice({
   name: "correlation",
   initialState,
   reducers: {
-    setInit: (state, action) => {
-      state.init = action.payload;
-    },
     setSelectedChart: (state, action) => {
       state.selectedChart = action.payload;
     },
@@ -30,7 +26,6 @@ const correlationSlice = createSlice({
 
 export default correlationSlice.reducer;
 export const {
-  setInit,
   setGroupVar,
   setSelectedChart,
 } = correlationSlice.actions;

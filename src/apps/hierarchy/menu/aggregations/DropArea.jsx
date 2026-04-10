@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Tooltip, Typography } from "antd";
+import { Tooltip, Typography } from "antd";
 import { useFormikContext } from "formik";
 import { CopyOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
@@ -11,8 +11,8 @@ import {
 } from "./DropIndicator";
 import BasicAttribute from "./BasicAttribute";
 import InputAttribute from "./InputAttribute";
-import buttonStyles from "@/styles/Buttons.module.css";
 import styles from "./DropArea.module.css";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 
 const { Text } = Typography;
 
@@ -144,10 +144,10 @@ const DropArea = ({
 
       <div style={{ display: "flex", justifyContent: "center", gap: 12 }}>
         <Tooltip title={"Add all variables"}>
-          <Button
+          <AppButton
+            variant={APP_BUTTON_VARIANTS.ACTION}
             shape="circle"
             size="large"
-            className={buttonStyles.coloredButton}
             onClick={() => modeAllNodes(true)}
             icon={<CopyOutlined />}
           />
@@ -156,8 +156,8 @@ const DropArea = ({
         {save}
 
         <Tooltip title={"Delete all variables"}>
-          <Button
-            className={buttonStyles.coloredButton}
+          <AppButton
+            variant={APP_BUTTON_VARIANTS.ACTION}
             shape="circle"
             size="large"
             onClick={() => modeAllNodes(false)}

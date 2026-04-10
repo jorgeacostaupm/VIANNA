@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Button, Select, Typography, InputNumber, Slider } from "antd";
+import { Select, Typography, InputNumber, Slider } from "antd";
 import { getTopCorrelations } from "@/utils/functionsCorrelation";
 import {
   COLOR_SCALES,
@@ -9,11 +9,13 @@ import {
 import { EditOutlined } from "@ant-design/icons";
 import panelStyles from "@/styles/SettingsPanel.module.css";
 import AxisLabelSizeControl from "@/components/ui/AxisLabelSizeControl";
+import useSelectionRows from "@/hooks/useSelectionRows";
+import { AppButton } from "@/components/ui/button";
 
 const { Text } = Typography;
 
 export default function Settings({ config, setConfig, params, setParams }) {
-  const data = useSelector((s) => s.dataframe.selection);
+  const data = useSelectionRows();
   const navioColumns = useSelector(
     (state) => state.dataframe.navioColumns || [],
   );
@@ -90,7 +92,7 @@ export default function Settings({ config, setConfig, params, setParams }) {
             onChange={onChange}
             style={{ width: 120 }}
           />
-          <Button type="primary" icon={<EditOutlined />} onClick={onClick} />
+          <AppButton type="primary" icon={<EditOutlined />} onClick={onClick} />
         </div>
       </div>
 

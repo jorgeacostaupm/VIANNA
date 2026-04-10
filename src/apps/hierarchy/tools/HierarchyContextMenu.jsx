@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { Button } from "antd";
 import * as d3 from "d3";
 
 import {
@@ -16,7 +15,6 @@ import {
 } from "@ant-design/icons";
 
 import { pubsub } from "@/utils/pubsub";
-import buttonStyles from "@/styles/Buttons.module.css";
 import styles from "@/styles/Charts.module.css";
 import { addAttribute, removeAttribute } from "@/store/features/metadata";
 import {
@@ -25,6 +23,7 @@ import {
 } from "@/store/features/metadata";
 import { getRandomInt } from "@/utils/functions";
 import OperationModal from "./OperationModal";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 
 const { subscribe, unsubscribe, publish } = pubsub;
 
@@ -224,16 +223,17 @@ export default function HierarchyContextMenu({ editor }) {
     selectionToggleableNodes.every((n) => n?.data?.isActive === false);
 
   const MenuAction = ({ label, icon, onClick, danger, disabled }) => (
-    <Button
+    <AppButton
+      variant={APP_BUTTON_VARIANTS.ACTION}
       size="small"
       icon={icon}
       danger={danger}
       disabled={disabled}
-      className={`${buttonStyles.myButton} ${styles.hierarchyMenuAction}`}
+      className={styles.hierarchyMenuAction}
       onClick={onClick}
     >
       {label}
-    </Button>
+    </AppButton>
   );
 
   return (

@@ -1,6 +1,8 @@
+import { resolveViewComponent } from "./viewDefinitions";
+
 export function createViewRenderer(registry, removeView) {
   return function renderView(view) {
-    const Comp = registry[view.type];
+    const Comp = resolveViewComponent(registry[view.type]);
     if (!Comp) return null;
 
     return (

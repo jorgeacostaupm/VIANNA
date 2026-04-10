@@ -7,22 +7,23 @@ import { setDataframe } from "@/store/features/dataframe";
 
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import BarButton from "@/components/ui/BarButton";
+import { useSelectionOrderValues } from "@/hooks/useSelectionRows";
 
 export default function QuarantineButton() {
   const dispatch = useDispatch();
-  const selection = useSelector((state) => state.dataframe.selection);
+  const selectedOrderValues = useSelectionOrderValues();
   const data = useSelector((state) => state.dataframe.dataframe);
   const qData =
     useSelector((state) => state.main.quarantineData) || [];
-  const ids = selection?.map((item) => item[ORDER_VARIABLE]);
 
   const onQuarantine = () => {
+    const selectedOrderSet = new Set(selectedOrderValues);
     const newData = data?.filter(
-      (item) => !ids?.includes(item[ORDER_VARIABLE])
+      (item) => !selectedOrderSet.has(item?.[ORDER_VARIABLE]),
     );
 
     const newQData = data?.filter((item) =>
-      ids?.includes(item[ORDER_VARIABLE])
+      selectedOrderSet.has(item?.[ORDER_VARIABLE]),
     );
     dispatch(setDataframe(newData));
     dispatch(setQuarantineData([...qData, ...newQData]));

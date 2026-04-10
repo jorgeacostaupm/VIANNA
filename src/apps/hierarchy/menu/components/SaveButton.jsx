@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
-import { Button } from "antd";
 import { SaveOutlined, EyeOutlined } from "@ant-design/icons";
 import * as aq from "arquero";
 
 import processFormula from "@/utils/processFormula";
 import { notifyError } from "@/notifications";
 import AutoCloseTooltip from "@/components/ui/AutoCloseTooltip";
-import buttonStyles from "@/styles/Buttons.module.css";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 
 import {
   PREVIEW_LIMIT,
@@ -184,28 +183,28 @@ export default function SaveButton() {
     <>
       {isAggregation ? (
         <AutoCloseTooltip title={`Preview ${PREVIEW_LIMIT} rows`}>
-          <Button
+          <AppButton
+            variant={APP_BUTTON_VARIANTS.ACTION}
             shape="circle"
             size="large"
-            className={buttonStyles.coloredButton}
             onClick={handlePreview}
             disabled={!canPreview}
             loading={previewLoading}
             icon={<EyeOutlined />}
-          ></Button>
+          />
         </AutoCloseTooltip>
       ) : null}
 
       <AutoCloseTooltip title="Save">
-        <Button
+        <AppButton
+          variant={APP_BUTTON_VARIANTS.ACTION}
           shape="circle"
           size="large"
-          className={buttonStyles.coloredButton}
           onClick={handleSave}
           disabled={isSaveInProgress}
           loading={isSaveInProgress}
           icon={<SaveOutlined />}
-        ></Button>
+        />
       </AutoCloseTooltip>
 
       <AggregationPreviewModal

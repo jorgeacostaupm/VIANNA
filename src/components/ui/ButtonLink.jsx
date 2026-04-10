@@ -27,7 +27,7 @@ const buildAppUrl = (route) => {
   return route ? `${base}#/${route}` : `${base}#/`;
 };
 
-export default function LinkButton({ to, icon }) {
+export default function GoToAppButton({ to, icon }) {
   const route = to || "";
   const routePath = route === "overview" ? "" : route;
   const appOpenMode = useSelector(selectAppOpenMode);

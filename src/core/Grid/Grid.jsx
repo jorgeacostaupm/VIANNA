@@ -1,10 +1,11 @@
 import GridLayout, { WidthProvider } from "react-grid-layout";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styles from "@/styles/App.module.css";
 import { Layout } from "antd";
 import useRootStyles from "@/hooks/useRootStyles";
 import useGridViews from "./useGridViews";
 import { createViewRenderer } from "./ViewRegistry";
+import { normalizeViewRegistry, resolveViewLayout } from "./viewDefinitions";
 import { APP_NAME } from "@/utils/Constants";
 
 const ResponsiveGridLayout = WidthProvider(GridLayout);
@@ -14,11 +15,14 @@ const GRID_COLS = 24;
 export default function Grid({
   registry,
   panel,
-  setInit,
   componentName,
   panelPlacement = "top",
 }) {
-  useRootStyles(setInit, APP_NAME + " - " + componentName);
+  useRootStyles(null, APP_NAME + " - " + componentName);
+  const normalizedRegistry = useMemo(
+    () => normalizeViewRegistry(registry),
+    [registry],
+  );
   const isInlineLeftPanel = Boolean(panel) && panelPlacement === "left";
   const initialPanelRows = componentName === "Correlation" ? 5 : 7;
   const [panelLayout, setPanelLayout] = useState({
@@ -42,11 +46,12 @@ export default function Grid({
       topOffsetRows: 0,
       leftOffsetCols: isInlineLeftPanel ? panelLayout.w : 0,
       totalCols: GRID_COLS,
+      getLayoutPreset: (type) => resolveViewLayout(normalizedRegistry[type]),
     },
   );
   const panelNode = panel ? panel(addView) : null;
 
-  const renderView = createViewRenderer(registry, removeView);
+  const renderView = createViewRenderer(normalizedRegistry, removeView);
   const layoutWithPanel = isInlineLeftPanel ? [panelLayout, ...layout] : layout;
 
   const handleLayoutChange = (nextLayout) => {

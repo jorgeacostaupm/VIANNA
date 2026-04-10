@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Settings from "./Settings";
@@ -6,17 +13,24 @@ import LassoDock from "./LassoDock";
 import ChartWithLegend from "@/components/charts/ChartWithLegend";
 import usePCAPlot from "./usePCAPlot";
 import usePCAData from "./usePCAData";
-import ViewContainer from "@/components/charts/ViewContainer";
+import CorrelationView from "../view/CorrelationView";
+import { createCorrelationViewModel } from "../view/createCorrelationViewModel";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
+import useSelectionRows from "@/hooks/useSelectionRows";
 import { extractOrderValues, uniqueColumns } from "@/utils/viewRecords";
 import { notifyError, notifySuccess, notifyWarning } from "@/notifications";
 import { generateFileName, getVariableTypes } from "@/utils/functions";
 import { setDataframe, setNavioColumns } from "@/store/features/dataframe";
 import { setVarTypes } from "@/store/features/main";
 import { addAttribute, updateAttribute } from "@/store/features/metadata";
+import {
+  DEFAULT_UNASSIGNED_GROUP_NAME,
+  initialLassoState,
+  isLassoEnabled,
+  lassoReducer,
+} from "./lassoState";
 
-const DEFAULT_UNASSIGNED_GROUP_NAME = "Unassigned";
 const DEFAULT_LASSO_COLUMN_NAME = "pca_lasso_group";
 const LASSO_NODE_DESCRIPTION =
   "User-defined PCA stratification derived from interactive lasso-based subgroup delineation.";
@@ -102,10 +116,14 @@ function Chart({ data, id, config, grouping }) {
 export default function PCA({ id, remove, sourceOrderValues = [] }) {
   const dispatch = useDispatch();
   const groupVar = useSelector((s) => s.correlation.groupVar);
-  const selection = useSelector((s) => s.dataframe.selection);
   const fullData = useSelector((s) => s.dataframe.dataframe);
   const navioColumns = useSelector((s) => s.dataframe.navioColumns || []);
   const metadataAttributes = useSelector((s) => s.metadata.attributes || []);
+  const selectionColumns = useMemo(
+    () => uniqueColumns([...(Array.isArray(navioColumns) ? navioColumns : []), ORDER_VARIABLE]),
+    [Array.isArray(navioColumns) ? navioColumns.join("|") : ""],
+  );
+  const selection = useSelectionRows(selectionColumns);
 
   const [config, setConfig] = useState(defaultConfig);
   const [params, setParams] = useState(defaultParams);
@@ -173,17 +191,8 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
     initialOrderValues: sourceOrderValues,
   });
 
-  const [lassoBuilder, setLassoBuilder] = useState({
-    enabled: false,
-    targetColumn: "",
-    groups: [],
-    activeGroupId: null,
-    selectionMode: "add",
-    assignments: {},
-    unassignedGroupName: DEFAULT_UNASSIGNED_GROUP_NAME,
-  });
-
-  const lassoGroupCounterRef = useRef(1);
+  const [lassoState, lassoDispatch] = useReducer(lassoReducer, initialLassoState);
+  const lassoEnabled = isLassoEnabled(lassoState);
 
   const datasetColumns = useMemo(() => {
     const firstRow = Array.isArray(fullData) && fullData.length > 0 ? fullData[0] : null;
@@ -196,13 +205,13 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
       (Array.isArray(data) ? data : []).map((row) => toOrderKey(row?.[ORDER_VARIABLE]))
     );
 
-    Object.entries(lassoBuilder.assignments || {}).forEach(([orderKey, groupId]) => {
+    Object.entries(lassoState.assignments || {}).forEach(([orderKey, groupId]) => {
       if (!validOrders.has(orderKey)) return;
       counts[groupId] = (counts[groupId] || 0) + 1;
     });
 
     return counts;
-  }, [data, lassoBuilder.assignments]);
+  }, [data, lassoState.assignments]);
 
   const unassignedVisibleCount = useMemo(() => {
     const visibleRows = Array.isArray(data) ? data : [];
@@ -210,9 +219,9 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
 
     return visibleRows.reduce((count, row) => {
       const orderKey = toOrderKey(row?.[ORDER_VARIABLE]);
-      return count + (lassoBuilder.assignments[orderKey] == null ? 1 : 0);
+      return count + (lassoState.assignments[orderKey] == null ? 1 : 0);
     }, 0);
-  }, [data, lassoBuilder.assignments]);
+  }, [data, lassoState.assignments]);
 
   const handleAddVisibleVariables = useCallback(() => {
     const visibleVariables = Array.isArray(navioColumns) ? navioColumns : [];
@@ -223,7 +232,7 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
   }, [navioColumns]);
 
   const handleStartLassoMode = useCallback(() => {
-    const suggestedName = lassoBuilder.targetColumn || DEFAULT_LASSO_COLUMN_NAME;
+    const suggestedName = lassoState.targetColumn || DEFAULT_LASSO_COLUMN_NAME;
     const inputName = window.prompt(
       "Name for the new grouping column:",
       suggestedName,
@@ -248,163 +257,102 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
       return;
     }
 
-    setLassoBuilder((prev) => {
-      if (prev.enabled && prev.targetColumn === columnName) return prev;
-
-      const nextGroups =
-        prev.groups.length > 0
-          ? prev.groups
-          : [{ id: `lasso-group-${lassoGroupCounterRef.current++}`, name: "Group 1" }];
-
-      const nextActiveGroupId =
-        prev.activeGroupId != null
-          ? prev.activeGroupId
-          : nextGroups[0]?.id || null;
-
-      return {
-        ...prev,
-        enabled: true,
-        targetColumn: columnName,
-        groups: nextGroups,
-        activeGroupId: nextActiveGroupId,
-      };
+    lassoDispatch({
+      type: "START",
+      payload: { targetColumn: columnName },
     });
-  }, [lassoBuilder.targetColumn, datasetColumns]);
+  }, [datasetColumns, lassoState.targetColumn]);
 
   const handleStopLassoMode = useCallback(() => {
-    setLassoBuilder((prev) => ({
-      ...prev,
-      enabled: false,
-    }));
+    lassoDispatch({ type: "STOP" });
   }, []);
 
   const handleAddLassoGroup = useCallback(() => {
-    setLassoBuilder((prev) => {
-      const id = `lasso-group-${lassoGroupCounterRef.current++}`;
-      const groupName = `Group ${prev.groups.length + 1}`;
-      return {
-        ...prev,
-        groups: [...prev.groups, { id, name: groupName }],
-        activeGroupId: id,
-      };
-    });
+    lassoDispatch({ type: "ADD_GROUP" });
   }, []);
 
   const handleRenameLassoGroup = useCallback((groupId, name) => {
-    setLassoBuilder((prev) => ({
-      ...prev,
-      groups: prev.groups.map((group) =>
-        group.id === groupId ? { ...group, name } : group,
-      ),
-    }));
+    lassoDispatch({
+      type: "RENAME_GROUP",
+      payload: { groupId, name },
+    });
   }, []);
 
   const handleSetActiveLassoGroup = useCallback((groupId) => {
-    setLassoBuilder((prev) => ({
-      ...prev,
-      activeGroupId: groupId,
-    }));
+    lassoDispatch({
+      type: "SET_ACTIVE_GROUP",
+      payload: { groupId },
+    });
   }, []);
 
   const handleSelectionModeChange = useCallback((selectionMode) => {
-    setLassoBuilder((prev) => ({
-      ...prev,
-      selectionMode,
-    }));
+    lassoDispatch({
+      type: "SET_SELECTION_MODE",
+      payload: { selectionMode },
+    });
   }, []);
 
   const handleUnassignedGroupNameChange = useCallback((unassignedGroupName) => {
-    setLassoBuilder((prev) => ({
-      ...prev,
-      unassignedGroupName,
-    }));
+    lassoDispatch({
+      type: "SET_UNASSIGNED_NAME",
+      payload: { unassignedGroupName },
+    });
   }, []);
 
   const handleClearAssignments = useCallback(() => {
-    setLassoBuilder((prev) => ({
-      ...prev,
-      assignments: {},
-    }));
+    lassoDispatch({ type: "CLEAR_ASSIGNMENTS" });
   }, []);
 
   const handlePointToggle = useCallback((orderValue) => {
     const orderKey = toOrderKey(orderValue);
-
-    setLassoBuilder((prev) => {
-      if (!prev.activeGroupId) return prev;
-
-      const assignments = { ...prev.assignments };
-      if (assignments[orderKey] === prev.activeGroupId) {
-        delete assignments[orderKey];
-      } else {
-        assignments[orderKey] = prev.activeGroupId;
-      }
-
-      return {
-        ...prev,
-        assignments,
-      };
+    lassoDispatch({
+      type: "TOGGLE_POINT",
+      payload: { orderKey },
     });
   }, []);
 
   const handleLassoSelection = useCallback((orderValues, mode) => {
     if (!Array.isArray(orderValues) || orderValues.length === 0) return;
-
-    setLassoBuilder((prev) => {
-      if (!prev.activeGroupId) return prev;
-
-      const assignments = { ...prev.assignments };
-      orderValues.forEach((orderValue) => {
-        const orderKey = toOrderKey(orderValue);
-
-        if (mode === "remove") {
-          if (assignments[orderKey] === prev.activeGroupId) {
-            delete assignments[orderKey];
-          }
-          return;
-        }
-
-        assignments[orderKey] = prev.activeGroupId;
-      });
-
-      return {
-        ...prev,
-        assignments,
-      };
+    lassoDispatch({
+      type: "APPLY_SELECTION",
+      payload: {
+        orderKeys: orderValues.map((orderValue) => toOrderKey(orderValue)),
+        mode,
+      },
     });
   }, []);
 
   const resolveGroupNameById = useMemo(() => {
     const nameById = new Map();
-    lassoBuilder.groups.forEach((group, index) => {
+    lassoState.groups.forEach((group, index) => {
       const normalizedName = group?.name?.trim() || `Group ${index + 1}`;
       nameById.set(group.id, normalizedName);
     });
     return nameById;
-  }, [lassoBuilder.groups]);
+  }, [lassoState.groups]);
 
   const buildRowsWithGroupColumn = useCallback(
     (rows) => {
-      if (!Array.isArray(rows) || !lassoBuilder.targetColumn) return [];
+      if (!Array.isArray(rows) || !lassoState.targetColumn) return [];
 
       const unassignedName =
-        lassoBuilder.unassignedGroupName?.trim() || DEFAULT_UNASSIGNED_GROUP_NAME;
+        lassoState.unassignedGroupName?.trim() || DEFAULT_UNASSIGNED_GROUP_NAME;
 
       return rows.map((row) => {
         const orderKey = toOrderKey(row?.[ORDER_VARIABLE]);
-        const groupId = lassoBuilder.assignments[orderKey];
+        const groupId = lassoState.assignments[orderKey];
         const label = resolveGroupNameById.get(groupId) || unassignedName;
 
         return {
           ...row,
-          [lassoBuilder.targetColumn]: label,
+          [lassoState.targetColumn]: label,
         };
       });
     },
     [
-      lassoBuilder.assignments,
-      lassoBuilder.targetColumn,
-      lassoBuilder.unassignedGroupName,
+      lassoState.assignments,
+      lassoState.targetColumn,
+      lassoState.unassignedGroupName,
       resolveGroupNameById,
     ],
   );
@@ -466,7 +414,7 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
   );
 
   const handleApplyLassoToDataset = useCallback(async () => {
-    if (!lassoBuilder.targetColumn) {
+    if (!lassoState.targetColumn) {
       notifyWarning({
         message: "No target column",
         description: "Start lasso mode and set a target column name first.",
@@ -488,19 +436,19 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
 
       const nextNavioColumns = uniqueColumns([
         ...(Array.isArray(navioColumns) ? navioColumns : []),
-        lassoBuilder.targetColumn,
+        lassoState.targetColumn,
       ]);
       dispatch(setNavioColumns(nextNavioColumns));
 
       const nextVarTypes = getVariableTypes(updatedRows);
-      nextVarTypes[lassoBuilder.targetColumn] = "string";
+      nextVarTypes[lassoState.targetColumn] = "string";
       dispatch(setVarTypes(nextVarTypes));
 
-      await upsertLassoNodeInHierarchy(lassoBuilder.targetColumn);
+      await upsertLassoNodeInHierarchy(lassoState.targetColumn);
 
       notifySuccess({
         message: "PCA groups saved",
-        description: `Column "${lassoBuilder.targetColumn}" was added to data and hierarchy as a categorical original node.`,
+        description: `Column "${lassoState.targetColumn}" was added to data and hierarchy as a categorical original node.`,
       });
     } catch (error) {
       notifyError({
@@ -514,13 +462,13 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
     buildRowsWithGroupColumn,
     dispatch,
     fullData,
-    lassoBuilder.targetColumn,
+    lassoState.targetColumn,
     navioColumns,
     upsertLassoNodeInHierarchy,
   ]);
 
   const handleDownloadGroupedData = useCallback(() => {
-    if (!lassoBuilder.targetColumn) {
+    if (!lassoState.targetColumn) {
       notifyWarning({
         message: "No target column",
         description: "Start lasso mode and set a target column name first.",
@@ -537,18 +485,18 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
       return;
     }
 
-    downloadCsv(rows, `${lassoBuilder.targetColumn}_preview`);
-  }, [buildRowsWithGroupColumn, fullData, lassoBuilder.targetColumn]);
+    downloadCsv(rows, `${lassoState.targetColumn}_preview`);
+  }, [buildRowsWithGroupColumn, fullData, lassoState.targetColumn]);
 
   const requiredVariables = useMemo(
     () =>
       uniqueColumns([
         groupVar,
         ...params.variables,
-        lassoBuilder.targetColumn || null,
+        lassoState.targetColumn || null,
         ORDER_VARIABLE,
       ]),
-    [groupVar, params.variables, lassoBuilder.targetColumn],
+    [groupVar, params.variables, lassoState.targetColumn],
   );
 
   useEffect(() => {
@@ -559,20 +507,20 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
 
   const groupingConfig = useMemo(
     () => ({
-      enabled: lassoBuilder.enabled,
-      activeGroupId: lassoBuilder.activeGroupId,
-      selectionMode: lassoBuilder.selectionMode,
-      assignments: lassoBuilder.assignments,
+      enabled: lassoEnabled,
+      activeGroupId: lassoState.activeGroupId,
+      selectionMode: lassoState.selectionMode,
+      assignments: lassoState.assignments,
       onPointToggle: handlePointToggle,
       onLassoSelection: handleLassoSelection,
     }),
     [
       handleLassoSelection,
       handlePointToggle,
-      lassoBuilder.activeGroupId,
-      lassoBuilder.assignments,
-      lassoBuilder.enabled,
-      lassoBuilder.selectionMode,
+      lassoEnabled,
+      lassoState.activeGroupId,
+      lassoState.assignments,
+      lassoState.selectionMode,
     ],
   );
 
@@ -581,15 +529,15 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
       <div ref={dockAnchorRef} style={{ width: "100%", height: "100%" }}>
         <Chart data={data} config={config} id={id} grouping={groupingConfig} />
         <LassoDock
-          enabled={lassoBuilder.enabled}
+          enabled={lassoEnabled}
           anchorRef={dockAnchorRef}
-          targetColumn={lassoBuilder.targetColumn}
-          groups={lassoBuilder.groups}
-          activeGroupId={lassoBuilder.activeGroupId}
-          selectionMode={lassoBuilder.selectionMode}
+          targetColumn={lassoState.targetColumn}
+          groups={lassoState.groups}
+          activeGroupId={lassoState.activeGroupId}
+          selectionMode={lassoState.selectionMode}
           assignmentCountsByGroup={assignmentCountsByGroup}
           unassignedVisibleCount={unassignedVisibleCount}
-          unassignedGroupName={lassoBuilder.unassignedGroupName}
+          unassignedGroupName={lassoState.unassignedGroupName}
           onStop={handleStopLassoMode}
           onSelectionModeChange={handleSelectionModeChange}
           onAddGroup={handleAddLassoGroup}
@@ -617,43 +565,43 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
     handleStopLassoMode,
     handleUnassignedGroupNameChange,
     id,
-    lassoBuilder.activeGroupId,
-    lassoBuilder.enabled,
-    lassoBuilder.groups,
-    lassoBuilder.selectionMode,
-    lassoBuilder.targetColumn,
-    lassoBuilder.unassignedGroupName,
+    lassoEnabled,
+    lassoState.activeGroupId,
+    lassoState.groups,
+    lassoState.selectionMode,
+    lassoState.targetColumn,
+    lassoState.unassignedGroupName,
     unassignedVisibleCount,
   ]);
 
-  return (
-    <ViewContainer
-      title={`PCA · ${params.variables.length} Variables`}
-      svgIDs={[id, `${id}-legend`]}
-      remove={remove}
-      settings={
-        <Settings
-          config={config}
-          setConfig={setConfig}
-          params={params}
-          setParams={setParams}
-          invalidCountsByVariable={invalidCountsByVariable}
-          onAddVisibleVariables={handleAddVisibleVariables}
-          isLassoEnabled={lassoBuilder.enabled}
-          lassoTargetColumn={lassoBuilder.targetColumn}
-          onStartLassoMode={handleStartLassoMode}
-          onStopLassoMode={handleStopLassoMode}
-        />
-      }
-      chart={chart}
-      config={config}
-      setConfig={setConfig}
-      info={info}
-      recordsExport={{
-        filename: "pca",
-        recordOrders,
-        requiredVariables,
-      }}
-    />
-  );
+  const viewModel = createCorrelationViewModel({
+    title: `PCA · ${params.variables.length} Variables`,
+    svgIDs: [id, `${id}-legend`],
+    remove,
+    settings: (
+      <Settings
+        config={config}
+        setConfig={setConfig}
+        params={params}
+        setParams={setParams}
+        invalidCountsByVariable={invalidCountsByVariable}
+        onAddVisibleVariables={handleAddVisibleVariables}
+        isLassoEnabled={lassoEnabled}
+        lassoTargetColumn={lassoState.targetColumn}
+        onStartLassoMode={handleStartLassoMode}
+        onStopLassoMode={handleStopLassoMode}
+      />
+    ),
+    chart,
+    config,
+    setConfig,
+    info,
+    recordsExport: {
+      filename: "pca",
+      recordOrders,
+      requiredVariables,
+    },
+  });
+
+  return <CorrelationView view={viewModel} />;
 }

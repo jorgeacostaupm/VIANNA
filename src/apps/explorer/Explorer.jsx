@@ -11,7 +11,6 @@ import { updateConfig } from "@/store/features/dataframe";
 export default function Explorer() {
   const dt = useSelector((state) => state.dataframe.dataframe);
   const config = useSelector((state) => state.dataframe.config);
-  const selection = useSelector((state) => state.dataframe.selection);
   const navioUiState = useSelector((state) => state.dataframe.navioUiState);
   const version = useSelector((state) => state.dataframe.version);
   const filename = useSelector((state) => state.dataframe.filename);
@@ -26,7 +25,7 @@ export default function Explorer() {
           data={dt}
           config={config}
           setSelection={setSelection}
-          selection={selection}
+          selectionPayloadMode="orderValues"
           navioUiState={navioUiState}
           setNavioUiState={setNavioUiState}
           resetToken={version}

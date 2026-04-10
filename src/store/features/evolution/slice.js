@@ -3,7 +3,6 @@ import { updateData } from "../dataframe/thunks";
 import { normalizeTimeOrderConfig } from "@/utils/evolutionTimeOrder";
 
 const initialState = {
-  init: false,
   groupVar: null,
   timeVar: null,
   selectedVar: null,
@@ -14,9 +13,6 @@ const evolutionSlice = createSlice({
   name: "evolution",
   initialState,
   reducers: {
-    setInit: (state, action) => {
-      state.init = action.payload;
-    },
     setSelectedVar: (state, action) => {
       state.selectedVar = action.payload;
     },
@@ -57,7 +53,6 @@ const evolutionSlice = createSlice({
 
 export default evolutionSlice.reducer;
 export const {
-  setInit,
   setSelectedVar,
   setGroupVar,
   setTimeVar,

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Button, Modal, Select, Switch, Tag, Typography } from "antd";
+import { Modal, Select, Switch, Tag, Typography } from "antd";
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
@@ -19,6 +19,8 @@ import {
   TimeOrderMode,
 } from "@/utils/evolutionTimeOrder";
 import styles from "./TimeOrderModal.module.css";
+import useSelectionRows from "@/hooks/useSelectionRows";
+import { AppButton } from "@/components/ui/button";
 
 const { Text } = Typography;
 const EMPTY_SELECTION = Object.freeze([]);
@@ -58,9 +60,11 @@ function buildManualList(values, config) {
 export default function TimeOrderModal({ timeVar }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
-  const selection = useSelector(
-    (s) => s.dataframe.selection ?? EMPTY_SELECTION,
+  const selectionColumns = useMemo(
+    () => (timeVar ? [timeVar] : []),
+    [timeVar],
   );
+  const selection = useSelectionRows(selectionColumns) ?? EMPTY_SELECTION;
   const storedConfig = useSelector((s) =>
     timeVar ? s.evolution.timeOrderByVar?.[timeVar] : null,
   );
@@ -172,14 +176,14 @@ export default function TimeOrderModal({ timeVar }) {
   return (
     <>
       <div className={styles.triggerWrap}>
-        <Button
+        <AppButton
           block
           icon={<SortAscendingOutlined />}
           onClick={() => setOpen(true)}
           disabled={!timeVar}
         >
           Time Order
-        </Button>
+        </AppButton>
         <div className={styles.meta}>
           <Tag color="blue">
             {normalizedStoredConfig.useManualOrder
@@ -210,13 +214,13 @@ export default function TimeOrderModal({ timeVar }) {
         width={680}
         footer={
           <div className={styles.modalFooter}>
-            <Button onClick={resetCurrentVariable}>
+            <AppButton onClick={resetCurrentVariable}>
               Reset variable settings
-            </Button>
-            <Button type="primary" onClick={applyChanges}>
+            </AppButton>
+            <AppButton type="primary" onClick={applyChanges}>
               Apply
-            </Button>
-            <Button onClick={() => setOpen(false)}>Cancel</Button>
+            </AppButton>
+            <AppButton onClick={() => setOpen(false)}>Cancel</AppButton>
           </div>
         }
       >
@@ -285,13 +289,13 @@ export default function TimeOrderModal({ timeVar }) {
                   </div>
                   {draftConfig.useManualOrder && (
                     <div className={styles.actions}>
-                      <Button
+                      <AppButton
                         size="small"
                         icon={<ArrowUpOutlined />}
                         disabled={index === 0}
                         onClick={() => moveManualItem(index, -1)}
                       />
-                      <Button
+                      <AppButton
                         size="small"
                         icon={<ArrowDownOutlined />}
                         disabled={index === displayPreview.length - 1}

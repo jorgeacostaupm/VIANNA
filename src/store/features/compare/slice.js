@@ -8,7 +8,6 @@ import {
 } from "./thunks";
 
 const initialState = {
-  init: false,
   isNumeric: null,
 
   groupVar: null,
@@ -34,9 +33,6 @@ const compareSlice = createSlice({
   name: "compare",
   initialState,
   reducers: {
-    setInit: (state, action) => {
-      state.init = action.payload;
-    },
     setIsNumeric: (state, action) => {
       state.isNumeric = action.payload;
     },
@@ -107,7 +103,6 @@ const compareSlice = createSlice({
 export default compareSlice.reducer;
 
 export const {
-  setInit,
   setIsNumeric,
   setGroupVar,
   setSelectedVar,

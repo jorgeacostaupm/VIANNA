@@ -1,9 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Button, Select, Slider, Switch, Typography } from "antd";
+import { Select, Slider, Switch, Typography } from "antd";
 
 import panelStyles from "@/styles/SettingsPanel.module.css";
 import AxisLabelSizeControl from "@/components/ui/AxisLabelSizeControl";
+import { AppButton } from "@/components/ui/button";
 
 const { Text } = Typography;
 
@@ -72,13 +73,13 @@ export default function Settings({
             disabled={!config.isSync}
           />
           <div className={panelStyles.inline}>
-            <Button
+            <AppButton
               size="small"
               onClick={onAddVisibleVariables}
               disabled={!config.isSync}
             >
               Add all visible
-            </Button>
+            </AppButton>
           </div>
           <Text className={panelStyles.helper}>
             Variables in red cannot be used in PCA with the current selection.
@@ -125,13 +126,13 @@ export default function Settings({
         <div className={panelStyles.rowStack}>
           <div className={panelStyles.inline}>
             {isLassoEnabled ? (
-              <Button size="small" danger onClick={onStopLassoMode}>
+              <AppButton size="small" danger onClick={onStopLassoMode}>
                 Stop lasso mode
-              </Button>
+              </AppButton>
             ) : (
-              <Button size="small" type="primary" onClick={onStartLassoMode}>
+              <AppButton size="small" type="primary" onClick={onStartLassoMode}>
                 Start lasso mode
-              </Button>
+              </AppButton>
             )}
           </div>
           <Text className={panelStyles.helper}>

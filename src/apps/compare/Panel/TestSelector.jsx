@@ -14,6 +14,7 @@ import { setSelectedTest } from "@/store/features/compare";
 import ColoredButton from "@/components/ui/ColoredButton";
 import styles from "@/styles/App.module.css";
 import { notifyError } from "@/notifications";
+import useSelectionRows from "@/hooks/useSelectionRows";
 
 const { Option, OptGroup } = Select;
 
@@ -29,8 +30,12 @@ export default function TestSelector({ generateTest, generateRanking }) {
   const selectedTest = useSelector((s) => s.compare.selectedTest);
 
   const varTypes = useSelector((s) => s.main.varTypes);
-  const selection = useSelector((s) => s.dataframe.selection);
   const groupVar = useSelector((s) => s.compare.groupVar);
+  const selectionColumns = useMemo(
+    () => (groupVar ? [groupVar] : []),
+    [groupVar],
+  );
+  const selection = useSelectionRows(selectionColumns);
   const groups = useMemo(() => {
     if (!groupVar || !Array.isArray(selection)) return [];
     return [...new Set(selection.map((row) => row[groupVar]))].filter(

@@ -4,10 +4,12 @@ import { useSelector } from "react-redux";
 import Settings from "./Settings";
 import useScatter from "./useScatter";
 import useScatterData from "./useScatterData";
-import ViewContainer from "@/components/charts/ViewContainer";
+import CorrelationView from "../view/CorrelationView";
+import { createCorrelationViewModel } from "../view/createCorrelationViewModel";
 import ChartWithLegend from "@/components/charts/ChartWithLegend";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
+import useSelectionRows from "@/hooks/useSelectionRows";
 import {
   extractOrderValues,
   isFiniteNumericValue,
@@ -37,7 +39,6 @@ export default function ScatterMatrix({
   sourceOrderValues = [],
 }) {
   const groupVar = useSelector((s) => s.correlation.groupVar);
-  const selection = useSelector((s) => s.dataframe.selection);
 
   const [config, setConfig] = useState({
     isSync: true,
@@ -54,6 +55,11 @@ export default function ScatterMatrix({
       prev.groupVar === groupVar ? prev : { ...prev, groupVar }
     );
   }, [groupVar]);
+  const requiredVariables = useMemo(
+    () => uniqueColumns([groupVar, ...(config.variables || []), ORDER_VARIABLE]),
+    [groupVar, Array.isArray(config.variables) ? config.variables.join("|") : ""],
+  );
+  const selection = useSelectionRows(requiredVariables);
 
   const [data] = useScatterData(config.isSync, config);
 
@@ -73,29 +79,24 @@ export default function ScatterMatrix({
     initialOrderValues: sourceOrderValues,
   });
 
-  const requiredVariables = useMemo(
-    () => uniqueColumns([groupVar, ...(config.variables || []), ORDER_VARIABLE]),
-    [groupVar, Array.isArray(config.variables) ? config.variables.join("|") : ""],
-  );
-
   const chart = useMemo(() => {
     return <Chart data={data} config={config} id={id} />;
   }, [config, data]);
 
-  return (
-    <ViewContainer
-      title={`Scatter Plot Matrix`}
-      svgIDs={[id, `${id}-legend`]}
-      remove={remove}
-      settings={<Settings config={config} setConfig={setConfig} />}
-      chart={chart}
-      config={config}
-      setConfig={setConfig}
-      recordsExport={{
-        filename: "scatter_matrix",
-        recordOrders,
-        requiredVariables,
-      }}
-    />
-  );
+  const viewModel = createCorrelationViewModel({
+    title: "Scatter Plot Matrix",
+    svgIDs: [id, `${id}-legend`],
+    remove,
+    settings: <Settings config={config} setConfig={setConfig} />,
+    chart,
+    config,
+    setConfig,
+    recordsExport: {
+      filename: "scatter_matrix",
+      recordOrders,
+      requiredVariables,
+    },
+  });
+
+  return <CorrelationView view={viewModel} />;
 }

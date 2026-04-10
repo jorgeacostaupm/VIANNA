@@ -1,6 +1,5 @@
-import { Button } from "antd";
 import AutoCloseTooltip from "./AutoCloseTooltip";
-import buttonStyles from "@/styles/Buttons.module.css";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 
 export default function BarButton({
   title,
@@ -14,21 +13,23 @@ export default function BarButton({
   shape,
   size = "small",
   placement = "top",
+  variant = APP_BUTTON_VARIANTS.TOOLBAR,
+  ...buttonProps
 }) {
-  const classes = [buttonStyles.barButton, className].filter(Boolean).join(" ");
-
   return (
     <AutoCloseTooltip title={title} placement={placement}>
-      <Button
+      <AppButton
+        variant={variant}
         size={size}
         icon={icon}
         onClick={onClick}
         disabled={disabled}
         loading={loading}
-        className={classes}
+        className={className}
         type={type}
         shape={shape}
         aria-label={ariaLabel || title}
+        {...buttonProps}
       />
     </AutoCloseTooltip>
   );

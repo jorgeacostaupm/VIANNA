@@ -7,11 +7,13 @@ import Settings from "./Settings";
 import useLineChart from "./useLineChart";
 import useEvolutionData from "./useLineChartData";
 import ChartWithLegend from "@/components/charts/ChartWithLegend";
-import ViewContainer from "@/components/charts/ViewContainer";
+import EvolutionView from "../view/EvolutionView";
+import { createEvolutionViewModel } from "../view/createEvolutionViewModel";
 import EvolutionTestsInfo from "./EvolutionTestsInfo";
 import { selectVars, selectVarTypes } from "@/store/features/main";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
+import useSelectionRows from "@/hooks/useSelectionRows";
 import {
   extractOrderValues,
   isFiniteNumericValue,
@@ -84,7 +86,26 @@ export default function LineChart({
   const groupVar = useSelector((s) => s.evolution.groupVar);
   const timeVar = useSelector((s) => s.evolution.timeVar);
   const idVar = useSelector((s) => s.main.idVar);
-  const selection = useSelector((s) => s.dataframe.selection);
+  const selectionColumns = useMemo(() => {
+    const isLmmEnabled = (config.testIds || []).includes("lmm-random-intercept");
+    const lmmCovariates = isLmmEnabled ? config.lmmCovariates || [] : [];
+    return uniqueColumns([
+      variable,
+      groupVar,
+      timeVar,
+      idVar,
+      ...lmmCovariates,
+      ORDER_VARIABLE,
+    ]);
+  }, [
+    variable,
+    groupVar,
+    timeVar,
+    idVar,
+    Array.isArray(config.testIds) ? config.testIds.join("|") : "",
+    Array.isArray(config.lmmCovariates) ? config.lmmCovariates.join("|") : "",
+  ]);
+  const selection = useSelectionRows(selectionColumns);
   const timeRange = {
     from: config.testTimeFrom,
     to: config.testTimeTo,
@@ -167,25 +188,7 @@ export default function LineChart({
     initialOrderValues: sourceOrderValues,
   });
 
-  const requiredVariables = useMemo(() => {
-    const isLmmEnabled = (config.testIds || []).includes("lmm-random-intercept");
-    const lmmCovariates = isLmmEnabled ? config.lmmCovariates || [] : [];
-    return uniqueColumns([
-      variable,
-      groupVar,
-      timeVar,
-      idVar,
-      ...lmmCovariates,
-      ORDER_VARIABLE,
-    ]);
-  }, [
-    variable,
-    groupVar,
-    timeVar,
-    idVar,
-    Array.isArray(config.testIds) ? config.testIds.join("|") : "",
-    Array.isArray(config.lmmCovariates) ? config.lmmCovariates.join("|") : "",
-  ]);
+  const requiredVariables = selectionColumns;
 
   const availableTimes = (data?.times || []).map((t) => String(t));
   const availableGroups = useMemo(
@@ -263,53 +266,51 @@ export default function LineChart({
     return typeof description === "string" ? description.trim() : "";
   }, [attributes, variable]);
 
-  return (
-    <ViewContainer
-      title={`Evolution · ${variable}`}
-      hoverTitle={variableDescription || undefined}
-      svgIDs={[id, `${id}-legend`]}
-      info={
-        data?.tests?.length ? <EvolutionTestsInfo tests={data.tests} /> : null
-      }
-      remove={remove}
-      settings={
-        <Settings
-          mode="series-appearance"
-          config={config}
-          setConfig={setConfig}
-          availableTimes={availableTimes}
-          availableGroups={availableGroups}
-          variable={variable}
-          idVar={idVar}
-          timeVar={timeVar}
-          groupVar={groupVar}
-          variableOptions={allSelectableVars}
-          varTypes={varTypes}
-        />
-      }
-      testsSettings={
-        <Settings
-          mode="tests"
-          config={config}
-          setConfig={setConfig}
-          availableTimes={availableTimes}
-          availableGroups={availableGroups}
-          variable={variable}
-          idVar={idVar}
-          timeVar={timeVar}
-          groupVar={groupVar}
-          variableOptions={allSelectableVars}
-          varTypes={varTypes}
-        />
-      }
-      chart={chart}
-      config={config}
-      setConfig={setConfig}
-      recordsExport={{
-        filename: `evolution_${variable || "view"}`,
-        recordOrders,
-        requiredVariables,
-      }}
-    />
-  );
+  const viewModel = createEvolutionViewModel({
+    title: `Evolution · ${variable}`,
+    hoverTitle: variableDescription || undefined,
+    svgIDs: [id, `${id}-legend`],
+    info: data?.tests?.length ? <EvolutionTestsInfo tests={data.tests} /> : null,
+    remove,
+    settings: (
+      <Settings
+        mode="series-appearance"
+        config={config}
+        setConfig={setConfig}
+        availableTimes={availableTimes}
+        availableGroups={availableGroups}
+        variable={variable}
+        idVar={idVar}
+        timeVar={timeVar}
+        groupVar={groupVar}
+        variableOptions={allSelectableVars}
+        varTypes={varTypes}
+      />
+    ),
+    testsSettings: (
+      <Settings
+        mode="tests"
+        config={config}
+        setConfig={setConfig}
+        availableTimes={availableTimes}
+        availableGroups={availableGroups}
+        variable={variable}
+        idVar={idVar}
+        timeVar={timeVar}
+        groupVar={groupVar}
+        variableOptions={allSelectableVars}
+        varTypes={varTypes}
+      />
+    ),
+    chart,
+    config,
+    setConfig,
+    recordsExport: {
+      filename: `evolution_${variable || "view"}`,
+      recordOrders,
+      requiredVariables,
+    },
+  });
+
+  return <EvolutionView view={viewModel} />;
 }

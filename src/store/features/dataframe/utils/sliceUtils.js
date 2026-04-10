@@ -1,4 +1,7 @@
-import { hasEmptyValues, pickColumns } from "@/utils/functions";
+import {
+  createSelectionRefForAllRows,
+  selectionHasEmptyValues,
+} from "./selectionRef";
 
 export const areColumnsEqual = (previousColumns = [], nextColumns = []) => {
   if (previousColumns === nextColumns) return true;
@@ -14,8 +17,12 @@ export const areColumnsEqual = (previousColumns = [], nextColumns = []) => {
 };
 
 export const syncSelectionFromDataframe = (state, dataframe) => {
-  const selection = pickColumns(dataframe, state.navioColumns);
   state.dataframe = dataframe;
-  state.selection = selection;
-  hasEmptyValues(selection, state);
+  state.selectionRef = createSelectionRefForAllRows(dataframe);
+  state.selection = null;
+  state.hasEmptyValues = selectionHasEmptyValues({
+    dataframe: state.dataframe,
+    selectionRef: state.selectionRef,
+    visibleColumns: state.navioColumns,
+  });
 };

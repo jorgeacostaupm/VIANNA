@@ -1,20 +1,26 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Radio } from "antd";
+import { Radio } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { selectNavioVars } from "@/store/features/main";
+import { ORDER_VARIABLE } from "@/utils/Constants";
 import { generateFileName } from "@/utils/functions";
-import buttonStyles from "@/styles/Buttons.module.css";
 import PopoverButton from "@/components/ui/PopoverButton";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
 import styles from "./ExportButton.module.css";
+import { useSelectionOrderValues } from "@/hooks/useSelectionRows";
 
 function ExportOptions() {
   const fullData = useSelector((state) => state.dataframe.dataframe);
-  const selectionRows = useSelector(
-    (state) => state.dataframe.selection,
-  );
   const visibleVariables = useSelector(selectNavioVars);
+  const selectedOrderValues = useSelectionOrderValues();
   const [includeAllVars, setIncludeAllVars] = useState(false);
+  const selectionRows = useMemo(() => {
+    const selectedOrderSet = new Set(selectedOrderValues);
+    return (Array.isArray(fullData) ? fullData : []).filter((row) =>
+      selectedOrderSet.has(row?.[ORDER_VARIABLE]),
+    );
+  }, [fullData, selectedOrderValues]);
 
   const buildCsv = (rows, includeAllVars = false) => {
     if (!rows || rows.length === 0) return "";
@@ -43,8 +49,9 @@ function ExportOptions() {
   return (
     <div className={styles.container}>
       <div className={styles.row}>
-        <Button
-          className={`${buttonStyles.myButton} ${styles.exportButton}`}
+        <AppButton
+          variant={APP_BUTTON_VARIANTS.ACTION}
+          className={styles.exportButton}
           onClick={() =>
             downloadCsv(
               selectionRows,
@@ -54,9 +61,10 @@ function ExportOptions() {
           }
         >
           Selection
-        </Button>
-        <Button
-          className={`${buttonStyles.myButton} ${styles.exportButton}`}
+        </AppButton>
+        <AppButton
+          variant={APP_BUTTON_VARIANTS.ACTION}
+          className={styles.exportButton}
           onClick={() =>
             downloadCsv(
               fullData,
@@ -66,7 +74,7 @@ function ExportOptions() {
           }
         >
           All data
-        </Button>
+        </AppButton>
       </div>
 
       <div className={styles.row}>

@@ -1,6 +1,6 @@
-import { Modal, Select, InputNumber, Input, Button, Typography, Spin } from "antd";
+import { Modal, Select, InputNumber, Input, Typography, Spin } from "antd";
 import { useState, useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import {
   ALL_FUNCTIONS,
@@ -10,6 +10,8 @@ import {
 } from "../menu/logic/formulaConstants";
 import { applyOperation } from "@/store/features/metadata";
 import { getCategoricalKeys } from "@/utils/functions";
+import useSelectionRows from "@/hooks/useSelectionRows";
+import { AppButton } from "@/components/ui/button";
 
 const { Option, OptGroup } = Select;
 const { Text } = Typography;
@@ -31,7 +33,7 @@ export default function OperationModal({
   const [categoricalVarsLoaded, setCategoricalVarsLoaded] = useState(false);
   const safeSelectedNodes = Array.isArray(selectedNodes) ? selectedNodes : [];
 
-  const data = useSelector((state) => state.dataframe.selection || []);
+  const data = useSelectionRows();
 
   const operationGroups = useMemo(() => {
     const rowText = ["string", "lower", "upper", "trim", "substring"];
@@ -358,22 +360,22 @@ export default function OperationModal({
                     addonBefore={`Arg ${index + 2}`}
                   />
                   {isVariableArgs && (
-                    <Button size="small" onClick={() => removeArgValue(index)}>
+                    <AppButton size="small" onClick={() => removeArgValue(index)}>
                       Remove
-                    </Button>
+                    </AppButton>
                   )}
                 </div>
               ))}
             </div>
             {isVariableArgs && (
-              <Button
+              <AppButton
                 size="small"
                 type="dashed"
                 style={{ marginTop: 8 }}
                 onClick={addArgValue}
               >
                 Add argument
-              </Button>
+              </AppButton>
             )}
             <div style={{ marginTop: 8 }}>
               <Text type="secondary">

@@ -8,22 +8,23 @@ import { ORDER_VARIABLE } from "@/utils/Constants";
 import PopoverButton from "@/components/ui/PopoverButton";
 import BarButton from "@/components/ui/BarButton";
 import { generateColumnBatch } from "@/store/features/dataframe";
+import { useSelectionOrderValues } from "@/hooks/useSelectionRows";
 
 function EditColumn() {
   const dispatch = useDispatch();
   const [column, setColumn] = useState(null);
   const [inputValue, setInputValue] = useState("");
 
-  const selection = useSelector((state) => state.dataframe.selection);
   const data = useSelector((state) => state.dataframe.dataframe);
   const attributes = useSelector((state) => state.metadata.attributes);
   const vars = useSelector(selectNavioVars);
+  const selectedOrderValues = useSelectionOrderValues();
 
-  const ids = selection?.map((item) => item[ORDER_VARIABLE]);
+  const selectedOrderSet = new Set(selectedOrderValues);
 
   const onEditSelection = () => {
     const updatedData = data.map((item) =>
-      ids?.includes(item[ORDER_VARIABLE])
+      selectedOrderSet.has(item?.[ORDER_VARIABLE])
         ? { ...item, [column]: inputValue }
         : item,
     );

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo } from "react";
 import { Dropdown } from "antd";
 import { TableOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
@@ -7,7 +7,7 @@ import BarButton from "@/components/ui/BarButton";
 import { selectNavioVars } from "@/store/features/main";
 import { ORDER_VARIABLE } from "@/utils/Constants";
 import { generateFileName } from "@/utils/functions";
-import { getViewOverlayPosition } from "@/components/ui/popupPosition";
+import useAnchoredOverlay from "@/components/ui/useAnchoredOverlay";
 import {
   normalizeOrderValues,
   sortRowsByOrderVariable,
@@ -26,11 +26,6 @@ export default function ViewRecordsDownloadButton({
   recordOrders = [],
   requiredVariables = [],
 }) {
-  const [open, setOpen] = useState(false);
-  const [overlayStyle, setOverlayStyle] = useState(undefined);
-  const [isFixedOverlay, setIsFixedOverlay] = useState(false);
-  const triggerRef = useRef(null);
-
   const fullData = useSelector((state) => state.dataframe.dataframe);
   const visibleVariables = useSelector(selectNavioVars);
   const normalizedOrders = useMemo(
@@ -59,34 +54,8 @@ export default function ViewRecordsDownloadButton({
   }, [normalizedOrders, rowsByOrder]);
 
   const disabled = rows.length === 0;
-
-  const updateOverlayPosition = useCallback(() => {
-    const position = getViewOverlayPosition(triggerRef.current);
-    setOverlayStyle(position || undefined);
-    setIsFixedOverlay(Boolean(position));
-  }, []);
-
-  useEffect(() => {
-    if (!open || !isFixedOverlay) return undefined;
-
-    const updatePosition = () => updateOverlayPosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [open, isFixedOverlay, updateOverlayPosition]);
-
-  useEffect(() => {
-    if (disabled) setOpen(false);
-  }, [disabled]);
-
-  const handleOpenChange = (nextOpen) => {
-    if (nextOpen) updateOverlayPosition();
-    setOpen(nextOpen);
-  };
+  const { open, overlayStyle, isFixedOverlay, triggerRef, handleOpenChange } =
+    useAnchoredOverlay({ disabled });
 
   const onMenuClick = ({ key }) => {
     const columns = resolveColumns({
@@ -172,4 +141,3 @@ function escapeCsvCell(value) {
   if (!/[",\n\r]/.test(text)) return text;
   return `"${text.replace(/"/g, '""')}"`;
 }
-

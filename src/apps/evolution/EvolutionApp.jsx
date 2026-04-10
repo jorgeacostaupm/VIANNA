@@ -1,24 +1,21 @@
-import { setInit } from "@/store/features/evolution";
 import { Apps } from "@/utils/Constants";
 import registry from "./registry";
 import Grid from "@/core/Grid";
 import Panel from "./Panel";
+import { createEvolutionPanelCommands } from "./panelCommands";
 
 export default function EvolutionApp() {
-  const panel = (addView) => (
-    <Panel
-      generateEvolution={(variable) => addView("evolution", { variable })}
-    />
-  );
+  const panel = (addView) => {
+    const commands = createEvolutionPanelCommands({ addView });
+    return <Panel generateEvolution={commands.addEvolution} />;
+  };
 
   return (
     <Grid
-      setInit={setInit}
       registry={registry}
       componentName={Apps.EVOLUTION}
       panel={panel}
       panelPlacement="left"
-      flow="horizontal"
     />
   );
 }
