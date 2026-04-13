@@ -1,0 +1,28 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Build project
+        run: |
+          npm install
+          VITE_BASE_PATH=/apache/~jacosta/prototypes/VANA/ npm run build
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./dist/ jacosta@olmo.datsi.fi.upm.es:/home/jacosta/public_html/prototypes/VANA/

@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -11,37 +11,31 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "deploy-${{ github.ref }}"
+  group: "pages"
   cancel-in-progress: true
 
 jobs:
-  build-pages:
-    name: Build (GitHub Pages)
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build
         run: npm run build
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-  deploy-pages:
-    name: Deploy (GitHub Pages)
-    needs: build-pages
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -50,34 +44,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-  deploy-private:
-    name: Deploy (Private Server)
-    if: ${{ secrets.DEPLOY_KEY != '' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build for private server
-        env:
-          VITE_BASE_PATH: /apache/~jacosta/prototypes/VANA/
-        run: npm run build
-
-      - name: Start SSH agent
-        uses: webfactory/ssh-agent@v0.9.1
-        with:
-          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
-
-      - name: Deploy via rsync
-        run: |
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./dist/ jacosta@olmo.datsi.fi.upm.es:/home/jacosta/public_html/prototypes/VANA/
