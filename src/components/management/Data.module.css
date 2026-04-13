@@ -182,7 +182,6 @@
 .settingsPanel {
   display: flex;
   flex-direction: column;
-  max-width: 860px;
   display: flex;
   gap: var(--space-3);
   padding: var(--space-2);

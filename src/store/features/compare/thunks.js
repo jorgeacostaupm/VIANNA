@@ -3,6 +3,7 @@ import * as aq from "arquero";
 
 import tests from "@/utils/tests";
 import { runLevene, runShapiroWilk } from "@/utils/stats";
+import { selectSelection } from "../dataframe/selectors";
 
 export const runAllComparisonTests = createAsyncThunk(
   "compare/runAllComparisonTests",
@@ -76,10 +77,17 @@ export const checkAssumptions = createAsyncThunk(
   "compare/checkAssumptions",
   async (_, { getState, rejectWithValue }) => {
     try {
-      const { selection } = getState().dataframe;
-      const { groupVar, selectedVar } = getState().compare;
+      const state = getState();
+      const selection = selectSelection(state);
+      const { groupVar, selectedVar } = state.compare;
       if (!groupVar) {
         throw new Error("Group variable is not set for assumptions.");
+      }
+      if (!selectedVar) {
+        throw new Error("Selected variable is not set for assumptions.");
+      }
+      if (!Array.isArray(selection) || selection.length === 0) {
+        throw new Error("No rows available in current selection.");
       }
 
       const table = aq.from(selection);

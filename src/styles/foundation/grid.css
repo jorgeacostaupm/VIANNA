@@ -3,19 +3,25 @@
   height: 18px;
   padding: 0;
   background-image: none;
+  right: 4px;
+  bottom: 4px;
 }
 
 .react-grid-item > .react-resizable-handle::after {
   content: "";
   position: absolute;
-  right: 6px;
-  bottom: 6px;
+  right: 4px;
+  bottom: 4px;
   width: 10px;
   height: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--color-brand);
   border-top: 0;
   border-left: 0;
   border-bottom-right-radius: 10px;
   box-sizing: border-box;
   opacity: 1;
+}
+
+.react-grid-item.grid-sidebar-item > .react-resizable-handle::after {
+  border-color: rgba(255, 255, 255, 0.95);
 }

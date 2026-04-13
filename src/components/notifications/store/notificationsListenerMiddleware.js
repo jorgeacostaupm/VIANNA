@@ -343,11 +343,11 @@ start({
 start({
   type: "main/loadDemoData/rejected",
   effect: async (action, listenerApi) => {
-    if (typeof action.payload === "string") return;
+    if (action.payload?.shouldNotify === false) return;
 
     notifyError(listenerApi, {
       message: "Could not load demo data",
-      error: action.payload || action.error,
+      error: action.payload?.message || action.payload || action.error,
       fallback: "An error occurred while loading demo files.",
     });
   },

@@ -72,9 +72,17 @@ export const loadDemoData = createAsyncThunk(
 
       return true;
     } catch (error) {
-      return rejectWithValue(
-        error?.message || error || "Could not load demo data",
-      );
+      const isNestedThunkError = typeof error === "string";
+      const message =
+        error?.message ||
+        (typeof error === "string" && error.trim().length > 0
+          ? error
+          : "Could not load demo data");
+
+      return rejectWithValue({
+        message,
+        shouldNotify: !isNestedThunkError,
+      });
     }
   },
 );

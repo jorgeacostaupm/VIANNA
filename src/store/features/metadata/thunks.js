@@ -169,8 +169,8 @@ export const createToMeta = createAsyncThunk(
         .filter((m) => m.type === "aggregation")
         .map((n) => n.name);
 
-      await dispatch(removeBatch({ cols: oldAggregations }));
-      await dispatch(generateColumnBatch({ cols: newAggregations }));
+      await dispatch(removeBatch({ cols: oldAggregations })).unwrap();
+      await dispatch(generateColumnBatch({ cols: newAggregations })).unwrap();
 
       return payload;
     } catch (err) {
@@ -236,7 +236,7 @@ export const addAttribute = createAsyncThunk(
       }
 
       if (type === "aggregation" && !skipGenerateEmpty) {
-        dispatch(generateEmpty({ colName: name }));
+        await dispatch(generateEmpty({ colName: name })).unwrap();
       }
 
       return payload;
@@ -308,7 +308,7 @@ export const removeAttribute = createAsyncThunk(
         return rejectWithValue("Node is part of an existing aggregation");
 
       if (node.type === "aggregation") {
-        dispatch(removeColumn({ colName: node.name }));
+        await dispatch(removeColumn({ colName: node.name })).unwrap();
       }
 
       return payload;
@@ -437,7 +437,9 @@ export const updateHierarchy = createAsyncThunk(
       }
 
       const navioColumns = getVisibleNodes(tree);
-      dispatch(generateColumnBatch({ cols: normalizedHierarchy }));
+      await dispatch(
+        generateColumnBatch({ cols: normalizedHierarchy, silentSuccess: true }),
+      ).unwrap();
       return {
         filename: normalizedFilename,
         hierarchy: normalizedHierarchy,

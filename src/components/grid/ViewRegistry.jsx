@@ -6,7 +6,7 @@ export function createViewRenderer(registry, removeView) {
     if (!Comp) return null;
 
     return (
-      <div key={view.id}>
+      <div key={view.id} className="grid-view-item">
         <Comp {...view} remove={() => removeView(view.id)} />
       </div>
     );

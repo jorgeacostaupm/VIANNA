@@ -174,7 +174,7 @@ export default function Grid({
             {hasLeftPanel && (
               <div
                 key={LEFT_PANEL_ID}
-                className={`${styles.gridPanelItem} ${styles.gridSidebarItem}`}
+                className={`${styles.gridPanelItem} ${styles.gridSidebarItem} grid-sidebar-item`}
               >
                 <div
                   className={`${styles.gridPanelContent} ${styles.gridSidebarContent}`}

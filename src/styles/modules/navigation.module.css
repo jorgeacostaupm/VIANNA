@@ -35,7 +35,7 @@
   z-index: 40;
   display: flex;
   width: fit-content;
-  margin-top: 10px;
+  align-items: center;
 }
 
 .mainSidebar {
@@ -47,10 +47,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   padding: var(--space-4) var(--space-3);
-  height: calc(70vh - 32px);
-  max-height: calc(100vh - 32px);
+  height: 98.5vh;
   overflow: hidden;
   transition:
     width var(--transition-base),

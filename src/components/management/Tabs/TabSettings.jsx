@@ -23,15 +23,6 @@ export default function TabSettings() {
   return (
     <div className={styles.tabPaneBody}>
       <div className={styles.settingsPanel}>
-        <Title level={4} style={{ margin: 0, color: "var(--primary-color)" }}>
-          Settings
-        </Title>
-        <Text type="secondary">
-          Configure informative tooltips and how applications open.
-        </Text>
-
-        <Divider style={{ margin: "0.25rem 0 0.5rem 0" }} />
-
         <section className={styles.settingsSection}>
           <div className={styles.settingsRowBetween}>
             <Text strong style={{ color: "var(--primary-color)" }}>
