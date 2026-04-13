@@ -1,5 +1,5 @@
 import * as ss from "simple-statistics";
-import { ORDER_VARIABLE } from "./Constants";
+import { ORDER_VARIABLE } from "./constants";
 
 const DEFAULT_METHOD = "pearson";
 

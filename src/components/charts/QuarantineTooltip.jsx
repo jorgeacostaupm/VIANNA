@@ -8,14 +8,13 @@ import { UserDeleteOutlined, UsergroupDeleteOutlined } from "@ant-design/icons";
 import store from "@/store/store";
 import { setDataframe } from "@/store/features/dataframe";
 import { setQuarantineData } from "@/store/features/main";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import styles from "@/styles/Charts.module.css";
-import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/buttons/core";
 
 const QuarantineObservationTooltip = ({ d, idVar }) => {
   const dispatch = useDispatch();
-  const dataframe =
-    useSelector((state) => state.dataframe.dataframe) || [];
+  const dataframe = useSelector((state) => state.dataframe.dataframe) || [];
   const quarantineData =
     useSelector((state) => state.main.quarantineData) || [];
 
@@ -79,6 +78,6 @@ export default function renderQTooltip(tooltip, d, idVar) {
   root.render(
     <Provider store={store}>
       <QuarantineObservationTooltip d={d} idVar={idVar} />
-    </Provider>
+    </Provider>,
   );
 }

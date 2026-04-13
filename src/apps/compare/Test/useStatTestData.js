@@ -3,7 +3,7 @@ import * as aq from "arquero";
 
 import tests from "@/utils/tests";
 import { computePairwiseData } from "@/utils/functions";
-import { notifyError, notifyInfo } from "@/notifications";
+import { notifyError, notifyInfo } from "@/components/notifications";
 import buildTestInfoContent from "./testInfoContent";
 
 function computePointRangeData(selection, groupVar, variable, test) {

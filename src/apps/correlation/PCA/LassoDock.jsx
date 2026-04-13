@@ -4,7 +4,7 @@ import { Input, Radio, Typography } from "antd";
 
 import panelStyles from "@/styles/SettingsPanel.module.css";
 import styles from "./LassoDock.module.css";
-import { AppButton } from "@/components/ui/button";
+import { AppButton } from "@/components/buttons/core";
 
 const { Text } = Typography;
 

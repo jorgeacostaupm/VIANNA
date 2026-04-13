@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { getPCAData } from "@/utils/functions";
-import { notifyError } from "@/notifications";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { notifyError } from "@/components/notifications";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import { uniqueColumns } from "@/utils/viewRecords";
 import useSelectionRows from "@/hooks/useSelectionRows";
 
@@ -12,7 +12,13 @@ export default function usePCAData(isSync = true, params, setInfo) {
   const groupVar = useSelector((s) => s.correlation.groupVar);
   const idVar = useSelector((s) => s.main.idVar);
   const selectionColumns = useMemo(
-    () => uniqueColumns([...(params?.variables || []), groupVar, idVar, ORDER_VARIABLE]),
+    () =>
+      uniqueColumns([
+        ...(params?.variables || []),
+        groupVar,
+        idVar,
+        ORDER_VARIABLE,
+      ]),
     [
       Array.isArray(params?.variables) ? params.variables.join("|") : "",
       groupVar,

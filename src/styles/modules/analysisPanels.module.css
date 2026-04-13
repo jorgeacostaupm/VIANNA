@@ -1,0 +1,198 @@
+.panelBox {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(248, 250, 252, 0.94) 100%
+  );
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: stretch;
+  white-space: normal;
+  box-shadow: var(--shadow-xs);
+}
+
+.panelBoxContext {
+  border-color: rgba(78, 102, 152, 0.3);
+  box-shadow:
+    0 0 0 1px rgba(78, 102, 152, 0.1),
+    var(--shadow-xs);
+}
+
+.panelBoxTitle {
+  font-family: var(--font-family-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+  line-height: 1;
+}
+
+.panelBoxBody {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.panelBoxBody :global(.ant-btn) {
+  width: 100%;
+  justify-content: center;
+}
+
+.selectorField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+}
+
+.selectorLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+  line-height: 1;
+  padding-left: 2px;
+}
+
+.selectorLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.testInfoTrigger {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-ink-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.testInfoTrigger:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-ink-secondary);
+  color: var(--color-ink);
+}
+
+.testInfoTrigger:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.testInfoTriggerInactive {
+  opacity: 0.6;
+}
+
+.testInfoTooltipContent {
+  max-width: min(460px, 84vw);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.testInfoTooltipList {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.contextStatsBox {
+  margin-top: 2px;
+  border-top: 1px dashed rgba(78, 102, 152, 0.3);
+  padding-top: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contextStatsRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.contextStatsLabel {
+  color: var(--color-ink-secondary);
+  font-size: var(--font-size-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contextStatsValue {
+  color: var(--color-ink);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.selectorControl :global(.ant-select-selector) {
+  height: 40px !important;
+  padding: 0 12px !important;
+  border-radius: var(--radius-md) !important;
+  border-color: var(--color-border-strong) !important;
+  background: #fff !important;
+  box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.02);
+}
+
+.selectorControl :global(.ant-select-selection-item),
+.selectorControl :global(.ant-select-selection-placeholder) {
+  line-height: 38px !important;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.selectorControl :global(.ant-select-arrow) {
+  color: var(--color-ink-tertiary);
+}
+
+.compareTestActions {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.compareTestActionCell {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+.compareTestActionCell > span {
+  display: flex !important;
+  width: 100%;
+}
+
+.compareTestActionCell :global(.ant-btn) {
+  width: 100%;
+  justify-content: center;
+}
+
+.assumptionsTagsGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  width: 100%;
+}

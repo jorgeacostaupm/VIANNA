@@ -1,6 +1,8 @@
 import React from "react";
 
 import { PairwiseChart, PointRangeChart } from "./charts";
+import PairwiseSettings from "./settings/PairwiseSettings";
+import PointRangeSettings from "./settings/PointRangeSettings";
 
 const pairwiseDefaultConfig = {
   isSync: true,
@@ -28,7 +30,7 @@ const pointRangeDefaultConfig = {
 export const TEST_VIEW_STRATEGIES = {
   pairwise: {
     defaultConfig: pairwiseDefaultConfig,
-    settingsVariant: "pairwise",
+    SettingsComponent: PairwiseSettings,
     filenamePrefix: "pairwise",
     hasData: (data) => Boolean(data?.pairwiseEffects?.length),
     getColorGroups: () => [],
@@ -42,7 +44,7 @@ export const TEST_VIEW_STRATEGIES = {
   },
   pointrange: {
     defaultConfig: pointRangeDefaultConfig,
-    settingsVariant: "pointrange",
+    SettingsComponent: PointRangeSettings,
     filenamePrefix: "summary",
     hasData: (data) => Boolean(data?.summaries?.length),
     getColorGroups: (data) => data?.summaries?.map((entry) => entry.name) || [],

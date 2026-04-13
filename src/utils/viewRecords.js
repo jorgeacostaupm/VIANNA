@@ -1,4 +1,4 @@
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 
 export function normalizeOrderValues(values) {
   if (!Array.isArray(values)) return [];
@@ -65,4 +65,3 @@ export function isFiniteNumericValue(value) {
   const numberValue = Number(value);
   return Number.isFinite(numberValue);
 }
-

@@ -20,7 +20,7 @@ import {
 } from "@/utils/evolutionTimeOrder";
 import styles from "./TimeOrderModal.module.css";
 import useSelectionRows from "@/hooks/useSelectionRows";
-import { AppButton } from "@/components/ui/button";
+import { AppButton } from "@/components/buttons/core";
 
 const { Text } = Typography;
 const EMPTY_SELECTION = Object.freeze([]);

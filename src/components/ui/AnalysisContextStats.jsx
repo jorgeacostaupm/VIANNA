@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import styles from "@/styles/App.module.css";
+import styles from "@/styles/modules/analysisPanels.module.css";
 import { getDistinctValueCount } from "@/utils/dataSummary";
 import { selectSelectionCount } from "@/store/features/dataframe";
 import useSelectionRows from "@/hooks/useSelectionRows";

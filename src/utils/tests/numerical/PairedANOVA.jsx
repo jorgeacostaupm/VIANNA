@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const repeatedMeasuresANOVA = {
   id: "anova-repeated-measures",
@@ -17,7 +17,9 @@ export const repeatedMeasuresANOVA = {
       throw new Error("Repeated measures ANOVA requires equal-length groups.");
     }
     if (n < 2) {
-      throw new Error("Repeated measures ANOVA requires at least 2 observations.");
+      throw new Error(
+        "Repeated measures ANOVA requires at least 2 observations.",
+      );
     }
 
     const subjectMeans = Array(n).fill(0);
@@ -38,7 +40,7 @@ export const repeatedMeasuresANOVA = {
     const ssTotal = groups.reduce(
       (sum, g) =>
         sum + g.values.reduce((s, v) => s + Math.pow(v - grandMean, 2), 0),
-      0
+      0,
     );
 
     const ssError = ssTotal - ssConditions - ssSubjects;

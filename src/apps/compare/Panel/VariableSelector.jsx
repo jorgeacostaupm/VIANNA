@@ -5,8 +5,8 @@ import { AreaChartOutlined } from "@ant-design/icons";
 
 import { selectVars } from "@/store/features/main";
 import { checkAssumptions, setSelectedVar } from "@/store/features/compare";
-import ColoredButton from "@/components/ui/ColoredButton";
-import styles from "@/styles/App.module.css";
+import { AppButton, APP_BUTTON_PRESETS } from "@/components/buttons/core";
+import styles from "@/styles/modules/analysisPanels.module.css";
 
 const { Option } = Select;
 
@@ -53,13 +53,14 @@ export default function VariableSelector({ generateDistribution }) {
         </Select>
       </div>
 
-      <ColoredButton
-        title={
+      <AppButton
+        preset={APP_BUTTON_PRESETS.ACTION}
+        tooltip={
           groupVar
             ? "Add distribution plots for the selected variable."
             : "Group variable must be set."
         }
-        placement={"bottom"}
+        tooltipPlacement={"bottom"}
         icon={<AreaChartOutlined />}
         onClick={() => selectedVar && generateDistribution(selectedVar)}
         disabled={!selectedVar || !groupVar}

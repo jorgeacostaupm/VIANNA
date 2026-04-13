@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 function clamp01(value) {
   return Math.max(0, Math.min(1, value));
@@ -46,7 +46,9 @@ export const welschAnova = {
     const groupNames = groups.map((g) => g.name);
     const groupSizes = groups.map((g) => g.values.length);
     if (groupSizes.some((n) => n < 2)) {
-      throw new Error("Welch ANOVA requires at least 2 observations per group.");
+      throw new Error(
+        "Welch ANOVA requires at least 2 observations per group.",
+      );
     }
     const N = groupSizes.reduce((sum, n) => sum + n, 0);
     const groupMeans = groups.map((g) => jStat.mean(g.values));
@@ -62,12 +64,12 @@ export const welschAnova = {
     const between =
       weights.reduce(
         (sum, w, i) => sum + w * Math.pow(groupMeans[i] - weightedMean, 2),
-        0
+        0,
       ) / df1;
     const corrDenominator = groups.reduce(
       (sum, _, i) =>
         sum + Math.pow(1 - weights[i] / W, 2) / (groupSizes[i] - 1),
-      0
+      0,
     );
     if (corrDenominator <= 0) {
       throw new Error("Welch ANOVA failed due to invalid variance correction.");
@@ -82,11 +84,11 @@ export const welschAnova = {
       groupMeans.reduce((sum, mean, i) => sum + mean * groupSizes[i], 0) / N;
     const ssBetween = groupMeans.reduce(
       (sum, mean, i) => sum + groupSizes[i] * Math.pow(mean - grandMean, 2),
-      0
+      0,
     );
     const ssWithin = groupVars.reduce(
       (sum, variance, i) => sum + (groupSizes[i] - 1) * variance,
-      0
+      0,
     );
     const ssTotal = ssBetween + ssWithin;
     const msWithin = ssWithin / (N - k);
@@ -131,16 +133,14 @@ export const welschAnova = {
           Math.pow(v1 / n1 + v2 / n2, 2) /
           (Math.pow(v1 / n1, 2) / (n1 - 1) + Math.pow(v2 / n2, 2) / (n2 - 1));
         const pRaw = clampProbability(
-          2 * (1 - jStat.studentt.cdf(Math.abs(tStat), dfPair))
+          2 * (1 - jStat.studentt.cdf(Math.abs(tStat), dfPair)),
         );
         const sdAverage = Math.sqrt((v1 + v2) / 2);
         const dUnpooled = diff / sdAverage;
         const dfEffect = n1 + n2 - 2;
         const hedgesJ = hedgesCorrection(dfEffect);
         const g = hedgesJ * dUnpooled;
-        const seG = Math.sqrt(
-          (n1 + n2) / (n1 * n2) + (g * g) / (2 * dfEffect)
-        );
+        const seG = Math.sqrt((n1 + n2) / (n1 * n2) + (g * g) / (2 * dfEffect));
         const tCritG = jStat.studentt.inv(1 - alpha / 2, dfEffect);
 
         pairwiseRaw.push({
@@ -170,17 +170,17 @@ export const welschAnova = {
 
     const descriptionString =
       `Welch’s ANOVA of ${k} groups (N=${N}) — F(${df1}, ${df2.toFixed(
-        1
+        1,
       )}) = ${FValue.toFixed(2)}, p = ${pValue.toFixed(
-        3
+        3,
       )}, ω² = ${omegaSquared.toFixed(3)} (SS-based).` +
       ` Pairwise Welch t-tests use Holm-adjusted p-values; pairwise effect size is Hedges’ g.` +
       ` Tested groups: ${groupNames
         .map(
           (name, i) =>
             `${name} (n=${groupSizes[i]}, x̄=${groupMeans[i].toFixed(
-              3
-            )}, sd=${Math.sqrt(groupVars[i]).toFixed(3)})`
+              3,
+            )}, sd=${Math.sqrt(groupVars[i]).toFixed(3)})`,
         )
         .join("; ")}`;
 

@@ -1,10 +1,14 @@
-import { DATASETS, ORDER_VARIABLE } from "@/utils/Constants";
+import { DATASETS, ORDER_VARIABLE } from "@/utils/constants";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { setDataframe } from "../dataframe/slice";
 import { pickColumns } from "@/utils/functions";
 import { updateData } from "../dataframe/thunks";
 import { updateDescriptions, updateHierarchy } from "../metadata/thunks";
-import * as api from "@/services/mainAppServices";
+import {
+  fetchDescriptionsCSV,
+  fetchHierarchy,
+  fetchTestData,
+} from "./utils/services";
 
 const { dataPath, hierarchyPath, descriptionsPath, idVar } = import.meta.env
   .PROD
@@ -25,21 +29,18 @@ export const setGroupVar = createAsyncThunk(
   },
 );
 
-export const setIdVar = createAsyncThunk(
-  "main/setIdVar",
-  async (nextIdVar) => {
-    return { idVar: nextIdVar };
-  },
-);
+export const setIdVar = createAsyncThunk("main/setIdVar", async (nextIdVar) => {
+  return { idVar: nextIdVar };
+});
 
 export const loadDemoData = createAsyncThunk(
   "main/loadDemoData",
   async (_, { dispatch, rejectWithValue }) => {
     try {
       const [data, hierarchy, descriptions] = await Promise.all([
-        api.fetchTestData(dataPath),
-        api.fetchHierarchy(hierarchyPath),
-        api.fetchDescriptionsCSV(descriptionsPath),
+        fetchTestData(dataPath),
+        fetchHierarchy(hierarchyPath),
+        fetchDescriptionsCSV(descriptionsPath),
       ]);
 
       await dispatch(
@@ -100,12 +101,12 @@ export const nullsToQuarantine = createAsyncThunk(
 
       const data = originalDt.filter(
         (row) =>
-          !idsWithNull.some((r) => r[ORDER_VARIABLE] === row[ORDER_VARIABLE])
+          !idsWithNull.some((r) => r[ORDER_VARIABLE] === row[ORDER_VARIABLE]),
       );
       dispatch(setDataframe(data));
 
       const quarantineData = originalDt.filter((row) =>
-        idsWithNull.some((r) => r[ORDER_VARIABLE] === row[ORDER_VARIABLE])
+        idsWithNull.some((r) => r[ORDER_VARIABLE] === row[ORDER_VARIABLE]),
       );
 
       return { quarantineData };

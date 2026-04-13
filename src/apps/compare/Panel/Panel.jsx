@@ -6,7 +6,7 @@ import VariableSelector from "./VariableSelector";
 import AssumptionsTags from "./AssumptionsTags";
 import TestSelector from "./TestSelector";
 import ContextSelector from "./ContextSelector";
-import { COMP_DESC } from "@/utils/Constants";
+import { COMP_DESC } from "@/utils/constants";
 
 export default function Panel({
   generateDistribution,
@@ -25,7 +25,10 @@ export default function Panel({
       </AnalysisPanelSection>
 
       <AnalysisPanelSection title="Statistical Tests">
-        <TestSelector generateTest={generateTest} generateRanking={generateRanking} />
+        <TestSelector
+          generateTest={generateTest}
+          generateRanking={generateRanking}
+        />
       </AnalysisPanelSection>
     </AnalysisSidebar>
   );

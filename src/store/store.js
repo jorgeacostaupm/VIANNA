@@ -4,7 +4,7 @@ import evolutionReducer from "./features/evolution";
 import correlationReducer from "./features/correlation";
 import dataReducer from "./features/dataframe";
 import metaReducer from "./features/metadata";
-import notificationsReducer from "@/notifications/store/notificationsSlice";
+import notificationsReducer from "@/components/notifications/store/notificationsSlice";
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
@@ -12,8 +12,8 @@ import {
   sharedStateSyncMiddleware,
   withSharedStateSyncReducer,
 } from "./middleware/sharedStateSync";
-import notificationsListenerMiddleware from "@/notifications/store/notificationsListenerMiddleware";
-import { registerNotificationDispatch } from "@/notifications/store/notificationDispatchBridge";
+import notificationsListenerMiddleware from "@/components/notifications/store/notificationsListenerMiddleware";
+import { registerNotificationDispatch } from "@/components/notifications/store/notificationDispatchBridge";
 
 const baseReducer = combineReducers({
   main: mainReducer,

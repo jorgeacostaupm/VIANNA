@@ -6,7 +6,7 @@ import useCorrelationMatrix from "./useCorrelationMatrix";
 import useCorrelationMatrixData from "./useCorrelationMatrixData";
 import CorrelationView from "../view/CorrelationView";
 import { createCorrelationViewModel } from "../view/createCorrelationViewModel";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
 import useSelectionRows from "@/hooks/useSelectionRows";
 import {
@@ -59,7 +59,10 @@ export default function CorrelationMatrix({
         if (vars.length < 2) return false;
         return vars.every((name) => isFiniteNumericValue(row?.[name]));
       }),
-    [selection, Array.isArray(params.variables) ? params.variables.join("|") : ""],
+    [
+      selection,
+      Array.isArray(params.variables) ? params.variables.join("|") : "",
+    ],
   );
 
   const recordOrders = useViewRecordSnapshot({

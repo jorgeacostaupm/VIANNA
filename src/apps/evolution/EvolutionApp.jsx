@@ -1,6 +1,6 @@
-import { Apps } from "@/utils/Constants";
+import { Apps } from "@/utils/constants";
 import registry from "./registry";
-import Grid from "@/core/Grid";
+import Grid from "@/components/grid";
 import Panel from "./Panel";
 import { createEvolutionPanelCommands } from "./panelCommands";
 
@@ -16,6 +16,7 @@ export default function EvolutionApp() {
       componentName={Apps.EVOLUTION}
       panel={panel}
       panelPlacement="left"
+      panelGridLayout={{ w: 3, minW: 3, maxW: 5, h: 7, minH: 4 }}
     />
   );
 }

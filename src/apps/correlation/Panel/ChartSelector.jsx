@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Select } from "antd";
 import { AreaChartOutlined } from "@ant-design/icons";
 
-import styles from "@/styles/App.module.css";
-import ColoredButton from "@/components/ui/ColoredButton";
+import styles from "@/styles/modules/analysisPanels.module.css";
+import { AppButton, APP_BUTTON_PRESETS } from "@/components/buttons/core";
 import registry from "../registry";
 
 const { Option } = Select;
@@ -30,8 +30,9 @@ export default function ChartSelector({ onAddChart }) {
         </Select>
       </div>
 
-      <ColoredButton
-        title={"Add the selected correlation chart"}
+      <AppButton
+        preset={APP_BUTTON_PRESETS.ACTION}
+        tooltip={"Add the selected correlation chart"}
         icon={<AreaChartOutlined />}
         onClick={() => {
           if (chart) onAddChart(chart);

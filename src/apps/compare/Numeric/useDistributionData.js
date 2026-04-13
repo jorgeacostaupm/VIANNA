@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { notifyError } from "@/notifications";
+import { notifyError } from "@/components/notifications";
 import { selectVars } from "@/store/features/main";
 import useSelectionRows from "@/hooks/useSelectionRows";
 import { uniqueColumns } from "@/utils/viewRecords";

@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const anova = {
   id: "anova-one-way",
@@ -28,12 +28,12 @@ export const anova = {
     const ssBetween = groups.reduce(
       (sum, g, i) =>
         sum + groupSizes[i] * Math.pow(groupMeans[i] - grandMean, 2),
-      0
+      0,
     );
     const ssWithin = groups.reduce(
       (sum, g, i) =>
         sum + g.values.reduce((s, v) => s + Math.pow(v - groupMeans[i], 2), 0),
-      0
+      0,
     );
     const ssTotal = ssBetween + ssWithin;
 
@@ -78,7 +78,7 @@ export const anova = {
           m2 = groupMeans[j];
 
         const pooledSD = Math.sqrt(
-          ((n1 - 1) * v1 + (n2 - 1) * v2) / (n1 + n2 - 2)
+          ((n1 - 1) * v1 + (n2 - 1) * v2) / (n1 + n2 - 2),
         );
         const d = (m1 - m2) / pooledSD;
 
@@ -108,14 +108,14 @@ export const anova = {
     const descriptionString =
       `One-way ANOVA of ${k} groups (N=${N})` +
       ` F(${dfBetween},${dfWithin}) = ${FValue.toFixed(
-        2
+        2,
       )}, p = ${pValue.toFixed(3)}, η² = ${etaSquared.toFixed(3)}` +
       ` Tested groups: ${groupNames
         .map(
           (name, i) =>
             `${name} (n=${groupSizes[i]}, x̄=${groupMeans[i].toFixed(
-              2
-            )}, sd=${Math.sqrt(groupVars[i]).toFixed(2)})`
+              2,
+            )}, sd=${Math.sqrt(groupVars[i]).toFixed(2)})`,
         )
         .join("; ")}`;
 

@@ -10,7 +10,7 @@ import { EditOutlined } from "@ant-design/icons";
 import panelStyles from "@/styles/SettingsPanel.module.css";
 import AxisLabelSizeControl from "@/components/ui/AxisLabelSizeControl";
 import useSelectionRows from "@/hooks/useSelectionRows";
-import { AppButton } from "@/components/ui/button";
+import { AppButton } from "@/components/buttons/core";
 
 const { Text } = Typography;
 

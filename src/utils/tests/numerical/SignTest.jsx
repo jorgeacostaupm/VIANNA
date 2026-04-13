@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const signTest = {
   id: "sign-test",
@@ -31,7 +31,7 @@ export const signTest = {
     if (pValue > 1) pValue = 1;
 
     const descriptionString = `Sign test (n=${n}): pos=${pos}, neg=${neg}, p=${pValue.toFixed(
-      3
+      3,
     )}`;
 
     const descriptionJSX = (

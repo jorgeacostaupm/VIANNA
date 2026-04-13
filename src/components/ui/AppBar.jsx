@@ -1,6 +1,6 @@
 import React from "react";
 import { Row, Space, Popover, Col } from "antd";
-import styles from "@/styles/App.module.css";
+import styles from "@/styles/modules/navigation.module.css";
 
 export default function AppBar({ description = null, children }) {
   const logoSrc = "./app_name.svg";

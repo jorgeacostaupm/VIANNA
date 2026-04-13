@@ -12,7 +12,7 @@ import {
 import BasicAttribute from "./BasicAttribute";
 import InputAttribute from "./InputAttribute";
 import styles from "./DropArea.module.css";
-import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/buttons/core";
 
 const { Text } = Typography;
 

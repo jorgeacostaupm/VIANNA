@@ -1,20 +1,12 @@
 import React from "react";
 
-import { setInitQuarantine } from "@/store/features/main";
 import Quarantine from "./Quarantine";
-
-import useRootStyles from "@/hooks/useRootStyles";
-import { APP_NAME, Apps } from "@/utils/Constants";
+import { QUARANTINE_DESC } from "@/utils/constants";
 import MainSidebar from "@/apps/main/MainSidebar";
 import SingleViewAppLayout from "@/components/ui/SingleViewAppLayout";
-import AppsButtons from "./AppsButtons";
-
-const QUARANTINE_DESC =
-  "The Quarantine view isolates selected records for focused inspection and recovery workflows without affecting the active exploration context.";
+import AppsButtons from "../hierarchy/AppsButtons";
 
 export default function QuarantineApp() {
-  useRootStyles(setInitQuarantine, APP_NAME + " · " + Apps.QUARANTINE);
-
   return (
     <>
       <SingleViewAppLayout

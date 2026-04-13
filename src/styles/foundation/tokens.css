@@ -1,0 +1,103 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+:root {
+  --font-family-base:
+    "Manrope", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+    sans-serif;
+  --font-family-display:
+    "Space Grotesk", "Manrope", "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 28px;
+  --font-size-4xl: 32px;
+
+  --line-height-tight: 1.2;
+  --line-height-base: 1.5;
+  --line-height-relaxed: 1.65;
+
+  --color-brand: #4e6698;
+  --color-brand-hover: #435985;
+  --color-brand-active: #374a73;
+  --color-brand-soft: rgba(78, 102, 152, 0.16);
+  --brand-radial-tint: rgba(78, 102, 152, 0.12);
+
+  --color-ink: #25324a;
+  --color-ink-secondary: #4c5d7e;
+  --color-ink-tertiary: #7483a3;
+
+  --color-bg: #f3f5fb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f7f8fc;
+
+  --color-border: #d6ddea;
+  --color-border-strong: #bcc8de;
+
+  --color-success: #26a88e;
+  --color-warning: #b07a2a;
+  --color-error: #b2545a;
+
+  --shadow-xs: 0 1px 3px rgba(37, 50, 74, 0.12);
+  --shadow-sm: 0 4px 12px rgba(37, 50, 74, 0.14);
+  --shadow-md: 0 12px 26px rgba(37, 50, 74, 0.18);
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  --control-height-sm: 32px;
+  --control-height-md: 40px;
+  --control-height-lg: 48px;
+
+  --focus-ring: 0 0 0 3px rgba(78, 102, 152, 0.25);
+  --transition-fast: 140ms ease;
+  --transition-base: 220ms ease;
+
+  --nav-height: 64px;
+
+  /* Legacy aliases used across the app */
+  --primary-color: var(--color-brand);
+  --secondary-color: #e6e8f1;
+  --warning-color: var(--color-warning);
+  --axis-color: var(--color-ink-secondary);
+
+  --chart-bg: var(--color-surface);
+  --chart-bg-muted: var(--color-surface-muted);
+  --chart-border: var(--color-border);
+  --chart-border-strong: var(--color-border-strong);
+  --chart-axis: var(--color-ink-secondary);
+  --chart-axis-muted: var(--color-ink-tertiary);
+  --chart-grid: #d6ddea;
+  --chart-grid-strong: #aebad2;
+  --chart-outline: var(--color-ink-secondary);
+  --chart-outline-muted: var(--color-ink-tertiary);
+  --chart-zero-line: #8c9bb8;
+  --chart-focus: var(--color-brand);
+
+  --chart-series-1: #4e6698;
+  --chart-series-2: #5f78ad;
+  --chart-series-3: #7091c2;
+  --chart-series-4: #82aadb;
+  --chart-series-5: #4b8fb8;
+  --chart-series-6: #5aa6c8;
+  --chart-series-7: #6cbbd6;
+  --chart-series-8: #7c9fe0;
+  --chart-series-9: #3f5a8a;
+  --chart-series-10: #93b9e8;
+}

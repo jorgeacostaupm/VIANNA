@@ -10,9 +10,9 @@ import { selectCategoricalVars, selectNavioVars } from "@/store/features/main";
 import {
   DEFAULT_GROUP_VARIABLE,
   DEFAULT_TIMESTAMP_VARIABLE,
-} from "@/utils/Constants";
+} from "@/utils/constants";
 import AnalysisContextStats from "@/components/ui/AnalysisContextStats";
-import styles from "@/styles/App.module.css";
+import styles from "@/styles/modules/analysisPanels.module.css";
 import TimeOrderModal from "./TimeOrderModal";
 
 const { Option } = Select;

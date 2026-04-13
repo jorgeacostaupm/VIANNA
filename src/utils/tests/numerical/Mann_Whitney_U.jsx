@@ -1,6 +1,6 @@
 import * as ss from "simple-statistics";
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const mannWhitney = {
   id: "mann-whitney-u",
@@ -17,7 +17,9 @@ export const mannWhitney = {
     const n1 = g1.values.length;
     const n2 = g2.values.length;
     if (n1 < 2 || n2 < 2) {
-      throw new Error("Mann–Whitney U requires at least 2 observations per group.");
+      throw new Error(
+        "Mann–Whitney U requires at least 2 observations per group.",
+      );
     }
     const N = n1 + n2;
 
@@ -67,10 +69,8 @@ export const mannWhitney = {
     const U = U1;
 
     const meanU = (n1 * n2) / 2;
-    const tieCorrection =
-      N > 1 ? tieSum / (N * (N - 1)) : 0;
-    const varU =
-      (n1 * n2 * (N + 1 - tieCorrection)) / 12;
+    const tieCorrection = N > 1 ? tieSum / (N * (N - 1)) : 0;
+    const varU = (n1 * n2 * (N + 1 - tieCorrection)) / 12;
     if (!Number.isFinite(varU) || varU <= 0) {
       throw new Error("Mann–Whitney U failed due to invalid variance.");
     }
@@ -113,9 +113,9 @@ export const mannWhitney = {
     ];
 
     const descriptionString = `Mann–Whitney U test (n1=${n1}, n2=${n2}) — U1=${U1.toFixed(
-      2
+      2,
     )}, U2=${U2.toFixed(2)}, z=${z.toFixed(2)}, p=${pValue.toFixed(
-      3
+      3,
     )}, r=${r.toFixed(2)}.`;
 
     const descriptionJSX = (

@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const tTest = {
   id: "t-test-independent",
@@ -15,7 +15,9 @@ export const tTest = {
     const n1 = group1.values.length;
     const n2 = group2.values.length;
     if (n1 < 2 || n2 < 2) {
-      throw new Error("Student t-test requires at least 2 observations per group.");
+      throw new Error(
+        "Student t-test requires at least 2 observations per group.",
+      );
     }
 
     const mean1 = jStat.mean(group1.values);
@@ -87,7 +89,7 @@ export const tTest = {
       `Independent Student's t-test (n1=${n1}, n2=${n2}) — ` +
       `t(${df}) = ${tStatistic.toFixed(2)}, p = ${pValue.toFixed(3)}, ` +
       `mean diff = ${diff.toFixed(2)} [${ciDiffLower.toFixed(
-        2
+        2,
       )}, ${ciDiffUpper.toFixed(2)}], ` +
       `d = ${d.toFixed(2)} [${ciDLower.toFixed(2)}, ${ciDUpper.toFixed(2)}].`;
 

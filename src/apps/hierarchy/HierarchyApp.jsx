@@ -1,16 +1,12 @@
 import React from "react";
 
 import HierarchyEditor from "./editor/HierarchyEditor";
-import { Apps, APP_NAME, HIER_DESC } from "@/utils/Constants";
-import { setInit } from "@/store/features/metadata";
-import useRootStyles from "@/hooks/useRootStyles";
+import { HIER_DESC } from "@/utils/constants";
 import AppsButtons from "./AppsButtons";
 import MainSidebar from "../main/MainSidebar";
 import SingleViewAppLayout from "@/components/ui/SingleViewAppLayout";
 
 export default function HierarchyApp() {
-  useRootStyles(setInit, APP_NAME + " · " + Apps.HIERARCHY);
-
   return (
     <>
       <SingleViewAppLayout

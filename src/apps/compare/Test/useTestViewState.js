@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
 import useSelectionRows from "@/hooks/useSelectionRows";
 import { extractOrderValues, uniqueColumns } from "@/utils/viewRecords";
@@ -41,7 +41,9 @@ export default function useTestViewState({
   });
 
   const variableDescription = useMemo(() => {
-    const description = attributes?.find((attr) => attr?.name === variable)?.desc;
+    const description = attributes?.find(
+      (attr) => attr?.name === variable,
+    )?.desc;
     return typeof description === "string" ? description.trim() : "";
   }, [attributes, variable]);
 

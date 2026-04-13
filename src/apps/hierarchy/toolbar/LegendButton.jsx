@@ -1,9 +1,9 @@
 import { Space, Typography } from "antd";
 import { BgColorsOutlined } from "@ant-design/icons";
 
-import { NodeColors } from "@/utils/Constants";
-import appStyles from "@/styles/App.module.css";
-import PopoverButton from "@/components/ui/PopoverButton";
+import { NodeColors } from "@/utils/constants";
+import styles from "./LegendButton.module.css";
+import PopoverButton from "@/components/buttons/ui/PopoverButton";
 
 const { Text } = Typography;
 
@@ -85,11 +85,7 @@ function Legend() {
 
   return (
     <>
-      <Space
-        direction="vertical"
-        size="large"
-        className={appStyles.popoverMenu}
-      >
+      <Space direction="vertical" size="large" className={styles.popoverMenu}>
         <div>
           <Text strong style={{ fontSize: "24px" }}>
             Node types

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 
 import { getCorrelationData as getData } from "@/utils/functionsCorrelation";
-import { notifyError } from "@/notifications";
+import { notifyError } from "@/components/notifications";
 import useSelectionRows from "@/hooks/useSelectionRows";
 import { uniqueColumns } from "@/utils/viewRecords";
 

@@ -1,4 +1,4 @@
-import { DataType } from "@/utils/Constants";
+import { DataType } from "@/utils/constants";
 
 const dtypeColors = {
   [DataType.NUMERICAL.dtype]: DataType.NUMERICAL.color,
@@ -127,9 +127,11 @@ export const computeNavioColumnsFromHierarchy = (attrs = []) => {
     });
   };
 
-  (Array.isArray(rootNode.related) ? rootNode.related : []).forEach((childId) => {
-    visitNode(attrsById.get(childId));
-  });
+  (Array.isArray(rootNode.related) ? rootNode.related : []).forEach(
+    (childId) => {
+      visitNode(attrsById.get(childId));
+    },
+  );
 
   return visibleNodeNames;
 };

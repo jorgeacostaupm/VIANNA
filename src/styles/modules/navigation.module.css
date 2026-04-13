@@ -1,0 +1,164 @@
+.appBar {
+  background: linear-gradient(90deg, #3f5484 0%, #4e6698 100%);
+  padding: 0 var(--space-4);
+  height: var(--nav-height);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.appBarPopoverContent {
+  max-width: 700px;
+  white-space: normal;
+  word-break: break-word;
+  text-align: justify;
+}
+
+.appBarControls {
+  max-width: 88vw;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0 var(--space-3);
+}
+
+.appBarLogo {
+  display: block;
+  width: fit-content;
+}
+
+.mainSidebarContainer {
+  position: relative;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  width: fit-content;
+  margin-top: 10px;
+}
+
+.mainSidebar {
+  background: linear-gradient(180deg, #3f5484 0%, #4e6698 100%);
+  border: 1px solid rgba(188, 200, 222, 0.36);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-4) var(--space-3);
+  height: calc(70vh - 32px);
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+  transition:
+    width var(--transition-base),
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    padding var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    margin-left var(--transition-base),
+    margin-right var(--transition-base);
+}
+
+.mainSidebarOpen {
+  margin-left: 10px;
+  width: 84px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mainSidebarClosed {
+  width: 0;
+  opacity: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.mainSidebarLogo {
+  margin-top: 0;
+}
+
+.mainSidebarControls {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-7) 0;
+}
+
+.mainSidebarControls > :global(div) {
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.mainSidebarHideButton {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-ink-secondary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  margin-top: auto;
+  margin-bottom: var(--space-1);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.mainSidebarHideButton:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.mainSidebarHideButton:active {
+  transform: translateY(1px);
+}
+
+.mainSidebarHideButton:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.mainSidebarShowButton {
+  width: 32px;
+  height: 72px;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  border: 1px solid rgba(188, 200, 222, 0.42);
+  background: linear-gradient(180deg, #3f5484 0%, #4e6698 100%);
+  color: #d6ddea;
+  box-shadow:
+    inset 1px 0 0 rgba(188, 200, 222, 0.45),
+    var(--shadow-sm);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.mainSidebarShowButton:hover {
+  background: linear-gradient(180deg, #4e6698 0%, #5f78ad 100%);
+  border-color: rgba(188, 200, 222, 0.6);
+  color: #e6e8f1;
+}
+
+.mainSidebarShowButton:active {
+  transform: translateX(1px);
+}
+
+.mainSidebarShowButton:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 1px 0 0 rgba(188, 200, 222, 0.45),
+    0 0 0 3px rgba(78, 102, 152, 0.3);
+}

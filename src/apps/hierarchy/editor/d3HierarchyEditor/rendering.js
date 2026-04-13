@@ -6,7 +6,8 @@ import { colorNode } from "./helpers";
 
 const getNodeShapeKind = (node) => {
   const { type } = node?.data || {};
-  const nChildren = (node.children?.length ?? 0) + (node._children?.length ?? 0);
+  const nChildren =
+    (node.children?.length ?? 0) + (node._children?.length ?? 0);
 
   if (type === "aggregation" && nChildren === 0) {
     return "triangle";
@@ -27,7 +28,11 @@ const ensureNodeShape = (group, node) => {
     : currentShape.node()?.tagName?.toLowerCase();
 
   const expectedTag =
-    shapeKind === "triangle" ? "path" : shapeKind === "rect" ? "rect" : "circle";
+    shapeKind === "triangle"
+      ? "path"
+      : shapeKind === "rect"
+        ? "rect"
+        : "circle";
 
   if (currentTag === expectedTag) return;
 
@@ -75,10 +80,6 @@ export function drawNodes(source, instant = false) {
           .attr("transform", () => this.getNodeTransform(source, true))
           .attr("fill-opacity", 0)
           .attr("stroke-opacity", 0);
-
-        this.addNodeEvents(g);
-
-        g.call(dragBehaviour);
 
         g.each(function (d) {
           const group = d3.select(this);
@@ -139,6 +140,13 @@ export function drawNodes(source, instant = false) {
           .remove(),
     );
 
+  // Rebind interactions on both entered and reused nodes. In development,
+  // React StrictMode can remount the editor while D3 reuses existing SVG nodes.
+  // If handlers stay attached to the previous editor instance, the first click
+  // mutates the stale hierarchy instead of the current one.
+  this.addNodeEvents(gnode);
+  gnode.call(dragBehaviour);
+
   const currentNodeHalfSize = this.getNodeHalfSize();
   const currentCornerRadius = this.getNodeCornerRadius();
 
@@ -162,7 +170,9 @@ export function drawNodes(source, instant = false) {
     .attr("fill", (d) => colorNode(d))
     .attr("fill-opacity", (d) => (d.data?.isActive === false ? 0.55 : 1))
     .attr("stroke", (d) => {
-      return (d._children && !d.children) || d.data?.type === "root" || d.data?.id === 0
+      return (d._children && !d.children) ||
+        d.data?.type === "root" ||
+        d.data?.id === 0
         ? CHART_OUTLINE
         : "none";
     })

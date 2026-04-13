@@ -7,11 +7,10 @@ import {
   SyncOutlined,
 } from "@ant-design/icons";
 
-import DownloadButton from "@/components/ui/DownloadButton";
-import ViewRecordsDownloadButton from "@/components/ui/ViewRecordsDownloadButton";
-import BarButton from "@/components/ui/BarButton";
-import PopoverButton from "@/components/ui/PopoverButton";
-import { APP_BUTTON_VARIANTS } from "@/components/ui/button";
+import DownloadButton from "@/components/buttons/ui/DownloadButton";
+import ViewRecordsDownloadButton from "@/components/buttons/ui/ViewRecordsDownloadButton";
+import { AppButton, APP_BUTTON_PRESETS, APP_BUTTON_VARIANTS } from "@/components/buttons/core";
+import PopoverButton from "@/components/buttons/ui/PopoverButton";
 
 export const DEFAULT_CHART_BAR_ACTION_ORDER = Object.freeze([
   "sync",
@@ -27,9 +26,10 @@ function buildSyncAction({ isSync, updateConfig }) {
   if (typeof updateConfig !== "function") return null;
 
   return (
-    <BarButton
+    <AppButton
+      preset={APP_BUTTON_PRESETS.TOOLBAR_ICON}
       key="sync"
-      title={
+      tooltip={
         isSync
           ? "Disable sync with Explorer selection"
           : "Enable sync with Explorer selection"
@@ -37,9 +37,7 @@ function buildSyncAction({ isSync, updateConfig }) {
       icon={<SyncOutlined />}
       onClick={() => updateConfig("isSync", !isSync)}
       variant={
-        isSync
-          ? APP_BUTTON_VARIANTS.TOOLBAR
-          : APP_BUTTON_VARIANTS.TOOLBAR_MUTED
+        isSync ? APP_BUTTON_VARIANTS.TOOLBAR : APP_BUTTON_VARIANTS.TOOLBAR_MUTED
       }
     />
   );
@@ -94,7 +92,13 @@ function buildTestsAction({ testsSettings }) {
 
 function buildCloseAction({ remove }) {
   return remove ? (
-    <BarButton key="close" title="Close" icon={<CloseOutlined />} onClick={remove} />
+    <AppButton
+      preset={APP_BUTTON_PRESETS.TOOLBAR_ICON}
+      key="close"
+      tooltip="Close"
+      icon={<CloseOutlined />}
+      onClick={remove}
+    />
   ) : null;
 }
 

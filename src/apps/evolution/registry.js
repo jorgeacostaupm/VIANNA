@@ -1,5 +1,5 @@
 import LineChart from "./LineChart";
-import { defineView } from "@/core/Grid/viewDefinitions";
+import { defineView } from "@/components/grid/viewDefinitions";
 
 export default {
   evolution: defineView(LineChart, {

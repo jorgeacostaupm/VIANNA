@@ -1,6 +1,6 @@
 import * as ss from "simple-statistics";
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const kruskalWallis = {
   id: "kruskal-wallis-test",
@@ -108,7 +108,7 @@ export const kruskalWallis = {
           Math.sqrt(
             ((N * (N + 1)) / 12) *
               (1 / groupSizes[i] + 1 / groupSizes[j]) *
-              tieCorrection
+              tieCorrection,
           );
         const pRaw = 2 * (1 - jStat.normal.cdf(Math.abs(z), 0, 1));
         const pAdj = Math.min(pRaw * comparisons, 1);
@@ -139,16 +139,16 @@ export const kruskalWallis = {
 
     const descriptionString =
       `Kruskal–Wallis of ${k} groups (N=${N}) — H(${df}) = ${H.toFixed(
-        2
+        2,
       )}, p = ${pValue.toFixed(3)}, εH² = ${epsilonHSquared.toFixed(3)}.` +
       ` Tested groups: ${groupNames
         .map(
           (name, i) =>
             `${name} (n=${groupSizes[i]}, median=${groupMedians[i].m.toFixed(
-              2
+              2,
             )}, IQR=${groupMedians[i].q1.toFixed(2)}–${groupMedians[
               i
-            ].q3.toFixed(2)})`
+            ].q3.toFixed(2)})`,
         )
         .join("; ")}`;
 

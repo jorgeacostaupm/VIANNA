@@ -28,14 +28,14 @@ export function addNodeEvents(nodes) {
 
         graph.tooltip.html(node.data.desc);
 
-        fixTooltipToNode(
-          d3.select(this),
-          graph.tooltip,
-        );
+        fixTooltipToNode(d3.select(this), graph.tooltip);
       }, 700);
     })
     .on("mouseleave", () => {
-      graph.svg.style("cursor", graph.isClickSelectionMode ? "pointer" : "default");
+      graph.svg.style(
+        "cursor",
+        graph.isClickSelectionMode ? "pointer" : "default",
+      );
 
       clearTimeout(graph._tooltipTimer);
       graph._tooltipTimer = null;
@@ -120,8 +120,10 @@ export function getDragBehaviour() {
 
           graph._dragSiblingMinX = Math.min(...xs);
           graph._dragSiblingMaxX = Math.max(...xs);
-          graph._dragSiblingMinY = Math.min(...ys) - graph.viewConfig.depthSpacing;
-          graph._dragSiblingMaxY = Math.max(...ys) + graph.viewConfig.depthSpacing;
+          graph._dragSiblingMinY =
+            Math.min(...ys) - graph.viewConfig.depthSpacing;
+          graph._dragSiblingMaxY =
+            Math.max(...ys) + graph.viewConfig.depthSpacing;
 
           graph._dragOriginalIndex = graph._dragSiblingXPositions.indexOf(
             node.x,
@@ -172,16 +174,12 @@ export function getDragBehaviour() {
           node.y < graph._dragSiblingMinY ||
           node.y > graph._dragSiblingMaxY
         ) {
-          graph.main
-            .selectAll(".circleG")
-            .classed("highlight-sibling", false);
+          graph.main.selectAll(".circleG").classed("highlight-sibling", false);
         } else {
           const parent = node.parent;
           if (!parent || !parent.children) return;
 
-          const siblings = parent.children.filter(
-            (sib) => sib.id !== node.id,
-          );
+          const siblings = parent.children.filter((sib) => sib.id !== node.id);
 
           if (siblings.length === 0) return;
 
@@ -219,10 +217,8 @@ export function getDragBehaviour() {
 
             if (i === graph._dragOriginalIndex) return;
 
-            const moveLeft =
-              range.includes(i) && i < graph._dragOriginalIndex;
-            const moveRight =
-              range.includes(i) && i > graph._dragOriginalIndex;
+            const moveLeft = range.includes(i) && i < graph._dragOriginalIndex;
+            const moveRight = range.includes(i) && i > graph._dragOriginalIndex;
 
             if (moveLeft || moveRight) {
               const referenceIndex = moveLeft ? i + 1 : i - 1;
@@ -385,10 +381,10 @@ export function onNodeClick(node) {
     return;
   }
 
-  if (this.isClickSelectionMode) {
+  /* if (this.isClickSelectionMode) {
     this.toggleNodeSelection(node.id);
     return;
-  }
+  } */
 
   if (node.children === undefined || node._children === undefined) {
     return;
@@ -405,6 +401,7 @@ export function onNodeClick(node) {
   this.dispatcher(
     toggleAttribute({ attributeID: node.data.id, fromFocus: false }),
   );
+
   this.drawHierarchy(node);
   this.scheduleNavioSync(transitionDuration + 16);
 }

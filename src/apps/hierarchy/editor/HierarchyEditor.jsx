@@ -70,7 +70,6 @@ function Hierarchy({
     [hierarchyRevision],
   );
 
-  // Inicialización / actualización del editor
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -82,11 +81,11 @@ function Hierarchy({
         { orientation, linkStyle, viewConfig },
       );
     } else {
+      console.log("Updating hierarchy editor with new tree data");
       editorRef.current.update(treeData);
     }
   }, [treeData]);
 
-  // Destroy only on unmount to preserve pubsub subscriptions and editor handlers
   useEffect(() => {
     return () => {
       editorRef.current?.destroy?.();

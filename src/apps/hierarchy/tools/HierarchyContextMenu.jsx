@@ -23,7 +23,7 @@ import {
 } from "@/store/features/metadata";
 import { getRandomInt } from "@/utils/functions";
 import OperationModal from "./OperationModal";
-import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/buttons/core";
 
 const { subscribe, unsubscribe, publish } = pubsub;
 
@@ -123,7 +123,6 @@ export default function HierarchyContextMenu({ editor }) {
 
     const currentIsActive = node?.data?.isActive !== false;
     const nextIsActive = !currentIsActive;
-    const nodeLabel = node?.data?.name || node?.name || `Node #${node.id}`;
 
     dispatch(
       setNodeOverviewAccess({ nodeId: node.id, isActive: nextIsActive }),

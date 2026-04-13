@@ -15,11 +15,15 @@ import usePCAPlot from "./usePCAPlot";
 import usePCAData from "./usePCAData";
 import CorrelationView from "../view/CorrelationView";
 import { createCorrelationViewModel } from "../view/createCorrelationViewModel";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
 import useSelectionRows from "@/hooks/useSelectionRows";
 import { extractOrderValues, uniqueColumns } from "@/utils/viewRecords";
-import { notifyError, notifySuccess, notifyWarning } from "@/notifications";
+import {
+  notifyError,
+  notifySuccess,
+  notifyWarning,
+} from "@/components/notifications";
 import { generateFileName, getVariableTypes } from "@/utils/functions";
 import { setDataframe, setNavioColumns } from "@/store/features/dataframe";
 import { setVarTypes } from "@/store/features/main";
@@ -120,7 +124,11 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
   const navioColumns = useSelector((s) => s.dataframe.navioColumns || []);
   const metadataAttributes = useSelector((s) => s.metadata.attributes || []);
   const selectionColumns = useMemo(
-    () => uniqueColumns([...(Array.isArray(navioColumns) ? navioColumns : []), ORDER_VARIABLE]),
+    () =>
+      uniqueColumns([
+        ...(Array.isArray(navioColumns) ? navioColumns : []),
+        ORDER_VARIABLE,
+      ]),
     [Array.isArray(navioColumns) ? navioColumns.join("|") : ""],
   );
   const selection = useSelectionRows(selectionColumns);
@@ -158,7 +166,9 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
   const previousVariablesRef = useRef([]);
 
   useEffect(() => {
-    const currentVariables = Array.isArray(params.variables) ? params.variables : [];
+    const currentVariables = Array.isArray(params.variables)
+      ? params.variables
+      : [];
     const prevVariables = new Set(previousVariablesRef.current);
 
     currentVariables
@@ -191,24 +201,32 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
     initialOrderValues: sourceOrderValues,
   });
 
-  const [lassoState, lassoDispatch] = useReducer(lassoReducer, initialLassoState);
+  const [lassoState, lassoDispatch] = useReducer(
+    lassoReducer,
+    initialLassoState,
+  );
   const lassoEnabled = isLassoEnabled(lassoState);
 
   const datasetColumns = useMemo(() => {
-    const firstRow = Array.isArray(fullData) && fullData.length > 0 ? fullData[0] : null;
+    const firstRow =
+      Array.isArray(fullData) && fullData.length > 0 ? fullData[0] : null;
     return firstRow ? Object.keys(firstRow) : [];
   }, [fullData]);
 
   const assignmentCountsByGroup = useMemo(() => {
     const counts = {};
     const validOrders = new Set(
-      (Array.isArray(data) ? data : []).map((row) => toOrderKey(row?.[ORDER_VARIABLE]))
+      (Array.isArray(data) ? data : []).map((row) =>
+        toOrderKey(row?.[ORDER_VARIABLE]),
+      ),
     );
 
-    Object.entries(lassoState.assignments || {}).forEach(([orderKey, groupId]) => {
-      if (!validOrders.has(orderKey)) return;
-      counts[groupId] = (counts[groupId] || 0) + 1;
-    });
+    Object.entries(lassoState.assignments || {}).forEach(
+      ([orderKey, groupId]) => {
+        if (!validOrders.has(orderKey)) return;
+        counts[groupId] = (counts[groupId] || 0) + 1;
+      },
+    );
 
     return counts;
   }, [data, lassoState.assignments]);
@@ -501,7 +519,7 @@ export default function PCA({ id, remove, sourceOrderValues = [] }) {
 
   useEffect(() => {
     setConfig((prev) =>
-      prev.groupVar === groupVar ? prev : { ...prev, groupVar }
+      prev.groupVar === groupVar ? prev : { ...prev, groupVar },
     );
   }, [groupVar]);
 

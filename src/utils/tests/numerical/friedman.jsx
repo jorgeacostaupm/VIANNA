@@ -1,5 +1,5 @@
 import jstat from "jstat";
-import { VariableTypes } from "@/utils/Constants";
+import { VariableTypes } from "@/utils/constants";
 
 export const friedmanTest = {
   id: "friedman-test",

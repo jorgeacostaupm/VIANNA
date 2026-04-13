@@ -1,7 +1,7 @@
 import { Select, Slider, Switch, Typography } from "antd";
 
 import panelStyles from "@/styles/SettingsPanel.module.css";
-import { AppButton } from "@/components/ui/button";
+import { AppButton } from "@/components/buttons/core";
 
 const { Text } = Typography;
 

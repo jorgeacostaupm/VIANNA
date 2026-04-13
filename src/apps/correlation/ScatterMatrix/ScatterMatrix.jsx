@@ -7,7 +7,7 @@ import useScatterData from "./useScatterData";
 import CorrelationView from "../view/CorrelationView";
 import { createCorrelationViewModel } from "../view/createCorrelationViewModel";
 import ChartWithLegend from "@/components/charts/ChartWithLegend";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
 import useSelectionRows from "@/hooks/useSelectionRows";
 import {
@@ -33,11 +33,7 @@ function Chart({ data, id, config }) {
   );
 }
 
-export default function ScatterMatrix({
-  id,
-  remove,
-  sourceOrderValues = [],
-}) {
+export default function ScatterMatrix({ id, remove, sourceOrderValues = [] }) {
   const groupVar = useSelector((s) => s.correlation.groupVar);
 
   const [config, setConfig] = useState({
@@ -52,12 +48,16 @@ export default function ScatterMatrix({
 
   useEffect(() => {
     setConfig((prev) =>
-      prev.groupVar === groupVar ? prev : { ...prev, groupVar }
+      prev.groupVar === groupVar ? prev : { ...prev, groupVar },
     );
   }, [groupVar]);
   const requiredVariables = useMemo(
-    () => uniqueColumns([groupVar, ...(config.variables || []), ORDER_VARIABLE]),
-    [groupVar, Array.isArray(config.variables) ? config.variables.join("|") : ""],
+    () =>
+      uniqueColumns([groupVar, ...(config.variables || []), ORDER_VARIABLE]),
+    [
+      groupVar,
+      Array.isArray(config.variables) ? config.variables.join("|") : "",
+    ],
   );
   const selection = useSelectionRows(requiredVariables);
 
@@ -70,7 +70,10 @@ export default function ScatterMatrix({
         if (vars.length < 2) return false;
         return vars.every((name) => isFiniteNumericValue(row?.[name]));
       }),
-    [selection, Array.isArray(config.variables) ? config.variables.join("|") : ""],
+    [
+      selection,
+      Array.isArray(config.variables) ? config.variables.join("|") : "",
+    ],
   );
 
   const recordOrders = useViewRecordSnapshot({

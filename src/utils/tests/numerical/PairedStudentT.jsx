@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const pairedTTest = {
   id: "t-test-paired",
@@ -24,7 +24,9 @@ export const pairedTTest = {
     const meanDiff = jStat.mean(differences);
     const sdDiff = jStat.stdev(differences, true);
     if (!Number.isFinite(sdDiff) || sdDiff === 0) {
-      throw new Error("Paired t-test requires non-zero variance of differences.");
+      throw new Error(
+        "Paired t-test requires non-zero variance of differences.",
+      );
     }
     const seDiff = sdDiff / Math.sqrt(n);
     const tStat = meanDiff / seDiff;
@@ -74,9 +76,9 @@ export const pairedTTest = {
       ],
       pairwiseTitle: "Effect Size (Cohen's dz)",
       descriptionString: `Paired t-test (n=${n}): t(${df}) = ${tStat.toFixed(
-        2
+        2,
       )}, p = ${pValue.toFixed(3)}, CI95% = [${ci95.lower.toFixed(
-        2
+        2,
       )}, ${ci95.upper.toFixed(2)}], dz = ${dz.toFixed(2)}.`,
       metric: { name: "Cohen's dz", symbol: "dz", value: dz },
     };

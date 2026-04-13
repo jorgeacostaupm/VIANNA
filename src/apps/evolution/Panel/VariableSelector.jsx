@@ -5,8 +5,8 @@ import { LineChartOutlined } from "@ant-design/icons";
 
 import { setSelectedVar } from "@/store/features/evolution";
 import { selectNumericVars } from "@/store/features/main";
-import ColoredButton from "@/components/ui/ColoredButton";
-import styles from "@/styles/App.module.css";
+import { AppButton, APP_BUTTON_PRESETS } from "@/components/buttons/core";
+import styles from "@/styles/modules/analysisPanels.module.css";
 
 const { Option } = Select;
 
@@ -48,8 +48,9 @@ export default function VariableSelector({ generateEvolution }) {
         </Select>
       </div>
 
-      <ColoredButton
-        title={
+      <AppButton
+        preset={APP_BUTTON_PRESETS.ACTION}
+        tooltip={
           groupVar && timeVar
             ? "Add evolution plot for the selected variable."
             : "Group and Time variables must be set."

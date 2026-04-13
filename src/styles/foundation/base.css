@@ -1,0 +1,97 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-ink);
+  background:
+    radial-gradient(
+      1200px 900px at 12% -10%,
+      var(--brand-radial-tint),
+      transparent 60%
+    ),
+    var(--color-bg);
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  background: transparent;
+}
+
+svg text,
+svg tspan {
+  font-family: var(--font-family-base);
+}
+
+svg .grid line {
+  stroke: var(--chart-grid-strong);
+  stroke-dasharray: none;
+  stroke-width: 1;
+  stroke-linecap: butt;
+  shape-rendering: crispEdges;
+  vector-effect: non-scaling-stroke;
+}
+
+svg .grid path {
+  stroke: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4,
+.ant-typography h5,
+.ant-typography h6,
+.ant-modal-title,
+.ant-card-head-title {
+  font-family: var(--font-family-display);
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+  line-height: var(--line-height-tight);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-tight);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-tight);
+}
+
+h4 {
+  font-size: var(--font-size-xl);
+}
+
+p,
+.ant-typography {
+  color: var(--color-ink);
+}
+
+a {
+  color: var(--color-brand);
+}

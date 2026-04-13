@@ -1,15 +1,15 @@
 import React from "react";
-import { Card, Space, Typography } from "antd";
+import { Card, Typography } from "antd";
 import {
   DatabaseOutlined,
   DownloadOutlined,
   PlayCircleOutlined,
 } from "@ant-design/icons";
 
-import styles from "@/styles/App.module.css";
-import { AppButton } from "@/components/ui/button";
+import styles from "./InitialDataChoice.module.css";
+import { AppButton } from "@/components/buttons/core";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 export default function InitialDataChoice({
   isLoadingDemo,

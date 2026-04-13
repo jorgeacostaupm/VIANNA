@@ -10,9 +10,9 @@ import {
 import { selectVars } from "@/store/features/main";
 import { checkAssumptions, setSelectedVar } from "@/store/features/compare";
 
-import { getColorByDtype, getNameByDtype } from "@/utils/Constants";
+import { getColorByDtype, getNameByDtype } from "@/utils/constants";
 import AutoCloseTooltip from "@/components/ui/AutoCloseTooltip";
-import styles from "@/styles/App.module.css";
+import styles from "@/styles/modules/analysisPanels.module.css";
 
 const grayStyle = {
   backgroundColor: "var(--color-surface-muted)",

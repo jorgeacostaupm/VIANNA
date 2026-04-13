@@ -5,9 +5,9 @@ import { SaveOutlined, EyeOutlined } from "@ant-design/icons";
 import * as aq from "arquero";
 
 import processFormula from "@/utils/processFormula";
-import { notifyError } from "@/notifications";
+import { notifyError } from "@/components/notifications";
 import AutoCloseTooltip from "@/components/ui/AutoCloseTooltip";
-import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/buttons/core";
 
 import {
   PREVIEW_LIMIT,

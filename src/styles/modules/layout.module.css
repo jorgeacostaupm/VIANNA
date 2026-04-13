@@ -1,0 +1,127 @@
+.fullScreenLayout {
+  --analysis-sidebar-top: 50px;
+  --analysis-sidebar-left: var(--space-4);
+  --analysis-sidebar-gap: var(--space-4);
+  --analysis-sidebar-width: 360px;
+  --analysis-sidebar-mobile-height: clamp(220px, 40vh, 320px);
+  min-height: 100vh;
+  width: 100vw;
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.fullScreenLayoutTopPanel {
+  flex-direction: column;
+}
+
+.mainAppContent {
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  transition:
+    margin-left var(--transition-base),
+    width var(--transition-base);
+}
+
+.gridWrapper {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.gridWorkspace {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 100vh;
+}
+
+.topPanelShell {
+  width: 100%;
+  padding: 10px 10px 0;
+}
+
+.topPanelShellContent {
+  width: 100%;
+}
+
+.gridWrapperWithSidebar {
+  min-height: 100vh;
+  margin-left: calc(
+    var(--analysis-sidebar-left) + var(--analysis-sidebar-width) +
+      var(--analysis-sidebar-gap)
+  );
+  width: calc(
+    100% -
+      (
+        var(--analysis-sidebar-left) + var(--analysis-sidebar-width) +
+          var(--analysis-sidebar-gap)
+      )
+  );
+  padding: var(--space-3) var(--space-3) var(--space-3) 0;
+}
+
+.gridPanelItem {
+  height: 100%;
+}
+
+.gridPanelContent {
+  height: 100%;
+}
+
+.gridSidebarItem {
+  height: 100%;
+}
+
+.gridSidebarContent {
+  height: 100%;
+  min-height: 0;
+}
+
+.analysisSidebarShell {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 100vh;
+  padding: 10px 0 10px 10px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.analysisSidebarShellContent {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+}
+
+.analysisSidebarResizeHandle {
+  position: relative;
+  flex: 0 0 14px;
+  cursor: col-resize;
+}
+
+.analysisSidebarResizeHandle::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 50%;
+  width: 4px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(63, 84, 132, 0.16) 0%,
+    rgba(63, 84, 132, 0.3) 100%
+  );
+  transition: background var(--transition-fast);
+}
+
+.analysisSidebarResizeHandle:hover::before {
+  background: linear-gradient(
+    180deg,
+    rgba(63, 84, 132, 0.28) 0%,
+    rgba(63, 84, 132, 0.5) 100%
+  );
+}

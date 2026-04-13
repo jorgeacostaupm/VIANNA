@@ -1,12 +1,14 @@
 import React from "react";
 
-import SwitchButton from "@/components/Buttons/SwitchButton";
-import NullQuarantineButton from "@/components/Buttons/NullQuarantinesButton";
-import QuarantineButton from "@/components/Buttons/QuarantineButton";
-import LegendButton from "@/components/Buttons/LegendButton";
-import SettingsButton from "@/components/Buttons/SettingsButton";
-import EditButton from "@/components/Buttons/EditButton";
-import ExportButton from "@/components/Buttons/ExportButton";
+import {
+  SwitchButton,
+  WarningNullButton,
+  SendQuarantineButton as QuarantineButton,
+  NavioLegendButton,
+  NavioSettingsButton,
+  EditColumnButton,
+  ExportDataButton,
+} from "@/components/buttons/navio";
 
 import styles from "@/styles/ChartBar.module.css";
 
@@ -19,16 +21,16 @@ export default function Bar({ title, config, updateConfig }) {
         </div>
 
         <div className={styles.right}>
-          <NullQuarantineButton />
+          <WarningNullButton />
           <QuarantineButton />
           <SwitchButton />
-          <LegendButton />
-          <EditButton></EditButton>
-          <ExportButton></ExportButton>
-          <SettingsButton
+          <NavioLegendButton />
+          <EditColumnButton></EditColumnButton>
+          <ExportDataButton></ExportDataButton>
+          <NavioSettingsButton
             config={config}
             updateConfig={updateConfig}
-          ></SettingsButton>
+          ></NavioSettingsButton>
         </div>
       </div>
     </>

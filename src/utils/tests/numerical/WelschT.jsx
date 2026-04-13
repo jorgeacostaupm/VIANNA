@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const welchTest = {
   id: "t-test-welch",
@@ -15,7 +15,9 @@ export const welchTest = {
     const n1 = g1.values.length;
     const n2 = g2.values.length;
     if (n1 < 2 || n2 < 2) {
-      throw new Error("Welch t-test requires at least 2 observations per group.");
+      throw new Error(
+        "Welch t-test requires at least 2 observations per group.",
+      );
     }
 
     const mean1 = jStat.mean(g1.values);
@@ -46,9 +48,7 @@ export const welchTest = {
     const ciDiffUpper = diff + tCrit * seDiff;
 
     const dfD = n1 + n2 - 2;
-    const pooledSD = Math.sqrt(
-      ((n1 - 1) * var1 + (n2 - 1) * var2) / dfD
-    );
+    const pooledSD = Math.sqrt(((n1 - 1) * var1 + (n2 - 1) * var2) / dfD);
     const d = diff / pooledSD;
     const seD = Math.sqrt((n1 + n2) / (n1 * n2) + (d * d) / (2 * dfD));
     const tCritD = jStat.studentt.inv(1 - alpha / 2, dfD);
@@ -96,10 +96,10 @@ export const welchTest = {
     const descriptionString =
       `Welch's t-test (n1=${n1}, n2=${n2}) — ` +
       `t(${df.toFixed(2)}) = ${tStatistic.toFixed(2)}, p = ${pValue.toFixed(
-        3
+        3,
       )}, ` +
       `mean diff = ${diff.toFixed(2)} [${ciDiffLower.toFixed(
-        2
+        2,
       )}, ${ciDiffUpper.toFixed(2)}], ` +
       `d = ${d.toFixed(2)} [${ciDLower.toFixed(2)}, ${ciDUpper.toFixed(2)}].`;
 

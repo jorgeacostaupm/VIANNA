@@ -1,0 +1,47 @@
+.popoverOverlayFixed {
+  position: fixed !important;
+  top: var(--view-overlay-top) !important;
+  right: var(--view-overlay-right) !important;
+  left: auto !important;
+  bottom: auto !important;
+}
+
+.popoverOverlay :global(.ant-popover-inner) {
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  white-space: pre-line;
+  padding: 0;
+}
+
+.popoverOverlay :global(.ant-popover-arrow) {
+  display: none;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--space-3);
+  max-height: 70vh;
+  display: flex;
+  max-width: 500px;
+}
+
+.panelHeader {
+  font-family: var(--font-family-display);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: var(--space-2);
+}
+
+.panelBody {
+  display: flex;
+  flex-direction: column;
+  display: flex;
+  gap: var(--space-2);
+}
+
+.tooltipTrigger {
+  display: inline-block;
+}

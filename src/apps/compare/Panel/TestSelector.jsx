@@ -9,11 +9,12 @@ import {
 } from "@ant-design/icons";
 
 import tests from "@/utils/tests";
-import { VariableTypes } from "@/utils/Constants";
+import { VariableTypes } from "@/utils/constants";
 import { setSelectedTest } from "@/store/features/compare";
-import ColoredButton from "@/components/ui/ColoredButton";
-import styles from "@/styles/App.module.css";
-import { notifyError } from "@/notifications";
+import { AppButton, APP_BUTTON_PRESETS } from "@/components/buttons/core";
+import panelStyles from "@/styles/modules/analysisPanels.module.css";
+import styles from "./TestSelector.module.css";
+import { notifyError } from "@/components/notifications";
 import useSelectionRows from "@/hooks/useSelectionRows";
 
 const { Option, OptGroup } = Select;
@@ -111,7 +112,7 @@ export default function TestSelector({ generateTest, generateRanking }) {
     isGroupCountApplicable &&
     (isTypeApplicable === null || isTypeApplicable);
   const testInfoTooltip = selectedTestObj ? (
-    <div className={styles.testInfoTooltipContent}>
+    <div className={panelStyles.testInfoTooltipContent}>
       <div>
         <strong>Test:</strong> {selectedTestObj.label}
       </div>
@@ -137,7 +138,7 @@ export default function TestSelector({ generateTest, generateRanking }) {
       <div>
         <strong>Reported measures:</strong>
         {selectedTestObj.reportedMeasures?.length ? (
-          <ul className={styles.testInfoTooltipList}>
+          <ul className={panelStyles.testInfoTooltipList}>
             {selectedTestObj.reportedMeasures.map((measure) => (
               <li key={measure}>{measure}</li>
             ))}
@@ -171,9 +172,9 @@ export default function TestSelector({ generateTest, generateRanking }) {
 
   return (
     <>
-      <div className={styles.selectorField}>
-        <div className={styles.selectorLabelRow}>
-          <span className={styles.selectorLabel}>Test</span>
+      <div className={panelStyles.selectorField}>
+        <div className={panelStyles.selectorLabelRow}>
+          <span className={panelStyles.selectorLabel}>Test</span>
           <Tooltip
             title={testInfoTooltip}
             placement="rightTop"
@@ -181,7 +182,7 @@ export default function TestSelector({ generateTest, generateRanking }) {
           >
             <button
               type="button"
-              className={`${styles.testInfoTrigger}${selectedTestObj ? "" : ` ${styles.testInfoTriggerInactive}`}`}
+              className={`${panelStyles.testInfoTrigger}${selectedTestObj ? "" : ` ${panelStyles.testInfoTriggerInactive}`}`}
               aria-label="Show selected test information"
             >
               <InfoCircleOutlined />
@@ -208,29 +209,31 @@ export default function TestSelector({ generateTest, generateRanking }) {
         </Select>
       </div>
 
-      <div className={styles.compareTestActions}>
-        <div className={styles.compareTestActionCell}>
-          <ColoredButton
-            title={
+      <div className={panelStyles.compareTestActions}>
+        <div className={panelStyles.compareTestActionCell}>
+          <AppButton
+            preset={APP_BUTTON_PRESETS.ACTION}
+            tooltip={
               groupVar
                 ? "Run the selected test on current variable"
                 : "Group variable must be set."
             }
-            placement={"bottom"}
+            tooltipPlacement={"bottom"}
             icon={<ExperimentOutlined />}
             onClick={triggerTest}
             disabled={!selectedVar || !selectedTest || !groupVar}
           />
         </div>
 
-        <div className={styles.compareTestActionCell}>
-          <ColoredButton
-            title={
+        <div className={panelStyles.compareTestActionCell}>
+          <AppButton
+            preset={APP_BUTTON_PRESETS.ACTION}
+            tooltip={
               groupVar
                 ? "Compare all variables with the selected test"
                 : "Group variable must be set."
             }
-            placement={"bottom"}
+            tooltipPlacement={"bottom"}
             icon={<BarChartOutlined />}
             onClick={() => selectedTest && generateRanking(selectedTest)}
             disabled={!selectedTest || !groupVar}

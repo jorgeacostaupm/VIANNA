@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const mcnemarTest = {
   id: "mcnemar-test",
@@ -13,8 +13,8 @@ export const mcnemarTest = {
     if (g1.values.length !== g2.values.length) {
       throw new Error("McNemar test requires paired samples.");
     }
-    const categories = [...new Set(groups.flatMap((g) => g.values))].sort((a, b) =>
-      String(a).localeCompare(String(b))
+    const categories = [...new Set(groups.flatMap((g) => g.values))].sort(
+      (a, b) => String(a).localeCompare(String(b)),
     );
     if (categories.length !== 2) {
       throw new Error("McNemar test requires exactly 2 categories.");
@@ -56,7 +56,7 @@ export const mcnemarTest = {
     ];
 
     const descriptionString = `McNemar test: χ²(1) = ${chi2.toFixed(
-      2
+      2,
     )}, p = ${pValue.toFixed(3)}.`;
     const descriptionJSX = (
       <div style={{ whiteSpace: "normal", maxWidth: "none" }}>

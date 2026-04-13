@@ -11,7 +11,7 @@ import {
 import { applyOperation } from "@/store/features/metadata";
 import { getCategoricalKeys } from "@/utils/functions";
 import useSelectionRows from "@/hooks/useSelectionRows";
-import { AppButton } from "@/components/ui/button";
+import { AppButton } from "@/components/buttons/core";
 
 const { Option, OptGroup } = Select;
 const { Text } = Typography;

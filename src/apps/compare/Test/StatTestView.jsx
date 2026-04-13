@@ -4,7 +4,6 @@ import ViewContainer from "@/components/charts/ViewContainer";
 import NoDataPlaceholder from "@/components/charts/NoDataPlaceholder";
 import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { isFiniteNumericValue } from "@/utils/viewRecords";
-import Settings from "./Settings";
 import useTestViewState from "./useTestViewState";
 import useStatTestData from "./useStatTestData";
 import { TEST_VIEW_STRATEGIES } from "./testViewStrategies";
@@ -30,6 +29,7 @@ export default function StatTestView({
   }
 
   const [config, setConfig] = useState(() => ({ ...strategy.defaultConfig }));
+  const SettingsComponent = strategy.SettingsComponent;
 
   const {
     groupVar,
@@ -87,11 +87,7 @@ export default function StatTestView({
       config={config}
       setConfig={setConfig}
       settings={
-        <Settings
-          config={config}
-          setConfig={setConfig}
-          variant={strategy.settingsVariant}
-        />
+        <SettingsComponent config={config} setConfig={setConfig} />
       }
       recordsExport={{
         filename: `${strategy.filenamePrefix}_${variable || "view"}`,

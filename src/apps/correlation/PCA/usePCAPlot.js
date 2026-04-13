@@ -6,12 +6,18 @@ import renderLegend from "@/utils/renderLegend";
 import useResizeObserver from "@/hooks/useResizeObserver";
 import useGroupColorDomain from "@/hooks/useGroupColorDomain";
 import { CHART_HIGHLIGHT } from "@/utils/chartTheme";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import { GROUP_CATEGORICAL_PALETTE } from "@/utils/groupColors";
 
 const margin = { top: 30, right: 20, bottom: 40, left: 60 };
 
-export default function usePCAPlot({ chartRef, legendRef, data, config, grouping }) {
+export default function usePCAPlot({
+  chartRef,
+  legendRef,
+  data,
+  config,
+  grouping,
+}) {
   const dimensions = useResizeObserver(chartRef);
   const idVar = useSelector((s) => s.main.idVar);
   const [hiddenGroups, setHiddenGroups] = useState([]);
@@ -20,12 +26,12 @@ export default function usePCAPlot({ chartRef, legendRef, data, config, grouping
   const groupsInData =
     Array.isArray(data) && groupVar
       ? Array.from(new Set(data.map((d) => d[groupVar]))).filter(
-          (value) => value != null
+          (value) => value != null,
         )
       : [];
   const { colorDomain, orderedGroups: groups } = useGroupColorDomain(
     groupVar,
-    groupsInData
+    groupsInData,
   );
 
   useEffect(() => {
@@ -40,7 +46,9 @@ export default function usePCAPlot({ chartRef, legendRef, data, config, grouping
       legendSvg.attr("width", 0).attr("height", 0);
       const parent = legendRef.current.parentNode;
       if (parent) {
-        d3.select(parent).style("align-items", null).style("justify-content", null);
+        d3.select(parent)
+          .style("align-items", null)
+          .style("justify-content", null);
       }
     };
 
@@ -150,7 +158,10 @@ export default function usePCAPlot({ chartRef, legendRef, data, config, grouping
         tooltip.style("opacity", 0);
       })
       .on("click", (e, d) => {
-        if (!grouping?.enabled || typeof grouping?.onPointToggle !== "function") {
+        if (
+          !grouping?.enabled ||
+          typeof grouping?.onPointToggle !== "function"
+        ) {
           return;
         }
 
@@ -185,7 +196,7 @@ export default function usePCAPlot({ chartRef, legendRef, data, config, grouping
         {
           transientHide: hoverHiddenGroups,
           setTransientHide: setHoverHiddenGroups,
-        }
+        },
       );
     }
 
@@ -213,7 +224,10 @@ export default function usePCAPlot({ chartRef, legendRef, data, config, grouping
       }
 
       const start = lassoPoints[0];
-      const body = lassoPoints.slice(1).map((p) => `L${p[0]},${p[1]}`).join(" ");
+      const body = lassoPoints
+        .slice(1)
+        .map((p) => `L${p[0]},${p[1]}`)
+        .join(" ");
       lassoPath
         .style("display", null)
         .attr("d", `M${start[0]},${start[1]} ${body}`.trim());
@@ -237,7 +251,10 @@ export default function usePCAPlot({ chartRef, legendRef, data, config, grouping
           .map((d) => d[ORDER_VARIABLE]);
 
         if (selectedOrderValues.length > 0) {
-          grouping?.onLassoSelection?.(selectedOrderValues, grouping?.selectionMode);
+          grouping?.onLassoSelection?.(
+            selectedOrderValues,
+            grouping?.selectionMode,
+          );
         }
       }
 
@@ -329,18 +346,21 @@ export default function usePCAPlot({ chartRef, legendRef, data, config, grouping
 
     const assignments = grouping?.assignments || {};
     const activeGroupId = grouping?.activeGroupId || null;
-    const hiddenSet = new Set([...(hiddenGroups || []), ...(hoverHiddenGroups || [])]);
+    const hiddenSet = new Set([
+      ...(hiddenGroups || []),
+      ...(hoverHiddenGroups || []),
+    ]);
 
     chart
       .selectAll(".dot")
       .classed("hide", (d) => hiddenSet.has(d[groupVar]))
       .classed(
         "lasso-assigned",
-        (d) => assignments[d?.[ORDER_VARIABLE]] !== undefined
+        (d) => assignments[d?.[ORDER_VARIABLE]] !== undefined,
       )
       .classed(
         "lasso-active",
-        (d) => assignments[d?.[ORDER_VARIABLE]] === activeGroupId
+        (d) => assignments[d?.[ORDER_VARIABLE]] === activeGroupId,
       )
       .classed("lasso-other", (d) => {
         const groupId = assignments[d?.[ORDER_VARIABLE]];

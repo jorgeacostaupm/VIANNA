@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import navio from "@/vendor/navio";
 
 import { selectNavioColumns } from "@/store/features/main";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import { GROUP_CATEGORICAL_PALETTE } from "@/utils/groupColors";
 
 const areColumnsEqual = (left, right) => {

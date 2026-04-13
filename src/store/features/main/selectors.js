@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 
-import { HIDDEN_VARIABLES, VariableTypes } from "@/utils/Constants";
+import { HIDDEN_VARIABLES, VariableTypes } from "@/utils/constants";
 import { MAIN_CONFIG_DEFAULTS } from "./configDefaults";
 
 export const selectMainState = (state) => state.main;
@@ -41,18 +41,8 @@ export const selectShowInformativeTooltips = createSelector(
   (config) => config.showInformativeTooltips !== false,
 );
 
-export const selectAppOpenMode = createSelector(
-  [selectMainConfig],
-  (config) => (config.appOpenMode === "tab" ? "tab" : "window"),
-);
-
-export const selectAppBrandColor = createSelector(
-  [selectMainConfig],
-  (config) =>
-    typeof config.appBrandColor === "string" &&
-    config.appBrandColor.trim().length > 0
-      ? config.appBrandColor
-      : MAIN_CONFIG_DEFAULTS.appBrandColor,
+export const selectAppOpenMode = createSelector([selectMainConfig], (config) =>
+  config.appOpenMode === "tab" ? "tab" : "window",
 );
 
 export const selectNavioColumns = createSelector(
@@ -67,10 +57,15 @@ const isSelectableColumn = (key, navioColumns) =>
   !HIDDEN_VARIABLES.includes(key);
 
 const createVarTypeSelector = (predicate) =>
-  createSelector([selectVarTypes, selectNavioColumns], (varTypes, navioColumns) =>
-    Object.entries(varTypes)
-      .filter(([key, type]) => predicate(type) && isSelectableColumn(key, navioColumns))
-      .map(([key]) => key),
+  createSelector(
+    [selectVarTypes, selectNavioColumns],
+    (varTypes, navioColumns) =>
+      Object.entries(varTypes)
+        .filter(
+          ([key, type]) =>
+            predicate(type) && isSelectableColumn(key, navioColumns),
+        )
+        .map(([key]) => key),
   );
 
 export const selectNumericVars = createVarTypeSelector(
@@ -96,5 +91,7 @@ export const selectVars = createVarTypeSelector(
 export const selectNavioVars = createSelector(
   [selectVarTypes, selectNavioColumns],
   (varTypes, navioColumns) =>
-    Object.keys(varTypes).filter((key) => isSelectableColumn(key, navioColumns)),
+    Object.keys(varTypes).filter((key) =>
+      isSelectableColumn(key, navioColumns),
+    ),
 );

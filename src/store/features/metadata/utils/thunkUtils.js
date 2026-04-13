@@ -1,7 +1,7 @@
 import { get_parser } from "@/apps/hierarchy/menu/logic/parser";
 import buildAggregation from "@/apps/hierarchy/menu/logic/formulaGenerator";
 import { ALL_FUNCTIONS } from "@/apps/hierarchy/menu/logic/formulaConstants";
-import { extractErrorMessage } from "@/notifications";
+import { extractErrorMessage } from "@/components/notifications";
 
 let parser = get_parser();
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Popover } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 
-import styles from "@/styles/App.module.css";
+import styles from "@/styles/modules/navigation.module.css";
 
 export default function AppSidebar({
   isOpen: controlledIsOpen,

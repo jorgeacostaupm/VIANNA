@@ -1,4 +1,4 @@
-import { DataType } from "@/utils/Constants";
+import { DataType } from "@/utils/constants";
 
 export const PREVIEW_LIMIT = 5;
 export const PREVIEW_RESULT_COLUMN = "__preview_result__";

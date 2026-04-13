@@ -3,9 +3,9 @@ import { useSelector } from "react-redux";
 
 import { selectCategoricalVars } from "@/store/features/main";
 import { computeRankingData } from "@/utils/functions";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
-import { notifyError, notifyWarning } from "@/notifications";
+import { notifyError, notifyWarning } from "@/components/notifications";
 import { extractOrderValues, uniqueColumns } from "@/utils/viewRecords";
 import useSelectionRows from "@/hooks/useSelectionRows";
 
@@ -21,7 +21,13 @@ export default function useRankingViewState({
   const hierarchy = useSelector((state) => state.metadata.attributes);
 
   const selectionColumns = useMemo(
-    () => uniqueColumns([groupVar, ...numericVars, ...categoricVars, ORDER_VARIABLE]),
+    () =>
+      uniqueColumns([
+        groupVar,
+        ...numericVars,
+        ...categoricVars,
+        ORDER_VARIABLE,
+      ]),
     [groupVar, numericVars, categoricVars],
   );
   const selection = useSelectionRows(selectionColumns);
@@ -107,7 +113,15 @@ export default function useRankingViewState({
       setData(null);
       skippedSignatureRef.current = "";
     }
-  }, [selection, groupVar, numericVars, categoricVars, test, isSync, hierarchy]);
+  }, [
+    selection,
+    groupVar,
+    numericVars,
+    categoricVars,
+    test,
+    isSync,
+    hierarchy,
+  ]);
 
   return {
     data,

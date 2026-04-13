@@ -1,5 +1,5 @@
 import * as aq from "arquero";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import { getFileName, getVariableTypes } from "@/utils/functions";
 import { setQuarantineData } from "../main/slice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
@@ -16,7 +16,10 @@ import {
 
 export const generateColumn = createAsyncThunk(
   "dataframe/agg-generate",
-  async ({ colName, formula, enforceNumber = false }, { getState, rejectWithValue }) => {
+  async (
+    { colName, formula, enforceNumber = false },
+    { getState, rejectWithValue },
+  ) => {
     try {
       const dt = getState().dataframe.dataframe;
       const qt = getState().main.quarantineData;
@@ -30,7 +33,7 @@ export const generateColumn = createAsyncThunk(
       console.error(error);
       return rejectWithValue("Error aggregating values");
     }
-  }
+  },
 );
 
 export const generateColumnBatch = createAsyncThunk(
@@ -74,7 +77,7 @@ export const generateColumnBatch = createAsyncThunk(
       console.error(error);
       return rejectWithValue("Error aggregating batches");
     }
-  }
+  },
 );
 
 export const generateEmpty = createAsyncThunk(
@@ -90,7 +93,7 @@ export const generateEmpty = createAsyncThunk(
     } catch {
       return rejectWithValue("Empty aggregation failed");
     }
-  }
+  },
 );
 
 export const removeColumn = createAsyncThunk(
@@ -104,7 +107,7 @@ export const removeColumn = createAsyncThunk(
     } catch {
       return rejectWithValue("Failed to remove attribute");
     }
-  }
+  },
 );
 
 export const removeBatch = createAsyncThunk(
@@ -117,7 +120,7 @@ export const removeBatch = createAsyncThunk(
     } catch {
       return rejectWithValue("Failed to batch remove");
     }
-  }
+  },
 );
 
 export const convertColumnType = createAsyncThunk(
@@ -159,7 +162,7 @@ export const convertColumnType = createAsyncThunk(
       console.error(err);
       return rejectWithValue(err?.message || "Error converting column type");
     }
-  }
+  },
 );
 
 export const replaceValuesWithNull = createAsyncThunk(
@@ -186,9 +189,7 @@ export const replaceValuesWithNull = createAsyncThunk(
         rowValue != null &&
         valuesToNullify.some((candidate) => {
           const normalizedRowValue = normalizeComparableValue(rowValue);
-          return (
-            normalizedRowValue === candidate || rowValue == candidate
-          );
+          return normalizedRowValue === candidate || rowValue == candidate;
         });
 
       const state = getState();
@@ -266,13 +267,18 @@ export const replaceValuesWithNull = createAsyncThunk(
             affectedNodes,
             dependenciesByAggregation,
           );
-          const nodeByName = new Map(affectedNodes.map((node) => [node.name, node]));
+          const nodeByName = new Map(
+            affectedNodes.map((node) => [node.name, node]),
+          );
           const orderedNodes = orderedNames
             .map((name) => nodeByName.get(name))
             .filter(Boolean);
 
           dataframe = recomputeAggregationColumns(dataframe, orderedNodes);
-          quarantineData = recomputeAggregationColumns(quarantineData, orderedNodes);
+          quarantineData = recomputeAggregationColumns(
+            quarantineData,
+            orderedNodes,
+          );
         }
       }
 
@@ -286,14 +292,14 @@ export const replaceValuesWithNull = createAsyncThunk(
     } catch {
       return rejectWithValue("Something went wrong nullifiying values");
     }
-  }
+  },
 );
 
 export const updateData = createAsyncThunk(
   "dataframe/load-import",
   async (
     { data, filename, isGenerateHierarchy },
-    { dispatch, rejectWithValue }
+    { dispatch, rejectWithValue },
   ) => {
     try {
       let dt = aq.from(data);
@@ -312,5 +318,5 @@ export const updateData = createAsyncThunk(
     } catch {
       return rejectWithValue("Something is wrong with API data");
     }
-  }
+  },
 );

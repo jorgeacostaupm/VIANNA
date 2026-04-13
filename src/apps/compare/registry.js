@@ -2,7 +2,7 @@ import Numeric from "./Numeric";
 import Ranking from "./Ranking";
 import Categoric from "./Categoric";
 import { PointRange, Pairwise } from "./Test";
-import { defineView } from "@/core/Grid/viewDefinitions";
+import { defineView } from "@/components/grid/viewDefinitions";
 
 export default {
   pointrange: defineView(PointRange, {

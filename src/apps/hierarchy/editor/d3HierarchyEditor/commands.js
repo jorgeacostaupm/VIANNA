@@ -18,7 +18,7 @@ import {
   notifyError,
   notifyInfo,
   notifyWarning,
-} from "@/notifications";
+} from "@/components/notifications";
 
 import { transitionDuration } from "./constants";
 import { computeNavioColumnsFromHierarchy, getNodeLabel } from "./helpers";
@@ -351,7 +351,6 @@ export function inspectNode({ nodeId }) {
   const node = this.root.descendants().find((d) => d.id === nodeId);
   if (!node) return;
 
-  console.log("[Hierarchy] inspected node", node.data);
   publish("nodeInspectionNode", { nodeId });
 }
 

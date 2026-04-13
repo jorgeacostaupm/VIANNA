@@ -5,10 +5,8 @@ import {
   Slider,
   Typography,
   Select,
-  Popover,
   InputNumber,
 } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
 import panelStyles from "@/styles/SettingsPanel.module.css";
 import evolutionTests from "@/utils/evolution_tests";
 import AxisLabelSizeControl from "@/components/ui/AxisLabelSizeControl";

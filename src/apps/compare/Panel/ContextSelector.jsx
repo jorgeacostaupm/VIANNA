@@ -4,9 +4,9 @@ import { Select } from "antd";
 
 import { selectCategoricalVars } from "@/store/features/main";
 import { setGroupVar as setCompareGroupVar } from "@/store/features/compare";
-import { DEFAULT_GROUP_VARIABLE } from "@/utils/Constants";
+import { DEFAULT_GROUP_VARIABLE } from "@/utils/constants";
 import AnalysisContextStats from "@/components/ui/AnalysisContextStats";
-import styles from "@/styles/App.module.css";
+import styles from "@/styles/modules/analysisPanels.module.css";
 
 const { Option } = Select;
 

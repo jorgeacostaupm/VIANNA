@@ -1,9 +1,3 @@
-import {
-  DEFAULT_BRAND_COLOR,
-  buildBrandPalette,
-  sanitizeBrandColor,
-} from "@/utils/appTheme";
-
 const STATIC_TOKENS = {
   colorSuccess: "#26A88E",
   colorWarning: "#B07A2A",
@@ -41,9 +35,17 @@ const STATIC_TOKENS = {
   controlHeightLG: 48,
 };
 
-export const createTheme = (colorValue = DEFAULT_BRAND_COLOR) => {
-  const palette = buildBrandPalette(sanitizeBrandColor(colorValue));
+const palette = {
+  brandColor: "#4e6698",
+  brandHover: "#435985",
+  brandActive: "#374a73",
+  brandSoft: "rgba(78, 102, 152, 0.16)",
+  brandSoftSubtle: "rgba(78, 102, 152, 0.12)",
+  focusRingColor: "rgba(78, 102, 152, 0.25)",
+  brandBorder: "#b7c1d6",
+};
 
+export const createTheme = () => {
   return {
     token: {
       ...STATIC_TOKENS,

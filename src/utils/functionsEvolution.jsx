@@ -19,9 +19,6 @@ export function getCompleteSubjects(participantData, times) {
 }
 
 export function runRMAnova(participantData, times) {
-  // ----------------------------------------
-  // 1. Filtrar sujetos con datos completos
-  // ----------------------------------------
   const { completeSubjects, excluded } = getCompleteSubjects(
     participantData,
     times,
@@ -39,16 +36,10 @@ export function runRMAnova(participantData, times) {
     };
   }
 
-  // ----------------------------------------
-  // 2. Construir matrices
-  // ----------------------------------------
   const Y = completeSubjects.map((p) =>
     times.map((t) => +p.values.find((v) => v.timestamp === t).value),
   );
 
-  // ----------------------------------------
-  // 3. Medias
-  // ----------------------------------------
   const grandMean = Y.flat().reduce((a, b) => a + b, 0) / (subjects * T);
 
   const timeMeans = times.map((_, ti) => jStat.mean(Y.map((row) => row[ti])));
@@ -71,9 +62,6 @@ export function runRMAnova(participantData, times) {
     }),
   );
 
-  // ----------------------------------------
-  // 4. Sumas de cuadrados
-  // ----------------------------------------
   const ssTime =
     subjects * timeMeans.reduce((acc, mt) => acc + (mt - grandMean) ** 2, 0);
 
@@ -103,17 +91,11 @@ export function runRMAnova(participantData, times) {
     });
   });
 
-  // ----------------------------------------
-  // 5. Grados de libertad
-  // ----------------------------------------
   const dfTime = T - 1;
   const dfGroup = G - 1;
   const dfInteraction = dfGroup * dfTime;
   const dfError = (subjects - G) * dfTime;
 
-  // ----------------------------------------
-  // 6. Estadísticos
-  // ----------------------------------------
   const msTime = ssTime / dfTime;
   const msGroup = ssGroup / dfGroup;
   const msInteraction = ssInteraction / dfInteraction;
@@ -132,9 +114,6 @@ export function runRMAnova(participantData, times) {
   const etaGroup = ssGroup / (ssGroup + ssError);
   const etaInteraction = ssInteraction / (ssInteraction + ssError);
 
-  // ----------------------------------------
-  // 7. HTML separado
-  // ----------------------------------------
   const html = renderRMAnovaHTML({
     groups,
     times,

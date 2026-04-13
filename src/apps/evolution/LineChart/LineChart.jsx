@@ -11,7 +11,7 @@ import EvolutionView from "../view/EvolutionView";
 import { createEvolutionViewModel } from "../view/createEvolutionViewModel";
 import EvolutionTestsInfo from "./EvolutionTestsInfo";
 import { selectVars, selectVarTypes } from "@/store/features/main";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import useViewRecordSnapshot from "@/hooks/useViewRecordSnapshot";
 import useSelectionRows from "@/hooks/useSelectionRows";
 import {
@@ -87,7 +87,9 @@ export default function LineChart({
   const timeVar = useSelector((s) => s.evolution.timeVar);
   const idVar = useSelector((s) => s.main.idVar);
   const selectionColumns = useMemo(() => {
-    const isLmmEnabled = (config.testIds || []).includes("lmm-random-intercept");
+    const isLmmEnabled = (config.testIds || []).includes(
+      "lmm-random-intercept",
+    );
     const lmmCovariates = isLmmEnabled ? config.lmmCovariates || [] : [];
     return uniqueColumns([
       variable,
@@ -123,7 +125,7 @@ export default function LineChart({
       lmmCovariates: config.lmmCovariates,
       lmmIncludeInteraction: config.lmmIncludeInteraction,
       lmmTimeCoding: config.lmmTimeCoding,
-    }
+    },
   );
 
   const liveOrderValues = useMemo(() => {
@@ -142,7 +144,8 @@ export default function LineChart({
     const includeComplete = Boolean(config.showComplete);
     const includeIncomplete = Boolean(config.showIncomplete);
     if (!includeComplete && !includeIncomplete) return [];
-    if (includeComplete && includeIncomplete) return extractOrderValues(baseRows);
+    if (includeComplete && includeIncomplete)
+      return extractOrderValues(baseRows);
     const timeValues = Array.isArray(data?.times)
       ? data.times.map((value) => String(value))
       : [];
@@ -198,10 +201,10 @@ export default function LineChart({
           (data?.meanData || [])
             .map((entry) => entry?.group)
             .filter((group) => group != null)
-            .map((group) => String(group))
-        )
+            .map((group) => String(group)),
+        ),
       ),
-    [data?.meanData]
+    [data?.meanData],
   );
 
   useEffect(() => {
@@ -238,12 +241,15 @@ export default function LineChart({
   }, [timeVar, varTypes]);
 
   useEffect(() => {
-    const blocked = new Set([variable, idVar, timeVar, groupVar].filter(Boolean));
+    const blocked = new Set(
+      [variable, idVar, timeVar, groupVar].filter(Boolean),
+    );
     setConfig((prev) => {
       const nextCovariates = (prev.lmmCovariates || []).filter(
         (name) => !blocked.has(name) && allSelectableVars.includes(name),
       );
-      if (nextCovariates.length === (prev.lmmCovariates || []).length) return prev;
+      if (nextCovariates.length === (prev.lmmCovariates || []).length)
+        return prev;
       return { ...prev, lmmCovariates: nextCovariates };
     });
   }, [
@@ -262,7 +268,9 @@ export default function LineChart({
     }
   }, [config, data]);
   const variableDescription = useMemo(() => {
-    const description = attributes?.find((attr) => attr?.name === variable)?.desc;
+    const description = attributes?.find(
+      (attr) => attr?.name === variable,
+    )?.desc;
     return typeof description === "string" ? description.trim() : "";
   }, [attributes, variable]);
 
@@ -270,7 +278,9 @@ export default function LineChart({
     title: `Evolution · ${variable}`,
     hoverTitle: variableDescription || undefined,
     svgIDs: [id, `${id}-legend`],
-    info: data?.tests?.length ? <EvolutionTestsInfo tests={data.tests} /> : null,
+    info: data?.tests?.length ? (
+      <EvolutionTestsInfo tests={data.tests} />
+    ) : null,
     remove,
     settings: (
       <Settings

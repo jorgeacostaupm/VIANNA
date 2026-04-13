@@ -1,0 +1,39 @@
+.mainLoadDemoData {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+}
+
+.initialDataChoiceContent {
+  width: 100%;
+  align-items: center;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.initialChoiceLogo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.initialChoiceTitle {
+  text-align: center;
+  font-size: 24px;
+}
+
+.initialChoiceText {
+  text-align: center;
+}
+
+.initialChoiceButtonsRow {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+  margin-top: 8px;
+}

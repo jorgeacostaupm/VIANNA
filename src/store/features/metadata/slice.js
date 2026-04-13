@@ -15,7 +15,8 @@ import {
 
 const MAX_ASSIGNMENT_HISTORY = 100;
 
-const toRelatedList = (node) => (Array.isArray(node?.related) ? node.related : []);
+const toRelatedList = (node) =>
+  Array.isArray(node?.related) ? node.related : [];
 
 const findNodeIndexById = (attributes, nodeId) =>
   attributes.findIndex((node) => node.id === nodeId);
@@ -65,8 +66,13 @@ const applyAssignmentChange = (state, sourceIDs, targetParentID) => {
   if (moves.length === 0) return [];
 
   const movedSet = new Set(moves.map((move) => move.sourceID));
-  const targetRelated = toRelatedList(targetNode).filter((id) => !movedSet.has(id));
-  targetNode.related = [...targetRelated, ...moves.map((move) => move.sourceID)];
+  const targetRelated = toRelatedList(targetNode).filter(
+    (id) => !movedSet.has(id),
+  );
+  targetNode.related = [
+    ...targetRelated,
+    ...moves.map((move) => move.sourceID),
+  ];
   targetNode.isShown = true;
 
   const targetIndexById = new Map();
@@ -77,7 +83,8 @@ const applyAssignmentChange = (state, sourceIDs, targetParentID) => {
   });
 
   moves.forEach((move) => {
-    move.toIndex = targetIndexById.get(move.sourceID) ?? targetNode.related.length - 1;
+    move.toIndex =
+      targetIndexById.get(move.sourceID) ?? targetNode.related.length - 1;
   });
 
   return moves;
@@ -230,7 +237,7 @@ export const metaSlice = createSlice({
       const { sourceID, parentID, newIndex } = action.payload;
 
       const parentNode = state.attributes.find((node) =>
-        node.related.includes(sourceID)
+        node.related.includes(sourceID),
       );
 
       if (!parentNode) return;
@@ -284,7 +291,9 @@ export const metaSlice = createSlice({
       let hasChanges = false;
 
       nodeIds.forEach((nodeId) => {
-        const nodeIdx = state.attributes.findIndex((node) => node.id === nodeId);
+        const nodeIdx = state.attributes.findIndex(
+          (node) => node.id === nodeId,
+        );
         if (nodeIdx === -1) return;
         if (state.attributes[nodeIdx].type === "root") return;
         if (state.attributes[nodeIdx].isActive === isActive) return;
@@ -364,7 +373,7 @@ export const metaSlice = createSlice({
 
       childIDs.forEach((source) => {
         const sourceNode = state.attributes.find((n) =>
-          n.related.includes(source)
+          n.related.includes(source),
         );
         if (!sourceNode) return;
 
@@ -412,7 +421,7 @@ export const metaSlice = createSlice({
             associatedParent: sourceParent.id,
             associatedData: {
               originalPos: toRelatedList(sourceParent).findIndex(
-                (n) => n === sourceID
+                (n) => n === sourceID,
               ),
             },
           });
@@ -433,7 +442,8 @@ export const metaSlice = createSlice({
     builder
       .addCase(changeRelationshipBatch.fulfilled, (state, action) => {
         const { recover, targetIdx, moveCandidates } = action.payload;
-        if (!Array.isArray(moveCandidates) || moveCandidates.length === 0) return;
+        if (!Array.isArray(moveCandidates) || moveCandidates.length === 0)
+          return;
 
         const movedIds = moveCandidates.map((move) => move.sourceID);
         const targetParent = state.attributes[targetIdx];
@@ -450,7 +460,7 @@ export const metaSlice = createSlice({
               associatedParent: sourceParent.id,
               associatedData: {
                 originalPos: toRelatedList(sourceParent).findIndex(
-                  (n) => n === sourceID
+                  (n) => n === sourceID,
                 ),
               },
             });
@@ -530,7 +540,7 @@ export const metaSlice = createSlice({
     builder.addCase(addAttribute.fulfilled, (state, action) => {
       const { id, name, parentID, type, recover, info, dtype } = action.payload;
       const parentPosition = state.attributes.findIndex(
-        (n) => n.id === parentID
+        (n) => n.id === parentID,
       );
       if (parentPosition === -1) return;
 
@@ -573,78 +583,76 @@ export const metaSlice = createSlice({
       state.hierarchyRevision += info ? 0 : 1;
     });
 
-    builder
-      .addCase(removeAttribute.fulfilled, (state, action) => {
-        const { attributeID, recover } = action.payload;
-        if (attributeID === 0) return; // avoid removing the root node.
+    builder.addCase(removeAttribute.fulfilled, (state, action) => {
+      const { attributeID, recover } = action.payload;
+      if (attributeID === 0) return; // avoid removing the root node.
 
-        const parentIdx = state.attributes.findIndex((n) =>
-          n.related.includes(attributeID)
+      const parentIdx = state.attributes.findIndex((n) =>
+        n.related.includes(attributeID),
+      );
+
+      if (recover == null || recover) {
+        const attrRelatedPos = state.attributes[parentIdx].related.findIndex(
+          (n) => n == attributeID,
         );
-
-        if (recover == null || recover) {
-          const attrRelatedPos = state.attributes[parentIdx].related.findIndex(
-            (n) => n == attributeID
-          );
-          const attribute = state.attributes.find((n) => n.id === attributeID);
-          if (attribute == null) return;
-          if (attribute.type === "attribute") {
-            state.recoverableOperations = [];
-          } else {
-            state.recoverableOperations.push({
-              change: "removeNode",
-              associatedId: attributeID,
-              associatedNodePosition: attrRelatedPos,
-              associatedParent: state.attributes[parentIdx].id,
-              associatedData: { ...attribute },
-            });
-          }
-        }
-
-        state.attributes[parentIdx].related = state.attributes[
-          parentIdx
-        ].related.filter((d) => d !== attributeID);
-
-        const node = state.attributes.find((n) => n.id === attributeID);
-        state.attributes[parentIdx].related = [
-          ...state.attributes[parentIdx].related,
-          ...node.related,
-        ];
-
-        if (state.attributes[parentIdx].info) {
-          state.attributes[parentIdx].info.usedAttributes = state.attributes[
-            parentIdx
-          ].info.usedAttributes.filter((n) => n.id !== attributeID);
-        }
-        state.attributes = state.attributes.filter(
-          (att) => att.id !== attributeID
-        );
-
-        state.hierarchyRevision += recover ? 0.5 : -0.5;
-      });
-
-    builder
-      .addCase(updateAttribute.fulfilled, (state, action) => {
-        const { node, recover } = action.payload;
-
-        const idx = state.attributes.findIndex((n) => n.id === node.id);
-        if (idx == null || idx === -1) return;
-
-        if (recover == null || recover) {
+        const attribute = state.attributes.find((n) => n.id === attributeID);
+        if (attribute == null) return;
+        if (attribute.type === "attribute") {
+          state.recoverableOperations = [];
+        } else {
           state.recoverableOperations.push({
-            change: "updateNode",
-            associatedId: node.id,
-            associatedParent: null,
-            associatedData: { ...state.attributes[idx] },
+            change: "removeNode",
+            associatedId: attributeID,
+            associatedNodePosition: attrRelatedPos,
+            associatedParent: state.attributes[parentIdx].id,
+            associatedData: { ...attribute },
           });
         }
+      }
 
-        state.attributes[idx] = {
-          ...state.attributes[idx],
-          ...node,
-        };
-        state.hierarchyRevision += recover != null || recover ? 0.5 : -0.5;
-      });
+      state.attributes[parentIdx].related = state.attributes[
+        parentIdx
+      ].related.filter((d) => d !== attributeID);
+
+      const node = state.attributes.find((n) => n.id === attributeID);
+      state.attributes[parentIdx].related = [
+        ...state.attributes[parentIdx].related,
+        ...node.related,
+      ];
+
+      if (state.attributes[parentIdx].info) {
+        state.attributes[parentIdx].info.usedAttributes = state.attributes[
+          parentIdx
+        ].info.usedAttributes.filter((n) => n.id !== attributeID);
+      }
+      state.attributes = state.attributes.filter(
+        (att) => att.id !== attributeID,
+      );
+
+      state.hierarchyRevision += recover ? 0.5 : -0.5;
+    });
+
+    builder.addCase(updateAttribute.fulfilled, (state, action) => {
+      const { node, recover } = action.payload;
+
+      const idx = state.attributes.findIndex((n) => n.id === node.id);
+      if (idx == null || idx === -1) return;
+
+      if (recover == null || recover) {
+        state.recoverableOperations.push({
+          change: "updateNode",
+          associatedId: node.id,
+          associatedParent: null,
+          associatedData: { ...state.attributes[idx] },
+        });
+      }
+
+      state.attributes[idx] = {
+        ...state.attributes[idx],
+        ...node,
+      };
+      state.hierarchyRevision += recover != null || recover ? 0.5 : -0.5;
+    });
 
     builder.addCase(applyOperation.fulfilled, (state, action) => {
       const { applied = [] } = action.payload || {};

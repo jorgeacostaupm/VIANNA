@@ -23,7 +23,11 @@ import {
   setNodeSelection,
   toggleNodeSelection,
 } from "./d3HierarchyEditor/selection";
-import { drawHierarchy, drawLinks, drawNodes } from "./d3HierarchyEditor/rendering";
+import {
+  drawHierarchy,
+  drawLinks,
+  drawNodes,
+} from "./d3HierarchyEditor/rendering";
 import {
   addNodeEvents,
   getBrush,
@@ -400,7 +404,10 @@ export default class D3HierarchyEditor {
     this.selectionMode = nextMode;
     this.isClickSelectionMode = nextMode === "click";
     if (this.svg) {
-      this.svg.style("cursor", this.isClickSelectionMode ? "pointer" : "default");
+      this.svg.style(
+        "cursor",
+        this.isClickSelectionMode ? "pointer" : "default",
+      );
     }
 
     if (nextMode === "brush") {
@@ -467,7 +474,7 @@ export default class D3HierarchyEditor {
     this.data = newData;
     this.root = d3.hierarchy(newData);
     this.initHierarchy();
-    this.drawHierarchy(this.root, true);
+    this.drawHierarchy(this.root, false);
     this.setNavioNodes();
   }
 }

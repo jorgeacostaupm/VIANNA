@@ -4,5 +4,4 @@ export const MAIN_CONFIG_DEFAULTS = Object.freeze({
   navioHeight: 700,
   showInformativeTooltips: true,
   appOpenMode: "window",
-  appBrandColor: "#4e6698",
 });

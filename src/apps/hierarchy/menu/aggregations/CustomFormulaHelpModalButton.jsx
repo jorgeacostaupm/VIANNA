@@ -4,7 +4,7 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 
 import CustomFormulaHelp from "./CustomFormulaHelp";
 import styles from "./CustomFormulaHelpModalButton.module.css";
-import { AppButton, APP_BUTTON_VARIANTS } from "@/components/ui/button";
+import { AppButton, APP_BUTTON_VARIANTS } from "@/components/buttons/core";
 
 export default function CustomFormulaHelpModalButton() {
   const [open, setOpen] = useState(false);

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useField, useFormikContext } from "formik";
+import { useField } from "formik";
 import { Input, Select, Tag, Typography } from "antd";
 
 import { dtypeColor, dtypeMap } from "../nodeMenuConstants";

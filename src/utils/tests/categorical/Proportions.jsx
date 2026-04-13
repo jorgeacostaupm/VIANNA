@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 function orderCategories(categories) {
   const allNumeric = categories.every((c) => typeof c === "number");
@@ -26,10 +26,11 @@ function wilsonInterval(p, n, z = 1.96) {
   const denom = 1 + (z * z) / n;
   const center = (p + (z * z) / (2 * n)) / denom;
   const half =
-    (z *
-      Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n))) /
-    denom;
-  return { lower: Math.max(0, center - half), upper: Math.min(1, center + half) };
+    (z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n))) / denom;
+  return {
+    lower: Math.max(0, center - half),
+    upper: Math.min(1, center + half),
+  };
 }
 
 export const twoProportionZ = {
@@ -53,9 +54,7 @@ export const twoProportionZ = {
     const z = (p1 - p2) / se;
     const pValue = 2 * (1 - jStat.normal.cdf(Math.abs(z), 0, 1));
     const zCrit = jStat.normal.inv(0.975, 0, 1);
-    const seDiff = Math.sqrt(
-      (p1 * (1 - p1)) / n1 + (p2 * (1 - p2)) / n2
-    );
+    const seDiff = Math.sqrt((p1 * (1 - p1)) / n1 + (p2 * (1 - p2)) / n2);
     const diff = p1 - p2;
     const ci = { lower: diff - zCrit * seDiff, upper: diff + zCrit * seDiff };
 
@@ -72,7 +71,7 @@ export const twoProportionZ = {
     ];
 
     const descriptionString = `Two-proportion z-test (${cat0} vs ${cat1}): z=${z.toFixed(
-      2
+      2,
     )}, p=${pValue.toFixed(3)}, diff=${diff.toFixed(3)}.`;
     const descriptionJSX = (
       <div style={{ whiteSpace: "normal", maxWidth: "none" }}>
@@ -81,8 +80,8 @@ export const twoProportionZ = {
           z = {z.toFixed(2)}, p = {pValue.toFixed(3)}
         </div>
         <div>
-          diff = {diff.toFixed(3)} [{ci.lower.toFixed(3)},{" "}
-          {ci.upper.toFixed(3)}]
+          diff = {diff.toFixed(3)} [{ci.lower.toFixed(3)}, {ci.upper.toFixed(3)}
+          ]
         </div>
       </div>
     );
@@ -133,14 +132,14 @@ export const newcombeDiff = {
     ];
 
     const descriptionString = `Newcombe/Wilson CI for ${cat0}: diff=${diff.toFixed(
-      3
+      3,
     )} [${ci.lower.toFixed(3)}, ${ci.upper.toFixed(3)}].`;
     const descriptionJSX = (
       <div style={{ whiteSpace: "normal", maxWidth: "none" }}>
         <div>Newcombe/Wilson CI</div>
         <div>
-          diff = {diff.toFixed(3)} [{ci.lower.toFixed(3)},{" "}
-          {ci.upper.toFixed(3)}]
+          diff = {diff.toFixed(3)} [{ci.lower.toFixed(3)}, {ci.upper.toFixed(3)}
+          ]
         </div>
       </div>
     );
@@ -193,7 +192,7 @@ export const oddsRatioTest = {
     ];
 
     const descriptionString = `Odds ratio: OR=${or.toFixed(
-      3
+      3,
     )} (log OR CI=[${ciLog.lower.toFixed(3)}, ${ciLog.upper.toFixed(3)}]).`;
     const descriptionJSX = (
       <div style={{ whiteSpace: "normal", maxWidth: "none" }}>
@@ -257,7 +256,7 @@ export const riskRatioTest = {
     ];
 
     const descriptionString = `Risk ratio: RR=${rr.toFixed(
-      3
+      3,
     )} (log RR CI=[${ciLog.lower.toFixed(3)}, ${ciLog.upper.toFixed(3)}]).`;
     const descriptionJSX = (
       <div style={{ whiteSpace: "normal", maxWidth: "none" }}>

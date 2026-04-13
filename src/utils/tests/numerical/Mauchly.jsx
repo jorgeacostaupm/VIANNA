@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 function covarianceMatrix(data) {
   const n = data.length;
@@ -62,7 +62,7 @@ export const mauchlyTest = {
     }
 
     const data = Array.from({ length: n }, (_, i) =>
-      groups.map((g) => g.values[i])
+      groups.map((g) => g.values[i]),
     );
     const S = covarianceMatrix(data);
     const tr = trace(S);
@@ -78,28 +78,27 @@ export const mauchlyTest = {
     const pValue = 1 - jStat.chisquare.cdf(chi2, df);
 
     const trS2 = traceSquare(S);
-    const epsilonGG = Math.max(
-      0,
-      Math.min(1, (tr * tr) / ((k - 1) * trS2))
-    );
+    const epsilonGG = Math.max(0, Math.min(1, (tr * tr) / ((k - 1) * trS2)));
     const epsilonHF = Math.max(
       0,
       Math.min(
         1,
         (n * (k - 1) * epsilonGG - 2) /
-          ((k - 1) * (n - 1) - (k - 1) * epsilonGG)
-      )
+          ((k - 1) * (n - 1) - (k - 1) * epsilonGG),
+      ),
     );
 
     const descriptionString = `Mauchly's test (k=${k}, n=${n}) — W=${W.toFixed(
-      4
+      4,
     )}, χ²(${df})=${chi2.toFixed(2)}, p=${pValue.toFixed(
-      3
+      3,
     )}, εGG=${epsilonGG.toFixed(3)}, εHF=${epsilonHF.toFixed(3)}.`;
 
     const descriptionJSX = (
       <div style={{ whiteSpace: "normal", maxWidth: "none" }}>
-        <div>Mauchly&apos;s test (k = {k}, n = {n})</div>
+        <div>
+          Mauchly&apos;s test (k = {k}, n = {n})
+        </div>
         <div>
           W = {W.toFixed(4)}, χ²({df}) = {chi2.toFixed(2)}, p ={" "}
           {pValue.toFixed(3)}

@@ -170,7 +170,6 @@ export {
 } from "./thunks";
 
 export {
-  selectAppBrandColor,
   selectAppOpenMode,
   selectDemoLoadStatus,
   selectHasMainData,

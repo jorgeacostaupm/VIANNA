@@ -1,5 +1,9 @@
-import { ORDER_VARIABLE } from "@/utils/Constants";
-import { compareOrderValues, normalizeOrderValues, uniqueColumns } from "@/utils/viewRecords";
+import { ORDER_VARIABLE } from "@/utils/constants";
+import {
+  compareOrderValues,
+  normalizeOrderValues,
+  uniqueColumns,
+} from "@/utils/viewRecords";
 
 const DEFAULT_MODE = "all";
 const VALID_MODES = new Set(["all", "include", "exclude"]);
@@ -29,12 +33,18 @@ export function resolveSelectionRefPayload(payload, dataframe) {
   }
 
   if (Array.isArray(payload)) {
-    return buildSelectionRefFromOrderValues(extractOrderValuesFromRows(payload), universeOrderValues);
+    return buildSelectionRefFromOrderValues(
+      extractOrderValuesFromRows(payload),
+      universeOrderValues,
+    );
   }
 
   if (payload && typeof payload === "object") {
     if (Array.isArray(payload.orderValues)) {
-      return buildSelectionRefFromOrderValues(payload.orderValues, universeOrderValues);
+      return buildSelectionRefFromOrderValues(
+        payload.orderValues,
+        universeOrderValues,
+      );
     }
     if (payload.selectionRef && typeof payload.selectionRef === "object") {
       return normalizeSelectionRef(payload.selectionRef, universeOrderValues);
@@ -50,7 +60,9 @@ export function resolveSelectionRefPayload(payload, dataframe) {
 export function getDataframeOrderValues(dataframe) {
   if (!Array.isArray(dataframe) || dataframe.length === 0) return [];
   return normalizeOrderValues(
-    dataframe.map((row) => row?.[ORDER_VARIABLE]).filter((value) => value != null),
+    dataframe
+      .map((row) => row?.[ORDER_VARIABLE])
+      .filter((value) => value != null),
   ).sort(compareOrderValues);
 }
 
@@ -68,7 +80,10 @@ export function projectSelectionRows({
   if (!Array.isArray(dataframe) || dataframe.length === 0) return [];
 
   const universeOrderValues = getDataframeOrderValues(dataframe);
-  const selectedOrderValues = resolveSelectionOrderValues(selectionRef, universeOrderValues);
+  const selectedOrderValues = resolveSelectionOrderValues(
+    selectionRef,
+    universeOrderValues,
+  );
   if (selectedOrderValues.length === 0) return [];
 
   const rowsByOrder = buildRowsByOrderMap(dataframe);
@@ -105,18 +120,29 @@ export function selectionHasEmptyValues({
   if (!Array.isArray(dataframe) || dataframe.length === 0) return false;
 
   const universeOrderValues = getDataframeOrderValues(dataframe);
-  const selectedOrderValues = resolveSelectionOrderValues(selectionRef, universeOrderValues);
+  const selectedOrderValues = resolveSelectionOrderValues(
+    selectionRef,
+    universeOrderValues,
+  );
   if (selectedOrderValues.length === 0) return false;
 
   const columnsToCheck = uniqueColumns(visibleColumns);
   if (columnsToCheck.length === 0) return false;
 
   const rowsByOrder = buildRowsByOrderMap(dataframe);
-  for (let orderIndex = 0; orderIndex < selectedOrderValues.length; orderIndex += 1) {
+  for (
+    let orderIndex = 0;
+    orderIndex < selectedOrderValues.length;
+    orderIndex += 1
+  ) {
     const row = rowsByOrder.get(selectedOrderValues[orderIndex]);
     if (!row) continue;
 
-    for (let columnIndex = 0; columnIndex < columnsToCheck.length; columnIndex += 1) {
+    for (
+      let columnIndex = 0;
+      columnIndex < columnsToCheck.length;
+      columnIndex += 1
+    ) {
       const value = row?.[columnsToCheck[columnIndex]];
       if (
         value === null ||
@@ -132,9 +158,12 @@ export function selectionHasEmptyValues({
 }
 
 function buildSelectionRefFromOrderValues(orderValues, universeOrderValues) {
-  const normalizedUniverse = normalizeOrderValues(universeOrderValues).sort(compareOrderValues);
+  const normalizedUniverse =
+    normalizeOrderValues(universeOrderValues).sort(compareOrderValues);
   const selectedSet = new Set(normalizeOrderValues(orderValues));
-  const normalizedSelected = normalizedUniverse.filter((value) => selectedSet.has(value));
+  const normalizedSelected = normalizedUniverse.filter((value) =>
+    selectedSet.has(value),
+  );
 
   const totalRows = normalizedUniverse.length;
   const selectedCount = normalizedSelected.length;
@@ -157,12 +186,16 @@ function buildSelectionRefFromOrderValues(orderValues, universeOrderValues) {
     };
   }
 
-  const excluded = normalizedUniverse.filter((value) => !selectedSet.has(value));
+  const excluded = normalizedUniverse.filter(
+    (value) => !selectedSet.has(value),
+  );
   const useExcludeMode = excluded.length < normalizedSelected.length;
 
   return {
     mode: useExcludeMode ? "exclude" : "include",
-    runs: buildRunsFromOrderValues(useExcludeMode ? excluded : normalizedSelected),
+    runs: buildRunsFromOrderValues(
+      useExcludeMode ? excluded : normalizedSelected,
+    ),
     totalRows,
     selectedCount,
   };
@@ -170,7 +203,8 @@ function buildSelectionRefFromOrderValues(orderValues, universeOrderValues) {
 
 function normalizeSelectionRef(inputRef, universeOrderValues) {
   const mode = VALID_MODES.has(inputRef?.mode) ? inputRef.mode : DEFAULT_MODE;
-  const normalizedUniverse = normalizeOrderValues(universeOrderValues).sort(compareOrderValues);
+  const normalizedUniverse =
+    normalizeOrderValues(universeOrderValues).sort(compareOrderValues);
   const totalRows = normalizedUniverse.length;
 
   if (mode === "all") {
@@ -193,13 +227,17 @@ function normalizeSelectionRef(inputRef, universeOrderValues) {
         .filter(Boolean)
     : [];
 
-  const reconstructedValues = mode === "include"
-    ? expandRunsToSet(runs)
-    : expandRunsToSet(runs, normalizedUniverse);
+  const reconstructedValues =
+    mode === "include"
+      ? expandRunsToSet(runs)
+      : expandRunsToSet(runs, normalizedUniverse);
 
-  const selectedCount = mode === "include"
-    ? normalizedUniverse.filter((value) => reconstructedValues.has(value)).length
-    : normalizedUniverse.filter((value) => !reconstructedValues.has(value)).length;
+  const selectedCount =
+    mode === "include"
+      ? normalizedUniverse.filter((value) => reconstructedValues.has(value))
+          .length
+      : normalizedUniverse.filter((value) => !reconstructedValues.has(value))
+          .length;
 
   return {
     mode,
@@ -214,10 +252,13 @@ function normalizeSelectionRef(inputRef, universeOrderValues) {
 }
 
 function resolveSelectionOrderValues(selectionRef, universeOrderValues) {
-  const normalizedUniverse = normalizeOrderValues(universeOrderValues).sort(compareOrderValues);
+  const normalizedUniverse =
+    normalizeOrderValues(universeOrderValues).sort(compareOrderValues);
   if (normalizedUniverse.length === 0) return [];
 
-  const mode = VALID_MODES.has(selectionRef?.mode) ? selectionRef.mode : DEFAULT_MODE;
+  const mode = VALID_MODES.has(selectionRef?.mode)
+    ? selectionRef.mode
+    : DEFAULT_MODE;
   if (mode === "all") return normalizedUniverse;
 
   const runs = Array.isArray(selectionRef?.runs) ? selectionRef.runs : [];
@@ -322,7 +363,11 @@ function buildRowsByOrderMap(dataframe) {
   for (let index = 0; index < dataframe.length; index += 1) {
     const row = dataframe[index];
     const orderValue = row?.[ORDER_VARIABLE];
-    if (orderValue === null || orderValue === undefined || map.has(orderValue)) {
+    if (
+      orderValue === null ||
+      orderValue === undefined ||
+      map.has(orderValue)
+    ) {
       continue;
     }
     map.set(orderValue, row);
@@ -331,7 +376,9 @@ function buildRowsByOrderMap(dataframe) {
 }
 
 function resolveProjectionColumns(requiredColumns, fallbackColumns) {
-  const explicitColumns = Array.isArray(requiredColumns) ? requiredColumns : null;
+  const explicitColumns = Array.isArray(requiredColumns)
+    ? requiredColumns
+    : null;
   const baseColumns = explicitColumns || fallbackColumns;
   const normalizedColumns = uniqueColumns(baseColumns).filter(
     (column) => column && column !== ORDER_VARIABLE,

@@ -1,6 +1,6 @@
 import React from "react";
 import AppSidebar from "@/components/ui/AppSidebar";
-import { APP_DESC } from "@/utils/Constants";
+import { APP_DESC } from "@/utils/constants";
 import AppsButtons from "./AppsButtons";
 
 export default function MainSidebar({

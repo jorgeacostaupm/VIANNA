@@ -4,7 +4,7 @@ import AnalysisSidebar from "@/components/ui/AnalysisSidebar";
 import AnalysisPanelSection from "@/components/ui/AnalysisPanelSection";
 import ChartSelector from "./ChartSelector";
 import ContextSelector from "./ContextSelector";
-import { CORR_DESC } from "@/utils/Constants";
+import { CORR_DESC } from "@/utils/constants";
 
 export default function Panel({ commands }) {
   const { addChart } = commands;

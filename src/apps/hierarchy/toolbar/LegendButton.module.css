@@ -1,0 +1,4 @@
+.popoverMenu {
+  max-width: min(520px, 90vw);
+  white-space: normal;
+}

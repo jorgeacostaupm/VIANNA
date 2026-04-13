@@ -10,12 +10,11 @@ import {
 import LegendButton from "./LegendButton";
 import { Bar } from "@/components/charts/ChartBar";
 import { hierarchySelector } from "@/store/features/metadata";
-import BarButton from "@/components/ui/BarButton";
-import PopoverButton from "@/components/ui/PopoverButton";
+import { AppButton, APP_BUTTON_PRESETS, APP_BUTTON_VARIANTS } from "@/components/buttons/core";
+import PopoverButton from "@/components/buttons/ui/PopoverButton";
 import HierarchyViewSettings from "../tools/HierarchyViewSettings";
-import { APP_BUTTON_VARIANTS } from "@/components/ui/button";
 import styles from "@/styles/ChartBar.module.css";
-import UndoRedoButtons from "@/components/Buttons/UndoRedoButtons";
+import UndoRedoButtons from "@/components/buttons/navio/UndoRedoButtons";
 
 function downloadHierarchy(hierarchy) {
   const meta = JSON.stringify(hierarchy, null, 2);
@@ -54,8 +53,9 @@ export default function HierarchyBar({
         <UndoRedoButtons />
         <div className={styles.separator} />
 
-        <BarButton
-          title="Brush selection (B)"
+        <AppButton
+          preset={APP_BUTTON_PRESETS.TOOLBAR_ICON}
+          tooltip="Brush selection (B)"
           icon={<DragOutlined />}
           onClick={() => toggleSelectionMode("brush")}
           disabled={!hasNodes}
@@ -66,8 +66,9 @@ export default function HierarchyBar({
               : APP_BUTTON_VARIANTS.TOOLBAR_MUTED
           }
         />
-        <BarButton
-          title="Click selection (C)"
+        <AppButton
+          preset={APP_BUTTON_PRESETS.TOOLBAR_ICON}
+          tooltip="Click selection (C)"
           icon={<CheckSquareOutlined />}
           onClick={() => toggleSelectionMode("click")}
           disabled={!hasNodes}
@@ -83,8 +84,9 @@ export default function HierarchyBar({
 
         <LegendButton />
 
-        <BarButton
-          title={"Download hierarchy"}
+        <AppButton
+          preset={APP_BUTTON_PRESETS.TOOLBAR_ICON}
+          tooltip={"Download hierarchy"}
           onClick={() => downloadHierarchy(hierarchy)}
           icon={<DownloadOutlined />}
         />

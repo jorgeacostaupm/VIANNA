@@ -1,10 +1,8 @@
 import React from "react";
 import { Layout } from "antd";
 import GridLayout, { WidthProvider } from "react-grid-layout";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
 
-import styles from "@/styles/App.module.css";
+import styles from "@/styles/modules/layout.module.css";
 import useViewportRowHeight from "@/hooks/useViewportRowHeight";
 
 const ResponsiveGridLayout = WidthProvider(GridLayout);

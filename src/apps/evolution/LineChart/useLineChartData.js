@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { getLineChartData } from "@/utils/functionsEvolution";
 import evolutionTests from "@/utils/evolution_tests";
 import { selectNumericVars, selectVarTypes } from "@/store/features/main";
-import { notifyError } from "@/notifications";
+import { notifyError } from "@/components/notifications";
 import useSelectionRows from "@/hooks/useSelectionRows";
 import { uniqueColumns } from "@/utils/viewRecords";
 

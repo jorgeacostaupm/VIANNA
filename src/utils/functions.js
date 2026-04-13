@@ -5,8 +5,8 @@ import { jStat } from "jstat";
 import { UMAP } from "umap-js";
 import tests from "@/utils/tests";
 
-import { VariableTypes, ORDER_VARIABLE } from "./Constants";
-import { extractErrorMessage } from "@/notifications";
+import { VariableTypes, ORDER_VARIABLE } from "./constants";
+import { extractErrorMessage } from "@/components/notifications";
 
 export function generateId() {
   return "id-" + Date.now().toString(36);
@@ -89,12 +89,12 @@ export function computePairwiseData(selection, groupVar, variable, test) {
           !Number.isFinite(value)
         ) {
           errors.push(
-            `Invalid value in column "${variable}" group "${group}" value: "${value}"`
+            `Invalid value in column "${variable}" group "${group}" value: "${value}"`,
           );
         }
       } else if (value == null || Number.isNaN(value)) {
         errors.push(
-          `Invalid value in column "${variable}" group "${group}" value: "${value}"`
+          `Invalid value in column "${variable}" group "${group}" value: "${value}"`,
         );
       }
     });
@@ -134,14 +134,15 @@ export function computeRankingData({
 
   const variables =
     testObj.variableType === VariableTypes.NUMERICAL
-      ? numericVars ?? []
-      : categoricVars ?? [];
+      ? (numericVars ?? [])
+      : (categoricVars ?? []);
 
   const table = aq.from(selection);
   const grouped = table.groupby(groupVar).objects({ grouped: "entries" });
 
   const groupCount = grouped.length;
-  const metricName = testObj.metric?.measure ?? testObj.metric?.name ?? "Metric";
+  const metricName =
+    testObj.metric?.measure ?? testObj.metric?.name ?? "Metric";
   const metricLabel = testObj.metric?.symbol
     ? `${metricName} (${testObj.metric.symbol})`
     : metricName;
@@ -172,7 +173,7 @@ export function computeRankingData({
 
     const validationReason = getRankingVariableValidationReason(
       groups,
-      testObj.variableType
+      testObj.variableType,
     );
     if (validationReason) {
       skippedVariables.push({
@@ -239,9 +240,7 @@ function getRankingVariableValidationReason(groups, variableType) {
         return count + (valid ? 0 : 1);
       }, 0);
 
-      return invalidCount > 0
-        ? `${group.name}: ${invalidCount}`
-        : null;
+      return invalidCount > 0 ? `${group.name}: ${invalidCount}` : null;
     })
     .filter(Boolean);
 
@@ -249,12 +248,12 @@ function getRankingVariableValidationReason(groups, variableType) {
 
   if (variableType === VariableTypes.NUMERICAL) {
     return `Contains invalid numeric values by group (${invalidByGroup.join(
-      ", "
+      ", ",
     )}).`;
   }
 
   return `Contains missing/invalid categorical values by group (${invalidByGroup.join(
-    ", "
+    ", ",
   )}).`;
 }
 
@@ -267,7 +266,7 @@ export function computeEvolutionObservationData(
   variable,
   groupVar,
   timeVar,
-  idVar
+  idVar,
 ) {
   const table = aq.from(data);
   const groupedTable = table
@@ -414,8 +413,8 @@ export function getPCAData(data, params) {
   const info = topVars.map(
     ({ pc, variance, variables }) =>
       `${pc === 1 ? "X" : "Y"} explains ${(variance * 100).toFixed(
-        2
-      )}% of variance, influenced by ${variables.join(", ")}. \n`
+        2,
+      )}% of variance, influenced by ${variables.join(", ")}. \n`,
   );
 
   const points = projected.map(([pc1, pc2], i) => ({
@@ -451,7 +450,7 @@ export function getDistributionData(data, column, groupVar) {
         !Number.isFinite(value)
       ) {
         errors.push(
-          `Invalid value: "${value}" in column "${column}" (group "${type})"`
+          `Invalid value: "${value}" in column "${column}" (group "${type})"`,
         );
       } else {
         resultArray.push({ type, value });
@@ -461,7 +460,7 @@ export function getDistributionData(data, column, groupVar) {
 
   if (errors.length) {
     throw new Error(
-      `Invalid values found:\n` + errors.map((msg) => ` • ${msg}`).join("\n")
+      `Invalid values found:\n` + errors.map((msg) => ` • ${msg}`).join("\n"),
     );
   }
 
@@ -488,7 +487,7 @@ export function getEvolutionData(data, variable, groupVar, timeVar) {
           !Number.isFinite(v)
         ) {
           errors.push(
-            `Invalid value "${v}" for "${variable}" in group "${group}" time "${time}"`
+            `Invalid value "${v}" for "${variable}" in group "${group}" time "${time}"`,
           );
         }
       });
@@ -496,7 +495,7 @@ export function getEvolutionData(data, variable, groupVar, timeVar) {
   });
   if (errors.length) {
     throw new Error(
-      "Invalid values found:\n" + errors.map((msg) => ` • ${msg}`).join("\n")
+      "Invalid values found:\n" + errors.map((msg) => ` • ${msg}`).join("\n"),
     );
   }
 
@@ -507,7 +506,7 @@ export function getEvolutionData(data, variable, groupVar, timeVar) {
       const mean = arr.reduce((sum, value) => sum + value, 0) / arr.length;
       const std = Math.sqrt(
         arr.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) /
-          arr.length
+          arr.length,
       );
       obj[time] = { mean, std };
     });
@@ -521,7 +520,7 @@ export function generateTree(attributes, nodeID) {
   if (node == null) return null;
 
   const children = node.related.map((childID) =>
-    generateTree(attributes, childID)
+    generateTree(attributes, childID),
   );
   return {
     id: node.id,
@@ -583,7 +582,7 @@ export function getEvolutionZscores(groups, timeVar) {
     const max = timestamps[len - 1];
 
     const extremeVisits = population.filter(
-      (d) => d[timeVar] == max || d[timeVar] == min
+      (d) => d[timeVar] == max || d[timeVar] == min,
     );
     const cleanedPopulation = aq.from(extremeVisits);
 
@@ -594,7 +593,7 @@ export function getEvolutionZscores(groups, timeVar) {
         variable: d.variable,
         value: d.value,
         p_value: d.p_value,
-      })
+      }),
     );
 
     z_scores.push(...group_z_scores);
@@ -750,8 +749,8 @@ export function hasEmptyValues(data, state) {
       (value) =>
         value === null ||
         value === undefined ||
-        (typeof value === "number" && isNaN(value))
-    )
+        (typeof value === "number" && isNaN(value)),
+    ),
   );
 
   state.hasEmptyValues = hasEmptyValues;
@@ -831,7 +830,7 @@ export const getVariableTypes = (data, options = {}) => {
         data
           .slice(0, howManyItemsShouldSearchForNotNull)
           .map((d) => getAttrib(d, col))
-          .filter((v) => v !== null && v !== undefined && v !== "")
+          .filter((v) => v !== null && v !== undefined && v !== ""),
       ).size;
 
       if (distinctValues < maxNumDistictForCategorical) {
@@ -865,7 +864,7 @@ export const getVariableTypes = (data, options = {}) => {
         data
           .slice(0, howManyItemsShouldSearchForNotNull)
           .map((d) => getAttrib(d, col))
-          .filter((v) => v !== null && v !== undefined && v !== "")
+          .filter((v) => v !== null && v !== undefined && v !== ""),
       ).size;
 
       if (distinctValues < maxNumDistictForCategorical) {
@@ -887,7 +886,7 @@ export function fixTooltipToNode(
   nodeSelection,
   tooltip,
   yOffset = 50,
-  xOffset = 0
+  xOffset = 0,
 ) {
   const node = nodeSelection.node();
   if (!node) return;

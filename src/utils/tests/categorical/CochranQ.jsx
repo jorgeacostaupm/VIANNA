@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const cochranQ = {
   id: "cochran-q",
@@ -14,8 +14,8 @@ export const cochranQ = {
     if (groups.some((g) => g.values.length !== n)) {
       throw new Error("Cochran's Q requires equal-length groups.");
     }
-    const categories = [...new Set(groups.flatMap((g) => g.values))].sort((a, b) =>
-      String(a).localeCompare(String(b))
+    const categories = [...new Set(groups.flatMap((g) => g.values))].sort(
+      (a, b) => String(a).localeCompare(String(b)),
     );
     if (categories.length !== 2) {
       throw new Error("Cochran's Q requires exactly 2 categories.");
@@ -23,7 +23,7 @@ export const cochranQ = {
     const success = categories[0];
 
     const data = Array.from({ length: n }, (_, i) =>
-      groups.map((g) => (g.values[i] === success ? 1 : 0))
+      groups.map((g) => (g.values[i] === success ? 1 : 0)),
     );
     const Tj = Array(k).fill(0);
     const Ri = Array(n).fill(0);
@@ -50,14 +50,15 @@ export const cochranQ = {
     const kendallW = Q / (n * (k - 1));
 
     const descriptionString = `Cochran's Q (k=${k}, n=${n}) — Q=${Q.toFixed(
-      2
+      2,
     )}, p=${pValue.toFixed(3)}, W=${kendallW.toFixed(3)}.`;
     const descriptionJSX = (
       <div style={{ whiteSpace: "normal", maxWidth: "none" }}>
-        <div>Cochran&apos;s Q (k = {k}, n = {n})</div>
         <div>
-          Q = {Q.toFixed(2)}, p = {pValue.toFixed(3)}, W ={" "}
-          {kendallW.toFixed(3)}
+          Cochran&apos;s Q (k = {k}, n = {n})
+        </div>
+        <div>
+          Q = {Q.toFixed(2)}, p = {pValue.toFixed(3)}, W = {kendallW.toFixed(3)}
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
 import { jStat } from "jstat";
-import { VariableTypes } from "../../Constants";
+import { VariableTypes } from "../../constants";
 
 export const chiSquareIndependence = {
   id: "chi-square-independence",
@@ -32,10 +32,10 @@ export const chiSquareIndependence = {
       return cnt;
     });
     const rowSums = counts.map((cnt) =>
-      categories.reduce((sum, cat) => sum + cnt[cat], 0)
+      categories.reduce((sum, cat) => sum + cnt[cat], 0),
     );
     const colSums = categories.map((cat) =>
-      counts.reduce((sum, cnt) => sum + cnt[cat], 0)
+      counts.reduce((sum, cnt) => sum + cnt[cat], 0),
     );
     const N = rowSums.reduce((sum, v) => sum + v, 0);
 
@@ -130,11 +130,11 @@ export const chiSquareIndependence = {
           // muestreamos con reemplazo cada grupo por separado
           const resample1 = Array.from(
             { length: n1 },
-            () => arr1[Math.floor(Math.random() * n1)]
+            () => arr1[Math.floor(Math.random() * n1)],
           );
           const resample2 = Array.from(
             { length: n2 },
-            () => arr2[Math.floor(Math.random() * n2)]
+            () => arr2[Math.floor(Math.random() * n2)],
           );
           bootVs.push(computeCramersV(resample1, resample2));
         }
@@ -155,7 +155,7 @@ export const chiSquareIndependence = {
     }
 
     const descriptionString = `Chi-Square test of independence (r=${r}, c=${c}, N=${N}) — χ²(${df}) = ${chi2.toFixed(
-      2
+      2,
     )}, p = ${pValue.toFixed(3)}, V = ${cramerV.toFixed(3)}.`;
     const descriptionJSX = (
       <div style={{ whiteSpace: "normal", maxWidth: "none" }}>

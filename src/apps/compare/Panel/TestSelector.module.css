@@ -1,0 +1,9 @@
+.applicabilityYes {
+  color: var(--color-success-700, #067647);
+  font-weight: 600;
+}
+
+.applicabilityNo {
+  color: var(--color-warning-700, #b54708);
+  font-weight: 600;
+}

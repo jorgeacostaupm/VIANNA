@@ -1,15 +1,8 @@
-import { useEffect, useLayoutEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
 
 const DEFAULT_ROOT_STYLES = { padding: 0, maxWidth: "100vw" };
 
-const useRootStyles = (
-  setInit,
-  title,
-  applyStyles = DEFAULT_ROOT_STYLES,
-) => {
-  const dispatch = useDispatch();
-
+const useRootStyles = (title, applyStyles = DEFAULT_ROOT_STYLES) => {
   useEffect(() => {
     const rootElement = document.getElementById("root");
     if (rootElement && applyStyles) {
@@ -25,22 +18,6 @@ const useRootStyles = (
       document.title = title;
     }
   }, [applyStyles, title]);
-
-  useLayoutEffect(() => {
-    if (typeof setInit !== "function") {
-      return;
-    }
-
-    const handleBeforeUnload = () => {
-      dispatch(setInit(false));
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [dispatch, setInit]);
 };
 
 export default useRootStyles;

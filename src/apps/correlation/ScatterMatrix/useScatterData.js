@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { notifyError } from "@/notifications";
+import { notifyError } from "@/components/notifications";
 import useSelectionRows from "@/hooks/useSelectionRows";
-import { ORDER_VARIABLE } from "@/utils/Constants";
+import { ORDER_VARIABLE } from "@/utils/constants";
 import { uniqueColumns } from "@/utils/viewRecords";
 
 export default function useScatterData(isSync = true, params) {
