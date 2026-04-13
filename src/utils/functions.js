@@ -1,16 +1,10 @@
 import * as d3 from "d3";
 import { PCA } from "ml-pca";
 import * as aq from "arquero";
-import { jStat } from "jstat";
-import { UMAP } from "umap-js";
 import tests from "@/utils/tests";
 
 import { VariableTypes, ORDER_VARIABLE } from "./constants";
 import { extractErrorMessage } from "@/components/notifications";
-
-export function generateId() {
-  return "id-" + Date.now().toString(36);
-}
 
 export function getFileName(route) {
   return route
@@ -261,100 +255,6 @@ function normalizeErrorMessage(error) {
   return extractErrorMessage(error, "Unknown error while running test.");
 }
 
-export function computeEvolutionObservationData(
-  data,
-  variable,
-  groupVar,
-  timeVar,
-  idVar,
-) {
-  const table = aq.from(data);
-  const groupedTable = table
-    .groupby(idVar)
-    .select(idVar, groupVar, variable, timeVar, ORDER_VARIABLE);
-
-  return groupedTable.objects({ grouped: "entries" }).map(([id, rows]) => [
-    id,
-    rows.sort((a, b) => {
-      const va = a[ORDER_VARIABLE],
-        vb = b[ORDER_VARIABLE];
-      return typeof va === "number" && typeof vb === "number"
-        ? va - vb
-        : String(va).localeCompare(String(vb), undefined, { numeric: true });
-    }),
-  ]);
-}
-
-export function getCategoricDistributionData(selection, variable, groupVar) {
-  const groups = [...new Set(selection.map((item) => item[groupVar]))];
-  const categories = [...new Set(selection.map((item) => item[variable]))];
-
-  const counts = {};
-  groups.forEach((g) => {
-    counts[g] = {};
-    categories.forEach((c) => {
-      counts[g][c] = 0;
-    });
-  });
-
-  selection.forEach((item) => {
-    const g = item[groupVar];
-    const c = item[variable];
-    if (g != null && c != null) {
-      counts[g][c] = (counts[g][c] || 0) + 1;
-    }
-  });
-
-  const chartData = groups.map((g) => {
-    const obj = { [groupVar]: g };
-    categories.forEach((c) => {
-      obj[c] = counts[g][c];
-    });
-    return obj;
-  });
-
-  return { chartData, categories, catVar: variable, groupVar };
-}
-
-export function getUMAPData(data, params) {
-  const { variables, nNeighbors = 15, minDist = 0.1, nComponents = 2 } = params;
-
-  const matrix = [];
-  const metadata = [];
-
-  if (variables.length < 2 || data.length < 2) {
-    return null;
-  }
-
-  for (let i = 0; i < data.length; i++) {
-    const row = variables.map((v) => parseFloat(data[i][v]));
-    if (row.every((val) => !isNaN(val))) {
-      matrix.push(row);
-      metadata.push({ original: data[i] });
-    }
-  }
-
-  const umap = new UMAP({
-    nNeighbors,
-    minDist,
-    nComponents,
-  });
-
-  const embedding = umap.fit(matrix);
-
-  const points = embedding.map((coords, i) => {
-    const result = { ...metadata[i].original };
-    coords.forEach((value, j) => {
-      result[`pc${j + 1}`] = value;
-    });
-    return result;
-  });
-
-  const summary = `UMAP completed: ${nComponents}D projection, ${nNeighbors} neighbors, minDist ${minDist}.`;
-
-  return { points, summary };
-}
-
 export function getPCAData(data, params) {
   const { variables } = params;
   if (variables.length < 2 || data.length < 2) {
@@ -426,94 +326,6 @@ export function getPCAData(data, params) {
   return { points, info, skippedVariables };
 }
 
-export function getScatterData(data, params) {
-  const { variables } = params;
-  if (variables?.length < 2) return null;
-  return data;
-}
-
-export function getDistributionData(data, column, groupVar) {
-  const table = aq.from(data);
-  const selectedColumns = table.select(groupVar, column);
-  const grouped = selectedColumns.groupby(groupVar);
-  const resultArray = [];
-  const errors = [];
-
-  grouped.objects({ grouped: "entries" }).forEach(([type, rows]) => {
-    rows.forEach((row) => {
-      const value = row[column];
-
-      if (
-        value == null ||
-        typeof value !== "number" ||
-        Number.isNaN(value) ||
-        !Number.isFinite(value)
-      ) {
-        errors.push(
-          `Invalid value: "${value}" in column "${column}" (group "${type})"`,
-        );
-      } else {
-        resultArray.push({ type, value });
-      }
-    });
-  });
-
-  if (errors.length) {
-    throw new Error(
-      `Invalid values found:\n` + errors.map((msg) => ` • ${msg}`).join("\n"),
-    );
-  }
-
-  return resultArray;
-}
-
-export function getEvolutionData(data, variable, groupVar, timeVar) {
-  const table = aq.from(data);
-  const groupedTable = table
-    .groupby(groupVar, timeVar)
-    .select(groupVar, variable, timeVar);
-
-  const groups = groupedTable.objects({ grouped: "entries" });
-
-  const errors = [];
-  groups.forEach(([group, timeEntries]) => {
-    timeEntries.forEach(([time, rows]) => {
-      rows.forEach((row) => {
-        const v = row[variable];
-        if (
-          v == null ||
-          typeof v !== "number" ||
-          Number.isNaN(v) ||
-          !Number.isFinite(v)
-        ) {
-          errors.push(
-            `Invalid value "${v}" for "${variable}" in group "${group}" time "${time}"`,
-          );
-        }
-      });
-    });
-  });
-  if (errors.length) {
-    throw new Error(
-      "Invalid values found:\n" + errors.map((msg) => ` • ${msg}`).join("\n"),
-    );
-  }
-
-  return groups.map(([group, timeEntries]) => {
-    const obj = { population: group };
-    timeEntries.forEach(([time, rows]) => {
-      const arr = rows.map((d) => d[variable]);
-      const mean = arr.reduce((sum, value) => sum + value, 0) / arr.length;
-      const std = Math.sqrt(
-        arr.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) /
-          arr.length,
-      );
-      obj[time] = { mean, std };
-    });
-    return obj;
-  });
-}
-
 export function generateTree(attributes, nodeID) {
   const node = attributes.find((item) => item.id === nodeID);
 
@@ -568,78 +380,6 @@ export function getVisibleNodes(tree) {
   return filteredNodes;
 }
 
-export function getEvolutionZscores(groups, timeVar) {
-  const z_scores = [];
-  const pops = [];
-
-  groups.forEach((group) => {
-    const populationName = group[0];
-    const population = group[1];
-
-    const timestamps = [...new Set(population.map((d) => d[timeVar]).sort())];
-    const len = timestamps.length;
-    const min = timestamps[0];
-    const max = timestamps[len - 1];
-
-    const extremeVisits = population.filter(
-      (d) => d[timeVar] == max || d[timeVar] == min,
-    );
-    const cleanedPopulation = aq.from(extremeVisits);
-
-    // Calcular Z-scores
-    const group_z_scores = computeZscores(cleanedPopulation, timeVar).map(
-      (d) => ({
-        population: populationName,
-        variable: d.variable,
-        value: d.value,
-        p_value: d.p_value,
-      }),
-    );
-
-    z_scores.push(...group_z_scores);
-    pops.push(populationName);
-  });
-
-  return { data: z_scores, populations: pops };
-}
-
-export function computeZscores(table, grouping) {
-  const grouped_table = table.groupby(grouping);
-  const numeric_columns = getNumericCols(table);
-
-  const z_scores = [];
-  numeric_columns.forEach((variable) => {
-    const stats = getStats(grouped_table, variable, grouping);
-    const means = stats.array("mean");
-    const std = stats.array("std").map((d) => (d ? d : 0));
-    const count = stats.array("count");
-
-    const z_score =
-      (means[0] - means[1]) /
-      Math.sqrt(std[0] ** 2 / count[0] + std[1] ** 2 / count[1]);
-
-    const p_value = 2 * (1 - jStat.normal.cdf(Math.abs(z_score), 0, 1));
-
-    const obj = {
-      variable: variable,
-      value: z_score,
-      p_value: p_value,
-      my_value: "lalalala",
-      statistics: stats.objects(),
-    };
-
-    if (!Number.isNaN(z_score) && Number.isFinite(z_score)) z_scores.push(obj);
-  });
-
-  return z_scores;
-}
-
-export function getNumericCols(table) {
-  return table
-    .columnNames()
-    .filter((col) => table.array(col).every((v) => !isNaN(+v)));
-}
-
 export function getCategoricalKeys(data) {
   if (!Array.isArray(data) || data.length === 0) {
     return [];
@@ -677,56 +417,6 @@ export function getCategoricalKeys(data) {
   return categoricalKeys;
 }
 
-export function getStats(grouped_table, variable, grouping_var) {
-  const stats = grouped_table
-    .rollup({
-      mean: aq.op.average(variable),
-      std: aq.op.stdev(variable),
-      variance: aq.op.variance(variable),
-      count: aq.op.count(),
-    })
-    .rename({
-      [grouping_var]: "group",
-    });
-
-  return stats;
-}
-
-function isNumeric(value) {
-  return value !== null && value !== undefined && value !== "" && !isNaN(value);
-}
-
-export function identifyTypes(array, cardinalityThreshold = 0.3) {
-  if (!Array.isArray(array) || array.length === 0) return {};
-  const fields = Object.keys(array[0]);
-  const result = {};
-
-  for (const field of fields) {
-    const validValues = array
-      .map((item) => item[field])
-      .filter((v) => v !== null && v !== undefined && v !== "");
-
-    const distinctCount = new Set(validValues).size;
-    const ratio =
-      validValues.length > 0 ? distinctCount / validValues.length : 0;
-    const allNumeric = validValues.length > 0 && validValues.every(isNumeric);
-
-    if (ratio <= cardinalityThreshold) {
-      result[field] = VariableTypes.CATEGORICAL;
-      continue;
-    }
-
-    if (allNumeric) {
-      result[field] = VariableTypes.NUMERICAL;
-      continue;
-    }
-
-    result[field] = VariableTypes.UNKNOWN;
-  }
-
-  return result;
-}
-
 export function generateFileName(baseName = "data") {
   const currentDate = new Date();
   const year = currentDate.getFullYear();
@@ -739,21 +429,6 @@ export function generateFileName(baseName = "data") {
   const fileName = `${baseName}_${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
 
   return fileName;
-}
-
-export function hasEmptyValues(data, state) {
-  if (!data || data.length === 0) return false;
-
-  const hasEmptyValues = data.some((row) =>
-    Object.values(row).some(
-      (value) =>
-        value === null ||
-        value === undefined ||
-        (typeof value === "number" && isNaN(value)),
-    ),
-  );
-
-  state.hasEmptyValues = hasEmptyValues;
 }
 
 export function pickColumns(items, columns) {
@@ -924,8 +599,6 @@ export function moveTooltip(e, tooltip, chart, yOffset = 20, xOffset = 0) {
     .style("top", `${y - window.scrollY - tooltipHeight - yOffset}px`)
     .style("opacity", 1);
 }
-
-export function renderContextTooltip() {}
 
 // add functions to arquero :)
 import { addFunction } from "arquero";

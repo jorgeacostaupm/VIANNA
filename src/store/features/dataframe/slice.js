@@ -50,7 +50,7 @@ const initialState = {
   nullifiedValues: [],
 };
 
-export const dataSlice = createSlice({
+const dataSlice = createSlice({
   name: "dataframe",
   initialState: initialState,
   reducers: {

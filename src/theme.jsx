@@ -45,7 +45,7 @@ const palette = {
   brandBorder: "#b7c1d6",
 };
 
-export const createTheme = () => {
+const createTheme = () => {
   return {
     token: {
       ...STATIC_TOKENS,

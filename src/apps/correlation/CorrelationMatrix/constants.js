@@ -31,10 +31,6 @@ export const COLOR_SCALES = [
   },
 ];
 
-export const COLOR_SCALE_MAP = COLOR_SCALES.reduce((acc, item) => {
-  acc[item.value] = item;
-  return acc;
-}, {});
 
 export const CORRELATION_METHOD_MAP = CORRELATION_METHODS.reduce((acc, item) => {
   acc[item.value] = item;

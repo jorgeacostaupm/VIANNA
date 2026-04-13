@@ -29,23 +29,6 @@ export function attachTickLabelGridHover({
     .on("mouseout.grid-line-highlight", null);
 }
 
-export function attachTickLabelToNearestGridLine({
-  axisGroup,
-  gridLines,
-} = {}) {
-  const axis = toSelection(axisGroup);
-  const lines = toSelection(gridLines);
-  if (!axis || !lines || axis.empty() || lines.empty()) return;
-
-  lines.classed("chart-grid-line", true);
-  lines.classed("grid-line-active", false);
-
-  axis
-    .selectAll(".tick text")
-    .on("mouseover.grid-line-highlight", null)
-    .on("mouseout.grid-line-highlight", null);
-}
-
 export function paintLayersInOrder({ chartGroup, layers = [] } = {}) {
   const chart = toSelection(chartGroup);
   if (!chart || chart.empty() || !Array.isArray(layers)) return;

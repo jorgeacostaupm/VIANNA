@@ -13,7 +13,7 @@ export const TimeOrderDirection = Object.freeze({
 const TIME_ORDER_MODES = new Set(Object.values(TimeOrderMode));
 const TIME_ORDER_DIRECTIONS = new Set(Object.values(TimeOrderDirection));
 
-export const DEFAULT_TIME_ORDER_CONFIG = Object.freeze({
+const DEFAULT_TIME_ORDER_CONFIG = Object.freeze({
   valueMode: TimeOrderMode.AUTO,
   direction: TimeOrderDirection.ASC,
   useManualOrder: false,
@@ -162,7 +162,7 @@ export function normalizeTimeOrderConfig(config = null) {
   };
 }
 
-export function detectTimeOrderMode(values = []) {
+function detectTimeOrderMode(values = []) {
   const labels = uniqueLabels(values);
   if (!labels.length) return TimeOrderMode.TEXT;
 

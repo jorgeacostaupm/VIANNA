@@ -44,4 +44,3 @@ export const NodeSchema = yup.object({
   }),
 });
 
-export const MetaDataSchema = yup.array(NodeSchema).min(1);

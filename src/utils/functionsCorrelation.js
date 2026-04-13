@@ -175,9 +175,3 @@ export function getTopCorrelations(data, nTop, method = DEFAULT_METHOD) {
 
   return topVars;
 }
-
-export function getScatterData(data, params) {
-  const { variables } = params;
-  if (variables?.length < 2) return null;
-  return data;
-}

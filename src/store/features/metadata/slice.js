@@ -216,7 +216,7 @@ const initialState = {
   hierarchyRevision: -1,
 };
 
-export const metaSlice = createSlice({
+const metaSlice = createSlice({
   name: "metadata",
   initialState: initialState,
   reducers: (create) => ({

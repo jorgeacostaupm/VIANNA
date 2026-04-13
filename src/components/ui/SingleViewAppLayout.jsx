@@ -7,7 +7,7 @@ import useViewportRowHeight from "@/hooks/useViewportRowHeight";
 
 const ResponsiveGridLayout = WidthProvider(GridLayout);
 
-export const DEFAULT_CONTAINER_PADDING = 10;
+const DEFAULT_CONTAINER_PADDING = 10;
 
 export default function SingleViewAppLayout({
   sidebar = null,

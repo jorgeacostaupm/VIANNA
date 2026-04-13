@@ -4,7 +4,6 @@ import { mauchlyTest } from "@/utils/tests/numerical/Mauchly";
 import { pairedTTest } from "@/utils/tests/numerical/PairedStudentT";
 import { signTest } from "@/utils/tests/numerical/SignTest";
 import { fitRandomInterceptLmm } from "@/utils/evolution_lmm";
-import { ownMean } from "./OwnMean";
 
 const UNKNOWN_GROUP = "All";
 
@@ -351,5 +350,4 @@ const evolutionTests = [
   signTestEvolution,
 ];
 
-export { evolutionTests, ownMean };
 export default evolutionTests;

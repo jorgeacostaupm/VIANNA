@@ -6,7 +6,7 @@ function pick(primary, fallback) {
   return primary !== undefined ? primary : fallback;
 }
 
-export function resolveAxisLabelContainerStyle(config, baseStyle) {
+function resolveAxisLabelContainerStyle(config, baseStyle) {
   const axisLabelFontSize = Number.isFinite(config?.axisLabelFontSize)
     ? config.axisLabelFontSize
     : null;

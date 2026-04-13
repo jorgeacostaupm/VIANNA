@@ -41,7 +41,7 @@ export const getAttribsFromObjectRecursive = function(
   return helper(obj, 0);
 };
 
-export function convertAttribToFn(attr) {
+function convertAttribToFn(attr) {
   if (typeof attr === "string") {
     attr = attr.split(".");
   }

@@ -3,8 +3,8 @@ import { createSelector } from "@reduxjs/toolkit";
 import { HIDDEN_VARIABLES, VariableTypes } from "@/utils/constants";
 import { MAIN_CONFIG_DEFAULTS } from "./configDefaults";
 
-export const selectMainState = (state) => state.main;
-export const selectDataframeState = (state) => state.dataframe;
+const selectMainState = (state) => state.main;
+const selectDataframeState = (state) => state.dataframe;
 
 export const selectMainDataframe = createSelector(
   [selectDataframeState],

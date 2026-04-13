@@ -1,15 +1,12 @@
 export const APP_NAME = "VIANNA";
 
-export const DEFAULT_ID_VARIABLE = "pseudon_id";
 export const DEFAULT_GROUP_VARIABLE = "site";
 export const DEFAULT_TIMESTAMP_VARIABLE = "visit";
 
 export const ORDER_VARIABLE = "__ord";
-export const DESCRIPTION_VARIABLE = "__desc";
+const DESCRIPTION_VARIABLE = "__desc";
 
 export const HIDDEN_VARIABLES = [ORDER_VARIABLE, DESCRIPTION_VARIABLE];
-
-export const navioLabelHeight = 140;
 
 const withBase = (p) => `${import.meta.env.BASE_URL}${p}`;
 
@@ -43,13 +40,6 @@ export const Apps = Object.freeze({
   CORRELATION: "Correlation",
   EVOLUTION: "Evolution",
   QUARANTINE: "Quarantine",
-});
-
-export const Graphs = Object.freeze({
-  SCATTER: "Scatterplot Matrix",
-  CORRELATION: "Correlation Matrix",
-  PCA: "PCA",
-  UMAP: "UMAP",
 });
 
 export const VariableTypes = Object.freeze({
@@ -104,38 +94,3 @@ export const EVO_DESC =
 
 export const CORR_DESC =
   "The Correlation Analysis view examines relationships and dependencies among variables. It integrates multiple coordinated visualizations—such as correlation matrices, scatterplots, and dimensionality reduction techniques (PCA, t-SNE)—to reveal associations, clusters, and redundancies within the data. Color-coded matrices indicate the strength and direction of pairwise correlations, while interactive scatterplots allow detailed inspection of specific variable relationships. This view supports the validation of derived measures and helps uncover structural patterns across cognitive domains.";
-
-export function generateHelpText(ALL_FUNCTIONS) {
-  // Manejar ambos formatos de ALL_FUNCTIONS
-  const rowFuncs = Object.keys(ALL_FUNCTIONS || {})
-    .sort()
-    .join(", ");
-
-  return `
-CUSTOM FORMULA BUILDER
-======================
-
-Create calculated columns using mathematical expressions.
-
-FUNCTIONS (${Object.keys(ALL_FUNCTIONS).length} available):
-  ${rowFuncs}
-
-
-SYNTAX:
-  • Use $(ColumnName) to reference columns
-  • Operators: + - * / ** (power)
-  • Comparisons: == != < <= > >=
-  • Logic: && (and), || (or), ! (not)
-  • Group with: ( )
-
-EXAMPLES:
-  • Mean of two columns: ($(Col1) + $(Col2)) / 2
-  • Standardized score: zscore($(Score))
-  • Group standardization: zscoreByGroup($(Sales), $(Region))
-  • String concatenation: string($(First)) + " " + string($(Last))
-  • Conditional: $(Age) > 30 && $(Status) == "Active"
-  `;
-}
-
-import { ALL_FUNCTIONS } from "@/apps/hierarchy/menu/logic/formulaConstants";
-export const CUST_HELP = generateHelpText(ALL_FUNCTIONS);

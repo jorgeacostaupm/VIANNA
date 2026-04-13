@@ -89,7 +89,7 @@ const normalize = (value) =>
     .trim()
     .toLowerCase();
 
-export function resolveAppId(value) {
+function resolveAppId(value) {
   const key = normalize(value);
   return APP_NAV[key] ? key : null;
 }

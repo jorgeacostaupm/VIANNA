@@ -588,7 +588,7 @@ export function formatGroupCountLabel(group, groupCounts) {
   return `${group} (n=${n})`;
 }
 
-export function createGroupSizeScale(
+function createGroupSizeScale(
   groupCounts,
   { min = 0.55, max = 1, scaleType = "sqrt" } = {},
 ) {

@@ -57,7 +57,7 @@ export function resolveSelectionRefPayload(payload, dataframe) {
   return buildSelectionRefFromOrderValues([], universeOrderValues);
 }
 
-export function getDataframeOrderValues(dataframe) {
+function getDataframeOrderValues(dataframe) {
   if (!Array.isArray(dataframe) || dataframe.length === 0) return [];
   return normalizeOrderValues(
     dataframe

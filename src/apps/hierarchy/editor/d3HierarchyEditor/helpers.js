@@ -7,7 +7,7 @@ const dtypeColors = {
   root: "white",
 };
 
-export const hasNodeFormula = (nodeData) => {
+const hasNodeFormula = (nodeData) => {
   const formulaCandidates = [
     nodeData?.info?.formula,
     nodeData?.formula,

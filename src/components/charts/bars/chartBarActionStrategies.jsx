@@ -12,7 +12,7 @@ import ViewRecordsDownloadButton from "@/components/buttons/ui/ViewRecordsDownlo
 import { AppButton, APP_BUTTON_PRESETS, APP_BUTTON_VARIANTS } from "@/components/buttons/core";
 import PopoverButton from "@/components/buttons/ui/PopoverButton";
 
-export const DEFAULT_CHART_BAR_ACTION_ORDER = Object.freeze([
+const DEFAULT_CHART_BAR_ACTION_ORDER = Object.freeze([
   "sync",
   "records-export",
   "download",
